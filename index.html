@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ward Decanting Generator</title>
+  <style>
+:root {
+  color-scheme: light;
+  --bg: #f3f6fb;
+  --surface: #ffffff;
+  --surface-alt: #f8fafc;
+  --border: #d9e2ec;
+  --text: #102a43;
+  --muted: #627d98;
+  --accent: #2563eb;
+  --accent-dark: #1d4ed8;
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
+  --error-text: #b91c1c;
+  --shadow: 0 16px 48px rgba(15, 23, 42, 0.08);
+  --success: #0f766e;
+  --warning: #b45309;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(180deg, #eff6ff 0%, var(--bg) 45%, #eef2ff 100%);
+  color: var(--text);
+}
+
+.app-shell {
+  width: min(1080px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 48px 0 64px;
+}
+
+.hero {
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+}
+
+.subtitle {
+  max-width: 760px;
+  margin: 14px 0 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid rgba(217, 226, 236, 0.8);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.workspace-card {
+  display: grid;
+  gap: 24px;
+}
+
+.workspace-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.calculator-panel,
+.map-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.route-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.field span {
+  font-size: 0.95rem;
+}
+
+.field input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.field select,
+.field input[type="file"] {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.primary-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 14px 20px;
+  min-width: 140px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.secondary-btn {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 16px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.secondary-btn:hover {
+  border-color: var(--accent);
+  background: #eff6ff;
+}
+
+.danger-btn:hover {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.helper-text {
+  margin: 16px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.message {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+}
+
+.error {
+  background: var(--error-bg);
+  border-color: var(--error-border);
+  color: var(--error-text);
+}
+
+.success {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.hidden {
+  display: none;
+}
+
+.results {
+  margin-top: 24px;
+  display: grid;
+  gap: 20px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.summary-card,
+.detail-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.summary-label {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.summary-value {
+  margin: 8px 0 0;
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  font-weight: 700;
+}
+
+.summary-subvalue {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.detail-card h2 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+}
+
+.detail-list {
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.detail-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-list dt {
+  color: var(--muted);
+}
+
+.detail-list dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 700;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+td {
+  vertical-align: top;
+}
+
+.assumptions ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+}
+
+.panel-heading h2 {
+  margin: 4px 0 0;
+  font-size: 1.35rem;
+}
+
+.panel-eyebrow {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.map-status {
+  align-self: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: var(--accent-dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.map-stage-wrap {
+  position: relative;
+  min-height: 540px;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.map-stage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  cursor: crosshair;
+}
+
+.map-empty-state {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(217, 226, 236, 0.92);
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.map-marker circle {
+  fill: #f97316;
+  stroke: #ffffff;
+  stroke-width: 5;
+  filter: drop-shadow(0 8px 12px rgba(249, 115, 22, 0.35));
+}
+
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.legend-chip::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.legend-chip.area {
+  color: #0f766e;
+}
+
+.legend-chip.entrance {
+  color: #dc2626;
+}
+
+.legend-chip.lift-lobby {
+  color: #7c3aed;
+}
+
+.legend-chip.lift {
+  color: #2563eb;
+}
+
+.legend-chip.waypoint {
+  color: #b45309;
+}
+
+.map-note,
+.editor-note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 20px;
+}
+
+.editor-card,
+.asset-card {
+  display: grid;
+  gap: 18px;
+}
+
+.editor-section {
+  display: grid;
+  gap: 14px;
+}
+
+.editor-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.editor-box {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fcfdff;
+}
+
+.editor-box h3,
+.asset-section h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.route-draw-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.file-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.file-btn input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.asset-section {
+  display: grid;
+  gap: 12px;
+}
+
+.asset-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.asset-item {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fcfdff;
+}
+
+.asset-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.asset-title {
+  margin: 0;
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.asset-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.mini-btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.mini-btn:hover {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.empty-list {
+  color: var(--muted);
+}
+
+.map-node-label {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 4px;
+}
+
+.map-node-point {
+  stroke: #ffffff;
+  stroke-width: 5;
+  cursor: grab;
+}
+
+.map-node-point.dragging {
+  cursor: grabbing;
+}
+
+.route-segment {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.55;
+}
+
+.route-segment.active {
+  stroke-width: 16;
+  opacity: 0.92;
+  filter: drop-shadow(0 8px 12px rgba(15, 23, 42, 0.18));
+}
+
+.route-segment-label {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  fill: #334155;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 4px;
+}
+
+.draft-route {
+  fill: none;
+  stroke: #f97316;
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 20 14;
+  opacity: 0.95;
+}
+
+.draft-route-point {
+  fill: #f97316;
+  stroke: #ffffff;
+  stroke-width: 4;
+}
+
+@media (max-width: 1140px) {
+  .workspace-grid,
+  .editor-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 880px) {
+  .route-form,
+  .summary-grid,
+  .details-grid,
+  .editor-columns,
+  .route-draw-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .primary-btn {
+    width: 100%;
+  }
+
+  .editor-actions {
+    flex-direction: column;
+  }
+
+  .secondary-btn,
+  .file-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .map-stage-wrap {
+    min-height: 420px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <p class="eyebrow">Ward Decanting Generator</p>
+      <h1>Travel Time, Distance, and Route Map</h1>
+      <p class="subtitle">
+        Calculate the route, then display the movement path on a 2D map. You can
+        upload a floor plan, place labels for areas and lifts, draw route
+        segments, and reuse the same route definitions in the calculator view.
+      </p>
+    </section>
+
+    <section class="card workspace-card">
+      <div class="workspace-grid">
+        <section class="calculator-panel">
+          <form id="route-form" class="route-form">
+            <label class="field">
+              <span>Origin Ward</span>
+              <input
+                id="originWard"
+                name="originWard"
+                type="text"
+                placeholder="e.g. 10H, 8E, 10A"
+                autocomplete="off"
+                required
+              />
+            </label>
+
+            <label class="field">
+              <span>Destination Ward</span>
+              <input
+                id="destinationWard"
+                name="destinationWard"
+                type="text"
+                placeholder="e.g. A10"
+                autocomplete="off"
+                required
+              />
+            </label>
+
+            <button type="submit" class="primary-btn">Generate</button>
+          </form>
+
+          <p class="helper-text">
+            Current model assumes arrival through the <strong>South Lift Lobby</strong>.
+            The map editor below lets you define shared route geometry for the
+            animated path.
+          </p>
+
+          <div id="error-message" class="message error hidden" aria-live="polite"></div>
+          <div id="success-message" class="message success hidden" aria-live="polite"></div>
+
+          <section id="results" class="results hidden" aria-live="polite">
+            <div class="summary-grid">
+              <article class="summary-card">
+                <p class="summary-label">Total Distance</p>
+                <p id="total-distance" class="summary-value">0 m</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Total Time</p>
+                <p id="total-time" class="summary-value">0 s</p>
+                <p id="total-time-minutes" class="summary-subvalue">0:00.0</p>
+              </article>
+            </div>
+
+            <div class="details-grid">
+              <article class="detail-card">
+                <h2>Route Summary</h2>
+                <dl class="detail-list">
+                  <div>
+                    <dt>Origin Building</dt>
+                    <dd id="origin-building"></dd>
+                  </div>
+                  <div>
+                    <dt>Origin Floor</dt>
+                    <dd id="origin-floor"></dd>
+                  </div>
+                  <div>
+                    <dt>Transfer Floor</dt>
+                    <dd id="transfer-floor"></dd>
+                  </div>
+                  <div>
+                    <dt>Destination Wing</dt>
+                    <dd id="destination-wing"></dd>
+                  </div>
+                  <div>
+                    <dt>Destination Floor</dt>
+                    <dd id="destination-floor"></dd>
+                  </div>
+                  <div>
+                    <dt>Lobby Assumption</dt>
+                    <dd>South Lift Lobby</dd>
+                  </div>
+                </dl>
+              </article>
+
+              <article class="detail-card">
+                <h2>Step Breakdown</h2>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Step</th>
+                      <th>Distance</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="step-breakdown"></tbody>
+                </table>
+              </article>
+            </div>
+
+            <article class="detail-card assumptions">
+              <h2>Model Assumptions</h2>
+              <ul>
+                <li>Ward entrance to lift lobby is fixed at 20 m on both ends.</li>
+                <li>Walking speed is fixed at 1.2 m/s.</li>
+                <li>Lift travel time is 4 seconds per floor.</li>
+                <li>
+                  MCBTC uses the decanting path defined by the provided MCBTC to
+                  IPEB South Lift route values.
+                </li>
+                <li>
+                  Old Block HKLM and EF Wing use the route values defined by the
+                  provided old building to IPEB South Lift path.
+                </li>
+              </ul>
+            </article>
+          </section>
+        </section>
+
+        <aside class="map-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-eyebrow">Live Route Map</p>
+              <h2>2D Journey View</h2>
+            </div>
+            <span id="map-status" class="map-status">Waiting for route</span>
+          </div>
+
+          <div class="map-stage-wrap">
+            <svg id="map-svg" class="map-stage" viewBox="0 0 1000 1000" aria-label="Route map">
+              <defs>
+                <pattern id="grid-pattern" width="50" height="50" patternUnits="userSpaceOnUse">
+                  <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(148, 163, 184, 0.25)" stroke-width="1"></path>
+                </pattern>
+              </defs>
+              <rect x="0" y="0" width="1000" height="1000" fill="url(#grid-pattern)"></rect>
+              <image id="map-background" x="0" y="0" width="1000" height="1000" preserveAspectRatio="none"></image>
+              <g id="map-routes"></g>
+              <g id="map-labels"></g>
+              <g id="map-marker" class="map-marker hidden">
+                <circle r="15"></circle>
+              </g>
+            </svg>
+            <div id="map-empty-state" class="map-empty-state">
+              Upload a floor plan or start placing points on the blank canvas.
+            </div>
+          </div>
+
+          <div class="legend-row">
+            <span class="legend-chip area">Area</span>
+            <span class="legend-chip entrance">Entrance</span>
+            <span class="legend-chip lift-lobby">Lift Lobby</span>
+            <span class="legend-chip lift">Lift</span>
+            <span class="legend-chip waypoint">Route Node</span>
+          </div>
+
+          <p class="map-note">
+            After you generate a route, the app highlights the relevant segments
+            and animates a marker across the mapped path.
+          </p>
+        </aside>
+      </div>
+
+      <section class="editor-grid">
+        <article class="detail-card editor-card">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-eyebrow">Map Editor</p>
+              <h2>Edit Points and Routes</h2>
+            </div>
+          </div>
+
+          <div class="editor-section">
+            <label class="field">
+              <span>Floor Plan Image</span>
+              <input id="background-upload" type="file" accept="image/*" />
+            </label>
+          </div>
+
+          <div class="editor-section editor-columns">
+            <div class="editor-box">
+              <h3>Add Point</h3>
+              <label class="field">
+                <span>Point Name</span>
+                <input id="point-name" type="text" placeholder="e.g. HKLM Lift, South Lift" />
+              </label>
+              <label class="field">
+                <span>Point Type</span>
+                <select id="point-type">
+                  <option value="area">Area</option>
+                  <option value="entrance">Entrance</option>
+                  <option value="liftLobby">Lift Lobby</option>
+                  <option value="lift">Lift</option>
+                  <option value="waypoint">Route Node</option>
+                </select>
+              </label>
+              <button id="start-point-placement" type="button" class="secondary-btn">
+                Click Map To Place Point
+              </button>
+              <p id="placement-status" class="editor-note">
+                Choose a name and type, then click the map.
+              </p>
+            </div>
+
+            <div class="editor-box">
+              <h3>Add Route Segment</h3>
+              <label class="field">
+                <span>From Point</span>
+                <select id="segment-from"></select>
+              </label>
+              <label class="field">
+                <span>To Point</span>
+                <select id="segment-to"></select>
+              </label>
+              <label class="field">
+                <span>Route Group</span>
+                <select id="segment-group">
+                  <option value="shared">Shared</option>
+                  <option value="hklm">HKLM</option>
+                  <option value="ef">EF</option>
+                  <option value="mcbtc">MCBTC</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Step Tag</span>
+                <select id="segment-step">
+                  <option value="step1">Step 1: Departure</option>
+                  <option value="step3">Step 3: Inter-building</option>
+                  <option value="step5">Step 5: Arrival</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Segment Label</span>
+                <input id="segment-label" type="text" placeholder="Optional label" />
+              </label>
+              <div class="route-draw-actions">
+                <button id="start-route-draw" type="button" class="secondary-btn">
+                  Draw Route On Map
+                </button>
+                <button id="undo-route-point" type="button" class="secondary-btn">
+                  Undo Last Bend
+                </button>
+                <button id="finish-route-draw" type="button" class="secondary-btn">
+                  Finish Drawn Route
+                </button>
+                <button id="cancel-route-draw" type="button" class="secondary-btn danger-btn">
+                  Cancel Draw
+                </button>
+              </div>
+              <p id="route-draw-status" class="editor-note">
+                Select From and To points, click <strong>Draw Route On Map</strong>, then
+                click the map to place bend points along the walking path.
+              </p>
+            </div>
+          </div>
+
+          <div class="editor-actions">
+            <button id="save-map" type="button" class="secondary-btn">Save To Browser</button>
+            <button id="load-saved-map" type="button" class="secondary-btn">Load Saved Draft</button>
+            <button id="export-map" type="button" class="secondary-btn">Export JSON</button>
+            <button id="clear-routes" type="button" class="secondary-btn danger-btn">Clear Routes</button>
+            <label class="secondary-btn file-btn">
+              <span>Import JSON</span>
+              <input id="import-map" type="file" accept="application/json" />
+            </label>
+            <button id="reset-map" type="button" class="secondary-btn danger-btn">Reset Map</button>
+          </div>
+
+          <p class="editor-note">
+            Drag placed points directly on the map to adjust their position. Route
+            segment tags are used internally to match the calculator journey.
+          </p>
+        </article>
+
+        <article class="detail-card asset-card">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-eyebrow">Route Data</p>
+              <h2>Current Map Objects</h2>
+            </div>
+          </div>
+
+          <div class="asset-section">
+            <h3>Points</h3>
+            <div id="points-empty" class="empty-list">No points added yet.</div>
+            <ul id="points-list" class="asset-list"></ul>
+          </div>
+
+          <div class="asset-section">
+            <h3>Route Segments</h3>
+            <div id="segments-empty" class="empty-list">No route segments added yet.</div>
+            <ul id="segments-list" class="asset-list"></ul>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+  <script>
+const WALKING_DISTANCE_METERS = 20;
+const WALKING_SPEED_METERS_PER_SECOND = 1.2;
+const LIFT_TIME_PER_FLOOR_SECONDS = 4;
+const MAP_STORAGE_KEY = "ward-decanting-map-state-v2";
+const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
+const MAP_SIZE = 1000;
+const STEP_ORDER = ["step1", "step3", "step5"];
+
+const ORIGIN_BUILDING_RULES = {
+  H: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
+  K: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
+  L: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
+  M: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
+  E: { building: "Old Block - EF Wing", transferFloor: 2, routeKey: "ef" },
+  F: { building: "Old Block - EF Wing", transferFloor: 2, routeKey: "ef" },
+  A: { building: "MCBTC", transferFloor: 0, routeKey: "mcbtc" }
+};
+
+const INTER_BUILDING_SEGMENTS = {
+  hklm: [
+    { stepTag: "step1", label: "Departure ward entrance to departure lift lobby", distance: 20, time: WALKING_DISTANCE_METERS / WALKING_SPEED_METERS_PER_SECOND },
+    { stepTag: "step2", label: "Lift journey from ward floor to transfer floor", distance: 0, time: 0, calculated: "origin" },
+    { stepTag: "step3", label: "HKLM Lift to EF Lift", distance: 40, time: 33.3 },
+    { stepTag: "step3", label: "EF Lift to IPEB North Wing Lift", distance: 120, time: 100 },
+    { stepTag: "step3", label: "IPEB North Wing Lift to South Lift", distance: 105, time: 87.5 },
+    { stepTag: "step4", label: "Lift journey from transfer floor to destination floor", distance: 0, time: 0, calculated: "destination" },
+    { stepTag: "step5", label: "Destination lift lobby to ward entrance", distance: 20, time: WALKING_DISTANCE_METERS / WALKING_SPEED_METERS_PER_SECOND }
+  ],
+  ef: [
+    { stepTag: "step1", label: "Departure ward entrance to departure lift lobby", distance: 20, time: WALKING_DISTANCE_METERS / WALKING_SPEED_METERS_PER_SECOND },
+    { stepTag: "step2", label: "Lift journey from ward floor to transfer floor", distance: 0, time: 0, calculated: "origin" },
+    { stepTag: "step3", label: "EF Lift to IPEB North Wing Lift", distance: 120, time: 100 },
+    { stepTag: "step3", label: "IPEB North Wing Lift to South Lift", distance: 105, time: 87.5 },
+    { stepTag: "step4", label: "Lift journey from transfer floor to destination floor", distance: 0, time: 0, calculated: "destination" },
+    { stepTag: "step5", label: "Destination lift lobby to ward entrance", distance: 20, time: WALKING_DISTANCE_METERS / WALKING_SPEED_METERS_PER_SECOND }
+  ],
+  mcbtc: [
+    { stepTag: "step1", label: "Departure ward entrance to departure lift lobby", distance: 20, time: WALKING_DISTANCE_METERS / WALKING_SPEED_METERS_PER_SECOND },
+    { stepTag: "step2", label: "Lift journey from ward floor to transfer floor", distance: 0, time: 0, calculated: "origin" },
+    { stepTag: "step3", label: "MCBTC Lift to IPEB North Wing Lift", distance: 150, time: 125 },
+    { stepTag: "step3", label: "IPEB North Wing Lift to South Lift", distance: 105, time: 87.5 },
+    { stepTag: "step4", label: "Lift journey from transfer floor to destination floor", distance: 0, time: 0, calculated: "destination" },
+    { stepTag: "step5", label: "Destination lift lobby to ward entrance", distance: 20, time: WALKING_DISTANCE_METERS / WALKING_SPEED_METERS_PER_SECOND }
+  ]
+};
+
+const NODE_TYPE_META = {
+  area: { label: "Area", color: "#0f766e", radius: 14 },
+  entrance: { label: "Entrance", color: "#dc2626", radius: 14 },
+  liftLobby: { label: "Lift Lobby", color: "#7c3aed", radius: 14 },
+  lift: { label: "Lift", color: "#2563eb", radius: 14 },
+  waypoint: { label: "Route Node", color: "#b45309", radius: 11 }
+};
+
+const ROUTE_GROUP_META = {
+  shared: { label: "Shared", color: "#64748b" },
+  hklm: { label: "HKLM", color: "#1d4ed8" },
+  ef: { label: "EF", color: "#7c3aed" },
+  mcbtc: { label: "MCBTC", color: "#ea580c" }
+};
+
+const STEP_TAG_LABELS = {
+  step1: "Step 1",
+  step2: "Step 2",
+  step3: "Step 3",
+  step4: "Step 4",
+  step5: "Step 5"
+};
+
+let mapState = getEmptyMapState();
+let currentRouteResult = null;
+let activeJourney = null;
+let placementDraft = null;
+let routeDraft = null;
+let draggingNodeId = null;
+let animationFrameId = null;
+
+const form = document.getElementById("route-form");
+const resultsSection = document.getElementById("results");
+const errorMessage = document.getElementById("error-message");
+const successMessage = document.getElementById("success-message");
+const mapSvg = document.getElementById("map-svg");
+const mapBackground = document.getElementById("map-background");
+const mapRoutesGroup = document.getElementById("map-routes");
+const mapLabelsGroup = document.getElementById("map-labels");
+const mapMarker = document.getElementById("map-marker");
+const mapStatus = document.getElementById("map-status");
+const mapEmptyState = document.getElementById("map-empty-state");
+const backgroundUpload = document.getElementById("background-upload");
+const pointNameInput = document.getElementById("point-name");
+const pointTypeSelect = document.getElementById("point-type");
+const startPlacementButton = document.getElementById("start-point-placement");
+const placementStatus = document.getElementById("placement-status");
+const segmentFromSelect = document.getElementById("segment-from");
+const segmentToSelect = document.getElementById("segment-to");
+const segmentGroupSelect = document.getElementById("segment-group");
+const segmentStepSelect = document.getElementById("segment-step");
+const segmentLabelInput = document.getElementById("segment-label");
+const startRouteDrawButton = document.getElementById("start-route-draw");
+const undoRoutePointButton = document.getElementById("undo-route-point");
+const finishRouteDrawButton = document.getElementById("finish-route-draw");
+const cancelRouteDrawButton = document.getElementById("cancel-route-draw");
+const routeDrawStatus = document.getElementById("route-draw-status");
+const saveMapButton = document.getElementById("save-map");
+const loadSavedMapButton = document.getElementById("load-saved-map");
+const exportMapButton = document.getElementById("export-map");
+const clearRoutesButton = document.getElementById("clear-routes");
+const importMapInput = document.getElementById("import-map");
+const resetMapButton = document.getElementById("reset-map");
+const pointsList = document.getElementById("points-list");
+const segmentsList = document.getElementById("segments-list");
+const pointsEmpty = document.getElementById("points-empty");
+const segmentsEmpty = document.getElementById("segments-empty");
+
+initialize();
+
+function initialize() {
+  clearLegacyStoredMapState();
+  form.addEventListener("submit", handleGenerateRoute);
+  backgroundUpload.addEventListener("change", handleBackgroundUpload);
+  startPlacementButton.addEventListener("click", startPointPlacement);
+  startRouteDrawButton.addEventListener("click", startRouteDraw);
+  undoRoutePointButton.addEventListener("click", undoRoutePoint);
+  finishRouteDrawButton.addEventListener("click", finishRouteDraw);
+  cancelRouteDrawButton.addEventListener("click", cancelRouteDraw);
+  saveMapButton.addEventListener("click", handleManualSave);
+  loadSavedMapButton.addEventListener("click", loadSavedDraft);
+  exportMapButton.addEventListener("click", exportMapState);
+  clearRoutesButton.addEventListener("click", clearRoutesOnly);
+  importMapInput.addEventListener("change", importMapState);
+  resetMapButton.addEventListener("click", resetMapState);
+  mapSvg.addEventListener("click", handleMapClick);
+  mapSvg.addEventListener("pointerdown", handleMapPointerDown);
+  mapSvg.addEventListener("pointermove", handleMapPointerMove);
+  window.addEventListener("pointerup", handleMapPointerUp);
+  pointsList.addEventListener("click", handleListActions);
+  segmentsList.addEventListener("click", handleListActions);
+
+  renderAll();
+}
+
+function handleGenerateRoute(event) {
+  event.preventDefault();
+
+  const formData = new FormData(form);
+  const originWard = String(formData.get("originWard") || "").trim().toUpperCase();
+  const destinationWard = String(formData.get("destinationWard") || "").trim().toUpperCase();
+
+  try {
+    const result = calculateRoute(originWard, destinationWard);
+    currentRouteResult = result;
+    activeJourney = buildJourneyForRoute(result.origin.routeKey);
+    renderResults(result);
+    renderMap();
+    showError("");
+    showSuccess(activeJourney ? "已產生路線結果，地圖會顯示相應動畫。" : "已產生路線結果，但目前未找到已對應的地圖路線。");
+  } catch (error) {
+    currentRouteResult = null;
+    activeJourney = null;
+    resultsSection.classList.add("hidden");
+    stopAnimation();
+    renderMap();
+    showError(error.message);
+  }
+}
+
+function calculateRoute(originWard, destinationWard) {
+  const origin = parseOriginWard(originWard);
+  const destination = parseDestinationWard(destinationWard);
+  const segmentTemplate = INTER_BUILDING_SEGMENTS[origin.routeKey];
+
+  const steps = segmentTemplate.map((segment) => {
+    if (segment.calculated === "origin") {
+      return {
+        stepTag: segment.stepTag,
+        label: segment.label,
+        distance: 0,
+        time: Math.abs(origin.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS
+      };
+    }
+
+    if (segment.calculated === "destination") {
+      return {
+        stepTag: segment.stepTag,
+        label: segment.label,
+        distance: 0,
+        time: Math.abs(destination.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS
+      };
+    }
+
+    return { ...segment };
+  });
+
+  const totals = steps.reduce(
+    (accumulator, step) => {
+      accumulator.distance += step.distance;
+      accumulator.time += step.time;
+      return accumulator;
+    },
+    { distance: 0, time: 0 }
+  );
+
+  return {
+    origin,
+    destination,
+    steps,
+    totalDistance: roundOneDecimal(totals.distance),
+    totalTime: roundOneDecimal(totals.time),
+    totalTimeMinutes: formatSeconds(totals.time)
+  };
+}
+
+function parseOriginWard(input) {
+  const match = input.match(/^(\d{1,2})([A-Z])$/);
+
+  if (!match) {
+    throw new Error("Origin ward must be in the format like 10H, 8E, or 10A.");
+  }
+
+  const floor = Number(match[1]);
+  const suffix = match[2];
+  const config = ORIGIN_BUILDING_RULES[suffix];
+
+  if (!config) {
+    throw new Error("Origin ward code is not mapped yet. Supported suffixes are A, E, F, H, K, L, and M.");
+  }
+
+  return {
+    ward: input,
+    floor,
+    suffix,
+    building: config.building,
+    transferFloor: config.transferFloor,
+    routeKey: config.routeKey
+  };
+}
+
+function parseDestinationWard(input) {
+  const match = input.match(/^([A-Z]+)(\d{1,2})$/);
+
+  if (!match) {
+    throw new Error("Destination ward must be in the format like A10.");
+  }
+
+  return {
+    ward: input,
+    wing: match[1],
+    floor: Number(match[2])
+  };
+}
+
+function renderResults(result) {
+  document.getElementById("total-distance").textContent = `${result.totalDistance.toFixed(1)} m`;
+  document.getElementById("total-time").textContent = `${result.totalTime.toFixed(1)} s`;
+  document.getElementById("total-time-minutes").textContent = result.totalTimeMinutes;
+  document.getElementById("origin-building").textContent = result.origin.building;
+  document.getElementById("origin-floor").textContent = `${result.origin.floor}/F`;
+  document.getElementById("transfer-floor").textContent = `L${String(result.origin.transferFloor).padStart(2, "0")}`;
+  document.getElementById("destination-wing").textContent = `${result.destination.wing} Wing`;
+  document.getElementById("destination-floor").textContent = `${result.destination.floor}/F`;
+
+  const tableBody = document.getElementById("step-breakdown");
+  tableBody.innerHTML = "";
+
+  result.steps.forEach((step, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${index + 1}. ${step.label}</td>
+      <td>${step.distance.toFixed(1)} m</td>
+      <td>${step.time.toFixed(1)} s</td>
+    `;
+    tableBody.appendChild(row);
+  });
+
+  resultsSection.classList.remove("hidden");
+}
+
+function handleBackgroundUpload(event) {
+  const file = event.target.files && event.target.files[0];
+
+  if (!file) {
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    mapState.backgroundImage = String(reader.result || "");
+    mapState.nodes = [];
+    mapState.segments = [];
+    currentRouteResult = null;
+    activeJourney = null;
+    placementDraft = null;
+    cancelRouteDraw(false);
+    stopAnimation();
+    persistMapState();
+    renderAll();
+    placementStatus.textContent = "New map loaded. Previous points and routes were cleared.";
+    showSuccess("新地圖已載入，舊有點位和路線已清除。");
+  };
+  reader.readAsDataURL(file);
+}
+
+function startPointPlacement() {
+  const name = pointNameInput.value.trim();
+  const type = pointTypeSelect.value;
+
+  if (!name) {
+    showError("Enter a point name first, then click the map to place it.");
+    return;
+  }
+
+  cancelRouteDraw(false);
+  placementDraft = { name, type };
+  placementStatus.textContent = `Click on the map to place "${name}".`;
+  showError("");
+}
+
+function startRouteDraw() {
+  const fromId = segmentFromSelect.value;
+  const toId = segmentToSelect.value;
+
+  if (!fromId || !toId) {
+    showError("Choose both From Point and To Point before drawing the route.");
+    return;
+  }
+
+  if (fromId === toId) {
+    showError("The route start and end points must be different.");
+    return;
+  }
+
+  const fromNode = getNodeById(fromId);
+  const toNode = getNodeById(toId);
+
+  if (!fromNode || !toNode) {
+    showError("The selected route points are missing. Please select them again.");
+    return;
+  }
+
+  placementDraft = null;
+  routeDraft = {
+    editingSegmentId: null,
+    fromId,
+    toId,
+    routeGroup: segmentGroupSelect.value,
+    stepTag: segmentStepSelect.value,
+    label: segmentLabelInput.value.trim(),
+    waypoints: []
+  };
+
+  updateRouteDrawStatus(`Drawing from "${fromNode.name}" to "${toNode.name}". Click the map to add bend points, then finish the route.`);
+  showError("");
+  renderMap();
+}
+
+function undoRoutePoint() {
+  if (!routeDraft) {
+    updateRouteDrawStatus("No route is being drawn right now.");
+    return;
+  }
+
+  routeDraft.waypoints.pop();
+  updateRouteDrawStatus(`Last bend removed. ${routeDraft.waypoints.length} bend point(s) currently in this route.`);
+  renderMap();
+}
+
+function finishRouteDraw() {
+  if (!routeDraft) {
+    showError("Start drawing a route first.");
+    return;
+  }
+
+  const fromNode = getNodeById(routeDraft.fromId);
+  const toNode = getNodeById(routeDraft.toId);
+
+  if (!fromNode || !toNode) {
+    showError("The selected route points are missing. Please start the route again.");
+    cancelRouteDraw(false);
+    return;
+  }
+
+  const segmentPayload = {
+    id: routeDraft.editingSegmentId || createId("segment"),
+    fromId: routeDraft.fromId,
+    toId: routeDraft.toId,
+    routeGroup: routeDraft.routeGroup,
+    stepTag: routeDraft.stepTag,
+    label: routeDraft.label,
+    waypoints: routeDraft.waypoints.map(clonePoint)
+  };
+
+  if (routeDraft.editingSegmentId) {
+    mapState.segments = mapState.segments.map((segment) =>
+      segment.id === routeDraft.editingSegmentId ? segmentPayload : segment
+    );
+  } else {
+    mapState.segments.push(segmentPayload);
+  }
+
+  const createdLabel = routeDraft.label || `${fromNode.name} to ${toNode.name}`;
+  const wasEditing = Boolean(routeDraft.editingSegmentId);
+  routeDraft = null;
+  segmentLabelInput.value = "";
+  updateRouteDrawStatus(`${wasEditing ? "Updated" : "Saved"} drawn route "${createdLabel}".`);
+  showError("");
+  showSuccess(wasEditing ? `路線「${createdLabel}」已更新。` : `路線「${createdLabel}」已成功儲存。`);
+  persistMapState();
+  renderAll();
+}
+
+function cancelRouteDraw(shouldRender = true) {
+  routeDraft = null;
+  updateRouteDrawStatus("Select From and To points, click Draw Route On Map, then click the map to place bend points along the walking path.");
+
+  if (shouldRender) {
+    renderMap();
+  }
+}
+
+function handleMapClick(event) {
+  if (draggingNodeId) {
+    return;
+  }
+
+  const targetNodeId = event.target && event.target.dataset ? event.target.dataset.nodeId : "";
+  const { x, y } = getSvgPoint(event);
+
+  if (routeDraft) {
+    if (targetNodeId) {
+      return;
+    }
+
+    routeDraft.waypoints.push({ x, y });
+    updateRouteDrawStatus(`Added bend point ${routeDraft.waypoints.length}. Continue clicking along the path, then finish the route.`);
+    renderMap();
+    return;
+  }
+
+  if (!placementDraft) {
+    return;
+  }
+
+  mapState.nodes.push({
+    id: createId("node"),
+    name: placementDraft.name,
+    type: placementDraft.type,
+    x,
+    y
+  });
+
+  placementDraft = null;
+  pointNameInput.value = "";
+  placementStatus.textContent = "Point added. Enter another name or drag existing points to adjust them.";
+  persistMapState();
+  renderAll();
+}
+
+function handleMapPointerDown(event) {
+  const nodeId = event.target && event.target.dataset ? event.target.dataset.nodeId : "";
+
+  if (!nodeId) {
+    return;
+  }
+
+  draggingNodeId = nodeId;
+  event.target.classList.add("dragging");
+  showError("");
+}
+
+function handleMapPointerMove(event) {
+  if (!draggingNodeId) {
+    return;
+  }
+
+  const { x, y } = getSvgPoint(event);
+  const node = getNodeById(draggingNodeId);
+
+  if (!node) {
+    return;
+  }
+
+  node.x = x;
+  node.y = y;
+  renderMap();
+}
+
+function handleMapPointerUp() {
+  if (!draggingNodeId) {
+    return;
+  }
+
+  const activeCircle = mapSvg.querySelector(`[data-node-id="${draggingNodeId}"]`);
+
+  if (activeCircle) {
+    activeCircle.classList.remove("dragging");
+  }
+
+  draggingNodeId = null;
+  persistMapState();
+  renderAll(false);
+}
+
+function handleListActions(event) {
+  const button = event.target.closest("button[data-action]");
+
+  if (!button) {
+    return;
+  }
+
+  const { action, id } = button.dataset;
+
+  if (action === "delete-node") {
+    mapState.nodes = mapState.nodes.filter((node) => node.id !== id);
+    mapState.segments = mapState.segments.filter((segment) => segment.fromId !== id && segment.toId !== id);
+  }
+
+  if (action === "delete-segment") {
+    mapState.segments = mapState.segments.filter((segment) => segment.id !== id);
+
+    if (routeDraft && routeDraft.editingSegmentId === id) {
+      cancelRouteDraw(false);
+    }
+  }
+
+  if (action === "edit-segment") {
+    loadSegmentForEdit(id);
+    return;
+  }
+
+  syncRouteVisualizationState();
+  persistMapState();
+  renderAll();
+}
+
+function handleManualSave() {
+  const didSave = persistMapState();
+
+  if (!didSave) {
+    showError("The map could not be fully saved in browser storage. Try Export JSON instead.");
+    return;
+  }
+
+  showError("");
+  showSuccess("地圖專案已成功儲存到瀏覽器。");
+  placementStatus.textContent = "Map data saved in this browser.";
+}
+
+function loadSavedDraft() {
+  const savedState = loadMapState();
+  const hasSavedContent = savedState.backgroundImage || savedState.nodes.length || savedState.segments.length;
+
+  if (!hasSavedContent) {
+    showError("No saved browser draft was found.");
+    return;
+  }
+
+  mapState = savedState;
+  currentRouteResult = null;
+  activeJourney = null;
+  placementDraft = null;
+  cancelRouteDraw(false);
+  stopAnimation();
+  renderAll();
+  showError("");
+  showSuccess("已載入瀏覽器內的儲存草稿。");
+  placementStatus.textContent = "Saved browser draft loaded.";
+}
+
+function exportMapState() {
+  const payload = JSON.stringify(mapState, null, 2);
+  const blob = new Blob([payload], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+
+  anchor.href = url;
+  anchor.download = "ward-decanting-map.json";
+  anchor.click();
+  URL.revokeObjectURL(url);
+  showSuccess("JSON 備份檔已開始下載。");
+}
+
+function importMapState(event) {
+  const file = event.target.files && event.target.files[0];
+
+  if (!file) {
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(String(reader.result || ""));
+      mapState = normalizeMapState(parsed);
+      persistMapState();
+      renderAll();
+      showError("");
+      showSuccess("JSON 地圖檔已成功匯入。");
+      placementStatus.textContent = "Map JSON imported successfully.";
+      cancelRouteDraw(false);
+    } catch (error) {
+      showError("The JSON file could not be read. Please use a valid exported map file.");
+    }
+  };
+  reader.readAsText(file);
+  importMapInput.value = "";
+}
+
+function resetMapState() {
+  mapState = getEmptyMapState();
+  currentRouteResult = null;
+  activeJourney = null;
+  placementDraft = null;
+  cancelRouteDraw(false);
+  stopAnimation();
+  persistMapState();
+  renderAll();
+  showSuccess("地圖已重設。");
+}
+
+function clearRoutesOnly() {
+  mapState.segments = [];
+  currentRouteResult = null;
+  activeJourney = null;
+  cancelRouteDraw(false);
+  stopAnimation();
+  persistMapState();
+  renderAll();
+  showError("");
+  showSuccess("已清除所有路線，點位會保留。");
+  placementStatus.textContent = "All route segments were cleared. Points remain on the map.";
+}
+
+function renderAll(shouldRerenderLists = true) {
+  syncRouteVisualizationState();
+  renderMap();
+  refreshSelectOptions();
+
+  if (shouldRerenderLists) {
+    renderAssetLists();
+  }
+}
+
+function renderMap() {
+  mapBackground.setAttributeNS("http://www.w3.org/1999/xlink", "href", mapState.backgroundImage || "");
+  mapBackground.setAttribute("href", mapState.backgroundImage || "");
+  mapEmptyState.style.display = mapState.backgroundImage || mapState.nodes.length ? "none" : "block";
+
+  mapRoutesGroup.innerHTML = "";
+  mapLabelsGroup.innerHTML = "";
+
+  const activeSegmentIds = new Set(activeJourney ? activeJourney.segments.map((segment) => segment.id) : []);
+
+  mapState.segments.forEach((segment) => {
+    const fromNode = getNodeById(segment.fromId);
+    const toNode = getNodeById(segment.toId);
+    const pathPoints = getSegmentPathPoints(segment, fromNode, toNode);
+
+    if (pathPoints.length < 2) {
+      return;
+    }
+
+    const routeMeta = ROUTE_GROUP_META[segment.routeGroup] || ROUTE_GROUP_META.shared;
+    const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+
+    polyline.setAttribute("points", formatSvgPoints(pathPoints));
+    polyline.setAttribute("stroke", routeMeta.color);
+    polyline.setAttribute("class", `route-segment${activeSegmentIds.has(segment.id) ? " active" : ""}`);
+    polyline.dataset.segmentId = segment.id;
+    mapRoutesGroup.appendChild(polyline);
+
+    if (segment.label) {
+      const labelPoint = getPointAtHalfway(pathPoints);
+      const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      label.setAttribute("x", labelPoint.x + 8);
+      label.setAttribute("y", labelPoint.y - 8);
+      label.setAttribute("class", "route-segment-label");
+      label.textContent = segment.label;
+      mapRoutesGroup.appendChild(label);
+    }
+  });
+
+  if (routeDraft) {
+    const draftPoints = getDraftRoutePoints();
+
+    if (draftPoints.length > 1) {
+      const draftLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      draftLine.setAttribute("points", formatSvgPoints(draftPoints));
+      draftLine.setAttribute("class", "draft-route");
+      mapRoutesGroup.appendChild(draftLine);
+    }
+
+    routeDraft.waypoints.forEach((point) => {
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dot.setAttribute("cx", point.x);
+      dot.setAttribute("cy", point.y);
+      dot.setAttribute("r", 9);
+      dot.setAttribute("class", "draft-route-point");
+      mapRoutesGroup.appendChild(dot);
+    });
+  }
+
+  mapState.nodes.forEach((node) => {
+    const meta = NODE_TYPE_META[node.type] || NODE_TYPE_META.waypoint;
+    const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+
+    circle.setAttribute("cx", node.x);
+    circle.setAttribute("cy", node.y);
+    circle.setAttribute("r", meta.radius);
+    circle.setAttribute("fill", meta.color);
+    circle.setAttribute("class", "map-node-point");
+    circle.dataset.nodeId = node.id;
+
+    label.setAttribute("x", node.x + meta.radius + 12);
+    label.setAttribute("y", node.y + 8);
+    label.setAttribute("class", "map-node-label");
+    label.textContent = node.name;
+
+    group.appendChild(circle);
+    group.appendChild(label);
+    mapLabelsGroup.appendChild(group);
+  });
+
+  if (routeDraft) {
+    mapStatus.textContent = "Drawing route";
+  } else if (currentRouteResult && activeJourney && activeJourney.points.length > 1) {
+    mapStatus.textContent = `Showing ${ROUTE_GROUP_META[currentRouteResult.origin.routeKey].label} route`;
+    startAnimation(activeJourney.points);
+  } else {
+    mapStatus.textContent = currentRouteResult ? "No mapped path for this route yet" : "Waiting for route";
+    stopAnimation();
+  }
+}
+
+function refreshSelectOptions() {
+  const selectedFrom = segmentFromSelect.value;
+  const selectedTo = segmentToSelect.value;
+  const optionsMarkup = mapState.nodes
+    .map((node) => `<option value="${node.id}">${escapeHtml(node.name)} (${(NODE_TYPE_META[node.type] || NODE_TYPE_META.waypoint).label})</option>`)
+    .join("");
+
+  const placeholder = '<option value="">Select point</option>';
+  segmentFromSelect.innerHTML = placeholder + optionsMarkup;
+  segmentToSelect.innerHTML = placeholder + optionsMarkup;
+  segmentFromSelect.value = mapState.nodes.some((node) => node.id === selectedFrom) ? selectedFrom : "";
+  segmentToSelect.value = mapState.nodes.some((node) => node.id === selectedTo) ? selectedTo : "";
+}
+
+function renderAssetLists() {
+  pointsEmpty.style.display = mapState.nodes.length ? "none" : "block";
+  segmentsEmpty.style.display = mapState.segments.length ? "none" : "block";
+
+  pointsList.innerHTML = mapState.nodes
+    .map((node) => {
+      const meta = NODE_TYPE_META[node.type] || NODE_TYPE_META.waypoint;
+      return `
+        <li class="asset-item">
+          <div class="asset-head">
+            <p class="asset-title">${escapeHtml(node.name)}</p>
+            <button class="mini-btn" type="button" data-action="delete-node" data-id="${node.id}">Delete</button>
+          </div>
+          <p class="asset-meta">${meta.label} · X ${node.x.toFixed(1)} · Y ${node.y.toFixed(1)}</p>
+        </li>
+      `;
+    })
+    .join("");
+
+  segmentsList.innerHTML = mapState.segments
+    .map((segment) => {
+      const fromNode = getNodeById(segment.fromId);
+      const toNode = getNodeById(segment.toId);
+      const routeMeta = ROUTE_GROUP_META[segment.routeGroup] || ROUTE_GROUP_META.shared;
+      const bendCount = Array.isArray(segment.waypoints) ? segment.waypoints.length : 0;
+      const title = segment.label || `${fromNode ? fromNode.name : "Unknown"} to ${toNode ? toNode.name : "Unknown"}`;
+
+      return `
+        <li class="asset-item">
+          <div class="asset-head">
+            <p class="asset-title">${escapeHtml(title)}</p>
+            <div>
+              <button class="mini-btn" type="button" data-action="edit-segment" data-id="${segment.id}">Edit</button>
+              <button class="mini-btn" type="button" data-action="delete-segment" data-id="${segment.id}">Delete</button>
+            </div>
+          </div>
+          <p class="asset-meta">${routeMeta.label} · ${STEP_TAG_LABELS[segment.stepTag] || segment.stepTag} · ${bendCount} bend point(s)</p>
+        </li>
+      `;
+    })
+    .join("");
+}
+
+function loadSegmentForEdit(segmentId) {
+  const segment = mapState.segments.find((item) => item.id === segmentId);
+
+  if (!segment) {
+    showError("The selected route segment could not be found.");
+    return;
+  }
+
+  const fromNode = getNodeById(segment.fromId);
+  const toNode = getNodeById(segment.toId);
+
+  if (!fromNode || !toNode) {
+    showError("The route segment references missing points, so it cannot be edited.");
+    return;
+  }
+
+  placementDraft = null;
+  segmentFromSelect.value = segment.fromId;
+  segmentToSelect.value = segment.toId;
+  segmentGroupSelect.value = segment.routeGroup;
+  segmentStepSelect.value = segment.stepTag;
+  segmentLabelInput.value = segment.label || "";
+  routeDraft = {
+    editingSegmentId: segment.id,
+    fromId: segment.fromId,
+    toId: segment.toId,
+    routeGroup: segment.routeGroup,
+    stepTag: segment.stepTag,
+    label: segment.label || "",
+    waypoints: Array.isArray(segment.waypoints) ? segment.waypoints.map(clonePoint) : []
+  };
+
+  updateRouteDrawStatus(`Editing "${segment.label || `${fromNode.name} to ${toNode.name}`}". Add or undo bend points, then click Finish Drawn Route.`);
+  showError("");
+  renderMap();
+}
+
+function syncRouteVisualizationState() {
+  if (!currentRouteResult) {
+    activeJourney = null;
+    return;
+  }
+
+  activeJourney = buildJourneyForRoute(currentRouteResult.origin.routeKey);
+}
+
+function buildJourneyForRoute(routeKey) {
+  const matchingSegments = mapState.segments
+    .filter((segment) => segment.routeGroup === routeKey || segment.routeGroup === "shared")
+    .sort((left, right) => {
+      const leftOrder = STEP_ORDER.indexOf(left.stepTag);
+      const rightOrder = STEP_ORDER.indexOf(right.stepTag);
+      return leftOrder - rightOrder;
+    });
+
+  if (!matchingSegments.length) {
+    return null;
+  }
+
+  const points = [];
+
+  matchingSegments.forEach((segment) => {
+    const segmentPoints = getSegmentPathPoints(segment, getNodeById(segment.fromId), getNodeById(segment.toId));
+
+    segmentPoints.forEach((point, index) => {
+      if (points.length && index === 0 && isSamePoint(points[points.length - 1], point)) {
+        return;
+      }
+
+      points.push(point);
+    });
+  });
+
+  return points.length > 1
+    ? {
+        segments: matchingSegments,
+        points
+      }
+    : null;
+}
+
+function startAnimation(points) {
+  stopAnimation(false);
+  mapMarker.classList.remove("hidden");
+
+  const pathSegments = buildPathSegments(points);
+  const totalLength = pathSegments.reduce((sum, segment) => sum + segment.length, 0);
+
+  if (!pathSegments.length || !totalLength) {
+    return;
+  }
+
+  const durationMs = Math.min(Math.max(totalLength * 8, 5000), 15000);
+  const startedAt = performance.now();
+
+  function animateFrame(now) {
+    const progress = ((now - startedAt) % durationMs) / durationMs;
+    const targetDistance = totalLength * progress;
+    const point = getPointAtDistance(pathSegments, targetDistance);
+    mapMarker.setAttribute("transform", `translate(${point.x} ${point.y})`);
+    animationFrameId = window.requestAnimationFrame(animateFrame);
+  }
+
+  animationFrameId = window.requestAnimationFrame(animateFrame);
+}
+
+function stopAnimation(hideMarker = true) {
+  if (animationFrameId) {
+    window.cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+
+  if (hideMarker) {
+    mapMarker.classList.add("hidden");
+  }
+}
+
+function buildPathSegments(points) {
+  const pathSegments = [];
+
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const start = points[index];
+    const end = points[index + 1];
+    const length = Math.hypot(end.x - start.x, end.y - start.y);
+
+    if (!length) {
+      continue;
+    }
+
+    pathSegments.push({ start, end, length });
+  }
+
+  return pathSegments;
+}
+
+function getPointAtDistance(pathSegments, targetDistance) {
+  let remaining = targetDistance;
+
+  for (const segment of pathSegments) {
+    if (remaining <= segment.length) {
+      const ratio = remaining / segment.length;
+      return {
+        x: segment.start.x + (segment.end.x - segment.start.x) * ratio,
+        y: segment.start.y + (segment.end.y - segment.start.y) * ratio
+      };
+    }
+
+    remaining -= segment.length;
+  }
+
+  const lastSegment = pathSegments[pathSegments.length - 1];
+  return { x: lastSegment.end.x, y: lastSegment.end.y };
+}
+
+function getPointAtHalfway(points) {
+  const pathSegments = buildPathSegments(points);
+  const totalLength = pathSegments.reduce((sum, segment) => sum + segment.length, 0);
+
+  if (!totalLength) {
+    return points[0] || { x: 0, y: 0 };
+  }
+
+  return getPointAtDistance(pathSegments, totalLength / 2);
+}
+
+function getSegmentPathPoints(segment, fromNode, toNode) {
+  if (!fromNode || !toNode) {
+    return [];
+  }
+
+  const waypoints = Array.isArray(segment.waypoints) ? segment.waypoints : [];
+  return [
+    { x: fromNode.x, y: fromNode.y },
+    ...waypoints.map(clonePoint),
+    { x: toNode.x, y: toNode.y }
+  ];
+}
+
+function getDraftRoutePoints() {
+  if (!routeDraft) {
+    return [];
+  }
+
+  const fromNode = getNodeById(routeDraft.fromId);
+  const toNode = getNodeById(routeDraft.toId);
+
+  if (!fromNode || !toNode) {
+    return [];
+  }
+
+  return [
+    { x: fromNode.x, y: fromNode.y },
+    ...routeDraft.waypoints.map(clonePoint),
+    { x: toNode.x, y: toNode.y }
+  ];
+}
+
+function getSvgPoint(event) {
+  const rect = mapSvg.getBoundingClientRect();
+  const x = ((event.clientX - rect.left) / rect.width) * MAP_SIZE;
+  const y = ((event.clientY - rect.top) / rect.height) * MAP_SIZE;
+
+  return {
+    x: clamp(x, 0, MAP_SIZE),
+    y: clamp(y, 0, MAP_SIZE)
+  };
+}
+
+function getNodeById(id) {
+  return mapState.nodes.find((node) => node.id === id);
+}
+
+function loadMapState() {
+  try {
+    const raw = window.localStorage.getItem(MAP_STORAGE_KEY);
+
+    if (!raw) {
+      return getEmptyMapState();
+    }
+
+    return normalizeMapState(JSON.parse(raw));
+  } catch (error) {
+    return getEmptyMapState();
+  }
+}
+
+function clearLegacyStoredMapState() {
+  try {
+    LEGACY_MAP_STORAGE_KEYS.forEach((key) => {
+      window.localStorage.removeItem(key);
+    });
+  } catch (error) {
+    // Ignore storage cleanup failures and continue with current in-memory defaults.
+  }
+}
+
+function persistMapState() {
+  try {
+    window.localStorage.setItem(MAP_STORAGE_KEY, JSON.stringify(mapState));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function normalizeMapState(value) {
+  const safeState = getEmptyMapState();
+
+  if (!value || typeof value !== "object") {
+    return safeState;
+  }
+
+  safeState.backgroundImage = typeof value.backgroundImage === "string" ? value.backgroundImage : "";
+  safeState.nodes = Array.isArray(value.nodes)
+    ? value.nodes
+        .filter((node) => node && typeof node.name === "string")
+        .map((node) => ({
+          id: typeof node.id === "string" ? node.id : createId("node"),
+          name: node.name,
+          type: NODE_TYPE_META[node.type] ? node.type : "waypoint",
+          x: clamp(Number(node.x) || 0, 0, MAP_SIZE),
+          y: clamp(Number(node.y) || 0, 0, MAP_SIZE)
+        }))
+    : [];
+  safeState.segments = Array.isArray(value.segments)
+    ? value.segments
+        .filter((segment) => segment && typeof segment.fromId === "string" && typeof segment.toId === "string")
+        .map((segment) => ({
+          id: typeof segment.id === "string" ? segment.id : createId("segment"),
+          fromId: segment.fromId,
+          toId: segment.toId,
+          routeGroup: ROUTE_GROUP_META[segment.routeGroup] ? segment.routeGroup : "shared",
+          stepTag: STEP_TAG_LABELS[segment.stepTag] ? segment.stepTag : "step3",
+          label: typeof segment.label === "string" ? segment.label : "",
+          waypoints: normalizeSegmentWaypoints(segment)
+        }))
+    : [];
+  return safeState;
+}
+
+function normalizeSegmentWaypoints(segment) {
+  if (Array.isArray(segment.waypoints)) {
+    return segment.waypoints.map(clonePoint).filter(isValidPoint);
+  }
+
+  if (Array.isArray(segment.pathPoints) && segment.pathPoints.length >= 2) {
+    return segment.pathPoints.slice(1, -1).map(clonePoint).filter(isValidPoint);
+  }
+
+  return [];
+}
+
+function getEmptyMapState() {
+  return {
+    backgroundImage: "",
+    nodes: [],
+    segments: []
+  };
+}
+
+function updateRouteDrawStatus(message) {
+  routeDrawStatus.innerHTML = escapeHtml(message);
+}
+
+function formatSvgPoints(points) {
+  return points.map((point) => `${point.x},${point.y}`).join(" ");
+}
+
+function clonePoint(point) {
+  return {
+    x: clamp(Number(point.x) || 0, 0, MAP_SIZE),
+    y: clamp(Number(point.y) || 0, 0, MAP_SIZE)
+  };
+}
+
+function isValidPoint(point) {
+  return point && Number.isFinite(point.x) && Number.isFinite(point.y);
+}
+
+function isSamePoint(left, right) {
+  return Math.abs(left.x - right.x) < 0.001 && Math.abs(left.y - right.y) < 0.001;
+}
+
+function showError(message) {
+  if (!message) {
+    errorMessage.textContent = "";
+    errorMessage.classList.add("hidden");
+    return;
+  }
+
+  successMessage.textContent = "";
+  successMessage.classList.add("hidden");
+  errorMessage.textContent = message;
+  errorMessage.classList.remove("hidden");
+}
+
+function showSuccess(message) {
+  if (!message) {
+    successMessage.textContent = "";
+    successMessage.classList.add("hidden");
+    return;
+  }
+
+  errorMessage.textContent = "";
+  errorMessage.classList.add("hidden");
+  successMessage.textContent = message;
+  successMessage.classList.remove("hidden");
+}
+
+function createId(prefix) {
+  return `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function roundOneDecimal(value) {
+  return Math.round(value * 10) / 10;
+}
+
+function formatSeconds(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = (totalSeconds % 60).toFixed(1).padStart(4, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+  </script>
+</body>
+</html>
