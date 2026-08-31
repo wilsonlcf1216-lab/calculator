@@ -1102,6 +1102,14 @@ const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5", "step6"];
+const STEP_JSON_DEFAULTS = [
+  {
+    stepKey: "step1",
+    routeKey: "mcbtc",
+    fileName: "MCBTC_A.json",
+    filePath: "./MCBTC_A.json"
+  }
+];
 
 const ORIGIN_BUILDING_RULES = {
   H: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
@@ -1223,6 +1231,7 @@ initialize();
 function initialize() {
   clearLegacyStoredMapState();
   stepJsonLibrary = loadStepJsonLibrary();
+  void ensureBundledStepJsonDefaults();
   form.addEventListener("submit", handleGenerateRoute);
   backgroundUpload.addEventListener("change", handleBackgroundUpload);
   startPlacementButton.addEventListener("click", startPointPlacement);
@@ -1264,7 +1273,7 @@ function handleGenerateRoute(event) {
     renderResults(result);
     startStepPlayback();
     showError("");
-    showSuccess(hasAnyStepJsonLoaded()
+    showSuccess(hasAnyStepJsonLoadedForRoute(result.origin.routeKey)
       ? "已產生路線結果，會按 Step 1 至 Step 6 連續播放已載入的 JSON。"
       : "已產生路線結果，但目前未載入任何 Step JSON。");
   } catch (error) {
@@ -1841,7 +1850,7 @@ function renderMap() {
   if (routeDraft) {
     mapStatus.textContent = "Drawing route";
   } else if (currentRouteResult && activePlaybackStepKey) {
-    const loadedEntry = stepJsonLibrary[activePlaybackStepKey];
+    const loadedEntry = getStepJsonEntry(activePlaybackStepKey, currentRouteResult.origin.routeKey);
     const stepLabel = STEP_TAG_LABELS[activePlaybackStepKey] || activePlaybackStepKey;
 
     if (activeJourney && activeJourney.points.length > 1) {
@@ -1972,7 +1981,7 @@ function syncRouteVisualizationState() {
     return;
   }
 
-  const loadedEntry = stepJsonLibrary[activePlaybackStepKey];
+  const loadedEntry = getStepJsonEntry(activePlaybackStepKey, currentRouteResult.origin.routeKey);
   activePlaybackMapState = loadedEntry ? loadedEntry.mapState : getEmptyMapState();
   activeJourney = loadedEntry ? buildJourneyFromMapState(loadedEntry.mapState) : null;
   updateStepBreakdownHighlight();
@@ -2141,8 +2150,66 @@ function getDisplayMapState() {
   return mapState;
 }
 
-function hasAnyStepJsonLoaded() {
-  return PLAYBACK_STEP_KEYS.some((stepKey) => Boolean(stepJsonLibrary[stepKey]));
+function getStepJsonEntry(stepKey, routeKey = "") {
+  const entry = stepJsonLibrary[stepKey];
+
+  if (!entry) {
+    return null;
+  }
+
+  if (!entry.routeKey || !routeKey || entry.routeKey === routeKey) {
+    return entry;
+  }
+
+  return null;
+}
+
+function hasAnyStepJsonLoadedForRoute(routeKey = "") {
+  return PLAYBACK_STEP_KEYS.some((stepKey) => Boolean(getStepJsonEntry(stepKey, routeKey)));
+}
+
+async function ensureBundledStepJsonDefaults() {
+  const defaultsToLoad = STEP_JSON_DEFAULTS.filter((entry) => !stepJsonLibrary[entry.stepKey]);
+
+  if (!defaultsToLoad.length) {
+    return;
+  }
+
+  let didChange = false;
+
+  for (const entry of defaultsToLoad) {
+    try {
+      const response = await fetch(entry.filePath);
+
+      if (!response.ok) {
+        continue;
+      }
+
+      const parsed = await response.json();
+
+      if (!stepJsonLibrary[entry.stepKey]) {
+        stepJsonLibrary[entry.stepKey] = {
+          fileName: entry.fileName,
+          routeKey: entry.routeKey,
+          mapState: normalizeMapState(parsed)
+        };
+        didChange = true;
+      }
+    } catch (error) {
+      // Ignore missing bundled defaults and continue booting the app.
+    }
+  }
+
+  if (!didChange) {
+    return;
+  }
+
+  persistStepJsonLibrary();
+  renderAll();
+
+  if (currentRouteResult) {
+    restartStepPlayback();
+  }
 }
 
 function handleStepJsonLibraryImport(event) {
@@ -2165,6 +2232,7 @@ function handleStepJsonLibraryImport(event) {
       const parsed = JSON.parse(String(reader.result || ""));
       stepJsonLibrary[stepKey] = {
         fileName: file.name,
+        routeKey: "",
         mapState: normalizeMapState(parsed)
       };
       persistStepJsonLibrary();
@@ -2211,8 +2279,9 @@ function handleStepJsonLibraryActions(event) {
 function renderStepJsonLibrary() {
   stepJsonLibraryElement.innerHTML = PLAYBACK_STEP_KEYS.map((stepKey) => {
     const entry = stepJsonLibrary[stepKey];
+    const scopeSummary = entry && entry.routeKey ? ` · ${entry.routeKey.toUpperCase()} only` : "";
     const mapSummary = entry
-      ? `${escapeHtml(entry.fileName)} · ${entry.mapState.segments.length} segment(s) · ${entry.mapState.nodes.length} point(s)`
+      ? `${escapeHtml(entry.fileName)}${scopeSummary} · ${entry.mapState.segments.length} segment(s) · ${entry.mapState.nodes.length} point(s)`
       : "No JSON uploaded yet.";
 
     return `
@@ -2466,6 +2535,7 @@ function normalizeStepJsonLibrary(value) {
 
     safeLibrary[stepKey] = {
       fileName: typeof rawEntry.fileName === "string" ? rawEntry.fileName : `${stepKey}.json`,
+      routeKey: typeof rawEntry.routeKey === "string" ? rawEntry.routeKey : "",
       mapState: normalizeMapState(rawEntry.mapState || rawEntry)
     };
   });
