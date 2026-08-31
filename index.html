@@ -120,6 +120,21 @@ body {
   overflow-x: auto;
 }
 
+.step-playback-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.step-playback-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 .route-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
@@ -315,6 +330,14 @@ body {
 
 .step-row-active td:first-child {
   box-shadow: inset 4px 0 0 var(--accent);
+}
+
+#step-breakdown tr {
+  cursor: pointer;
+}
+
+#step-breakdown tr:hover td {
+  background: #f8fbff;
 }
 
 table {
@@ -940,6 +963,12 @@ td {
 
                 <article class="detail-card step-breakdown-card">
                   <h2>Step Breakdown</h2>
+                  <div class="step-playback-bar">
+                    <button id="playback-toggle" type="button" class="secondary-btn">Stop</button>
+                    <p id="step-playback-meta" class="step-playback-meta">
+                      Click any step row to jump there, then continue playback from that segment.
+                    </p>
+                  </div>
                   <div class="step-breakdown-scroll">
                     <table class="step-table">
                       <thead>
@@ -1288,6 +1317,8 @@ let playbackSequenceToken = 0;
 let activePlaybackStepKey = "";
 let activePlaybackMapState = null;
 let activePlaybackDurationMs = 0;
+let activePlaybackIndex = -1;
+let isPlaybackPaused = false;
 
 const form = document.getElementById("route-form");
 const resultsSection = document.getElementById("results");
@@ -1301,6 +1332,8 @@ const mapMarker = document.getElementById("map-marker");
 const mapMarkerWalker = document.getElementById("map-marker-walker");
 const mapStatus = document.getElementById("map-status");
 const mapEmptyState = document.getElementById("map-empty-state");
+const playbackToggleButton = document.getElementById("playback-toggle");
+const stepPlaybackMeta = document.getElementById("step-playback-meta");
 const backgroundUpload = document.getElementById("background-upload");
 const pointNameInput = document.getElementById("point-name");
 const pointTypeSelect = document.getElementById("point-type");
@@ -1355,6 +1388,8 @@ function initialize() {
   segmentsList.addEventListener("click", handleListActions);
   stepJsonLibraryElement.addEventListener("change", handleStepJsonLibraryImport);
   stepJsonLibraryElement.addEventListener("click", handleStepJsonLibraryActions);
+  document.getElementById("step-breakdown").addEventListener("click", handleStepBreakdownClick);
+  playbackToggleButton.addEventListener("click", togglePlaybackState);
 
   renderAll();
 }
@@ -1493,6 +1528,8 @@ function renderResults(result) {
   result.steps.forEach((step, index) => {
     const row = document.createElement("tr");
     row.dataset.playbackStepKey = step.playbackStepKey || "";
+    row.dataset.playbackIndex = String(index);
+    row.title = `Jump to ${step.playbackStepKey || `step-${index + 1}`}`;
     row.innerHTML = `
       <td>${index + 1}. ${step.label}</td>
       <td>${step.distance.toFixed(1)} m</td>
@@ -1503,6 +1540,36 @@ function renderResults(result) {
 
   resultsSection.classList.remove("hidden");
   updateStepBreakdownHighlight();
+  updatePlaybackControls();
+}
+
+function handleStepBreakdownClick(event) {
+  const row = event.target.closest("tr[data-playback-index]");
+
+  if (!row || !currentRouteResult) {
+    return;
+  }
+
+  const targetIndex = Number(row.dataset.playbackIndex);
+
+  if (!Number.isFinite(targetIndex)) {
+    return;
+  }
+
+  jumpToPlaybackStep(targetIndex);
+}
+
+function togglePlaybackState() {
+  if (!currentRouteResult) {
+    return;
+  }
+
+  if (isPlaybackPaused) {
+    resumeStepPlayback();
+    return;
+  }
+
+  pauseStepPlayback();
 }
 
 function handleBackgroundUpload(event) {
@@ -1955,7 +2022,13 @@ function renderMap() {
     const loadedEntry = getStepJsonEntry(activePlaybackStepKey, currentRouteResult.origin.routeKey);
     const stepLabel = STEP_TAG_LABELS[activePlaybackStepKey] || activePlaybackStepKey;
 
-    if (activeJourney && activeJourney.points.length > 1) {
+    if (isPlaybackPaused && activeJourney && activeJourney.points.length > 1) {
+      mapStatus.textContent = `Paused on ${stepLabel}${loadedEntry ? ` · ${loadedEntry.fileName}` : ""}`;
+      stopAnimation(false);
+    } else if (isPlaybackPaused) {
+      mapStatus.textContent = `Paused on ${stepLabel}`;
+      stopAnimation();
+    } else if (activeJourney && activeJourney.points.length > 1) {
       mapStatus.textContent = `Playing ${stepLabel}${loadedEntry ? ` · ${loadedEntry.fileName}` : ""}`;
       startAnimation(activeJourney.points, activePlaybackDurationMs || undefined);
     } else if (loadedEntry) {
@@ -2071,7 +2144,10 @@ function syncRouteVisualizationState() {
     activePlaybackStepKey = "";
     activePlaybackMapState = null;
     activePlaybackDurationMs = 0;
+    activePlaybackIndex = -1;
+    isPlaybackPaused = false;
     updateStepBreakdownHighlight();
+    updatePlaybackControls();
     return;
   }
 
@@ -2080,6 +2156,7 @@ function syncRouteVisualizationState() {
     activePlaybackMapState = null;
     activePlaybackDurationMs = 0;
     updateStepBreakdownHighlight();
+    updatePlaybackControls();
     return;
   }
 
@@ -2087,6 +2164,7 @@ function syncRouteVisualizationState() {
   activePlaybackMapState = loadedEntry ? loadedEntry.mapState : getEmptyMapState();
   activeJourney = loadedEntry ? buildJourneyFromMapState(loadedEntry.mapState) : null;
   updateStepBreakdownHighlight();
+  updatePlaybackControls();
 }
 
 function buildJourneyFromMapState(sourceMapState) {
@@ -2170,40 +2248,14 @@ function stopAnimation(hideMarker = true) {
   }
 }
 
-function startStepPlayback() {
-  stopStepPlayback(false);
-
+function startStepPlayback(startIndex = 0) {
   if (!currentRouteResult || !currentRouteResult.steps.length) {
     renderAll(false);
     return;
   }
 
-  const playbackSteps = currentRouteResult.steps.slice();
-  const sequenceToken = ++playbackSequenceToken;
-
-  const playStepAtIndex = (index) => {
-    if (sequenceToken !== playbackSequenceToken || !currentRouteResult) {
-      return;
-    }
-
-    const step = playbackSteps[index];
-
-    if (!step) {
-      return;
-    }
-
-    activePlaybackStepKey = step.playbackStepKey || "";
-    activePlaybackDurationMs = getPlaybackDurationMs(step);
-    syncRouteVisualizationState();
-    renderAll(false);
-
-    playbackTimeoutId = window.setTimeout(() => {
-      const nextIndex = (index + 1) % playbackSteps.length;
-      playStepAtIndex(nextIndex);
-    }, activePlaybackDurationMs + 300);
-  };
-
-  playStepAtIndex(0);
+  isPlaybackPaused = false;
+  playStepAtIndex(startIndex, true);
 }
 
 function restartStepPlayback() {
@@ -2211,28 +2263,100 @@ function restartStepPlayback() {
     return;
   }
 
-  startStepPlayback();
+  startStepPlayback(activePlaybackIndex >= 0 ? activePlaybackIndex : 0);
 }
 
 function stopStepPlayback(clearCurrentRoute = true) {
-  playbackSequenceToken += 1;
-
-  if (playbackTimeoutId) {
-    window.clearTimeout(playbackTimeoutId);
-    playbackTimeoutId = null;
-  }
+  clearPlaybackTimer();
 
   stopAnimation();
   activePlaybackStepKey = "";
   activePlaybackMapState = null;
   activePlaybackDurationMs = 0;
+  activePlaybackIndex = -1;
   activeJourney = null;
+  isPlaybackPaused = false;
 
   if (clearCurrentRoute) {
     currentRouteResult = null;
   }
 
   updateStepBreakdownHighlight();
+  updatePlaybackControls();
+}
+
+function playStepAtIndex(index, shouldAutoAdvance = true) {
+  if (!currentRouteResult || !currentRouteResult.steps.length) {
+    return;
+  }
+
+  clearPlaybackTimer();
+
+  const playbackSteps = currentRouteResult.steps;
+  const normalizedIndex = ((index % playbackSteps.length) + playbackSteps.length) % playbackSteps.length;
+  const step = playbackSteps[normalizedIndex];
+
+  if (!step) {
+    return;
+  }
+
+  activePlaybackIndex = normalizedIndex;
+  activePlaybackStepKey = step.playbackStepKey || "";
+  activePlaybackDurationMs = getPlaybackDurationMs(step);
+  syncRouteVisualizationState();
+  renderAll(false);
+
+  if (!shouldAutoAdvance || isPlaybackPaused) {
+    return;
+  }
+
+  const sequenceToken = playbackSequenceToken;
+  playbackTimeoutId = window.setTimeout(() => {
+    if (sequenceToken !== playbackSequenceToken || !currentRouteResult || isPlaybackPaused) {
+      return;
+    }
+
+    playStepAtIndex(normalizedIndex + 1, true);
+  }, activePlaybackDurationMs + 300);
+}
+
+function pauseStepPlayback() {
+  if (!currentRouteResult) {
+    return;
+  }
+
+  isPlaybackPaused = true;
+  clearPlaybackTimer();
+  stopAnimation(false);
+  updatePlaybackControls();
+  renderMap();
+}
+
+function resumeStepPlayback() {
+  if (!currentRouteResult) {
+    return;
+  }
+
+  const resumeIndex = activePlaybackIndex >= 0 ? activePlaybackIndex : 0;
+  startStepPlayback(resumeIndex);
+}
+
+function jumpToPlaybackStep(index) {
+  if (!currentRouteResult) {
+    return;
+  }
+
+  isPlaybackPaused = false;
+  playStepAtIndex(index, true);
+}
+
+function clearPlaybackTimer() {
+  playbackSequenceToken += 1;
+
+  if (playbackTimeoutId) {
+    window.clearTimeout(playbackTimeoutId);
+    playbackTimeoutId = null;
+  }
 }
 
 function getPlaybackDurationMs(step) {
@@ -2408,6 +2532,35 @@ function updateStepBreakdownHighlight() {
   document.querySelectorAll("#step-breakdown tr").forEach((row) => {
     row.classList.toggle("step-row-active", row.dataset.playbackStepKey === activePlaybackStepKey);
   });
+}
+
+function updatePlaybackControls() {
+  if (!playbackToggleButton || !stepPlaybackMeta) {
+    return;
+  }
+
+  playbackToggleButton.disabled = !currentRouteResult;
+
+  if (!currentRouteResult) {
+    playbackToggleButton.textContent = "Start";
+    stepPlaybackMeta.textContent = "Click any step row to jump there, then continue playback from that segment.";
+    return;
+  }
+
+  playbackToggleButton.textContent = isPlaybackPaused ? "Start" : "Stop";
+
+  if (activePlaybackIndex >= 0) {
+    const currentStep = currentRouteResult.steps[activePlaybackIndex];
+    const currentStepLabel = currentStep?.playbackStepKey
+      ? (STEP_TAG_LABELS[currentStep.playbackStepKey] || currentStep.playbackStepKey)
+      : `Step ${activePlaybackIndex + 1}`;
+    stepPlaybackMeta.textContent = isPlaybackPaused
+      ? `${currentStepLabel} paused. Click Start to continue from this segment, or click another step to jump there.`
+      : `${currentStepLabel} is playing. Click any step row to jump there and continue from that segment.`;
+    return;
+  }
+
+  stepPlaybackMeta.textContent = "Click any step row to jump there, then continue playback from that segment.";
 }
 
 function buildPathSegments(points) {
