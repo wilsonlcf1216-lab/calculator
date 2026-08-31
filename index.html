@@ -281,6 +281,14 @@ body {
   font-weight: 700;
 }
 
+.step-row-active td {
+  background: #eff6ff;
+}
+
+.step-row-active td:first-child {
+  box-shadow: inset 4px 0 0 var(--accent);
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -585,6 +593,56 @@ td {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+.step-json-library {
+  display: grid;
+  gap: 12px;
+}
+
+.step-json-item {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fcfdff;
+}
+
+.step-json-item.active {
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.step-json-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.step-json-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 86px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: #e5e7eb;
+  color: #334155;
+}
+
+.step-json-status.loaded {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.step-json-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .mini-btn {
@@ -955,8 +1013,11 @@ td {
                 <span>Step Tag</span>
                 <select id="segment-step">
                   <option value="step1">Step 1: Departure</option>
-                  <option value="step3">Step 3: Inter-building</option>
-                  <option value="step5">Step 5: Arrival</option>
+                  <option value="step2">Step 2</option>
+                  <option value="step3">Step 3</option>
+                  <option value="step4">Step 4</option>
+                  <option value="step5">Step 5</option>
+                  <option value="step6">Step 6: Arrival</option>
                 </select>
               </label>
               <label class="field">
@@ -1021,6 +1082,12 @@ td {
             <div id="segments-empty" class="empty-list">No route segments added yet.</div>
             <ul id="segments-list" class="asset-list"></ul>
           </div>
+
+          <div class="asset-section">
+            <h3>Step JSON Library</h3>
+            <p class="asset-meta">Upload one JSON per step. Playback will run Step 1 to Step 6 in sequence and highlight the active step.</p>
+            <div id="step-json-library" class="step-json-library"></div>
+          </div>
         </article>
       </section>
     </section>
@@ -1030,9 +1097,11 @@ const WALKING_DISTANCE_METERS = 20;
 const WALKING_SPEED_METERS_PER_SECOND = 1.2;
 const LIFT_TIME_PER_FLOOR_SECONDS = 4;
 const MAP_STORAGE_KEY = "ward-decanting-map-state-v2";
+const STEP_JSON_LIBRARY_STORAGE_KEY = "ward-decanting-step-json-library-v1";
 const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
-const STEP_ORDER = ["step1", "step3", "step5"];
+const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5", "step6"];
+const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5", "step6"];
 
 const ORIGIN_BUILDING_RULES = {
   H: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
@@ -1092,16 +1161,23 @@ const STEP_TAG_LABELS = {
   step2: "Step 2",
   step3: "Step 3",
   step4: "Step 4",
-  step5: "Step 5"
+  step5: "Step 5",
+  step6: "Step 6"
 };
 
 let mapState = getEmptyMapState();
+let stepJsonLibrary = getEmptyStepJsonLibrary();
 let currentRouteResult = null;
 let activeJourney = null;
 let placementDraft = null;
 let routeDraft = null;
 let draggingNodeId = null;
 let animationFrameId = null;
+let playbackTimeoutId = null;
+let playbackSequenceToken = 0;
+let activePlaybackStepKey = "";
+let activePlaybackMapState = null;
+let activePlaybackDurationMs = 0;
 
 const form = document.getElementById("route-form");
 const resultsSection = document.getElementById("results");
@@ -1140,11 +1216,13 @@ const pointsList = document.getElementById("points-list");
 const segmentsList = document.getElementById("segments-list");
 const pointsEmpty = document.getElementById("points-empty");
 const segmentsEmpty = document.getElementById("segments-empty");
+const stepJsonLibraryElement = document.getElementById("step-json-library");
 
 initialize();
 
 function initialize() {
   clearLegacyStoredMapState();
+  stepJsonLibrary = loadStepJsonLibrary();
   form.addEventListener("submit", handleGenerateRoute);
   backgroundUpload.addEventListener("change", handleBackgroundUpload);
   startPlacementButton.addEventListener("click", startPointPlacement);
@@ -1164,6 +1242,8 @@ function initialize() {
   window.addEventListener("pointerup", handleMapPointerUp);
   pointsList.addEventListener("click", handleListActions);
   segmentsList.addEventListener("click", handleListActions);
+  stepJsonLibraryElement.addEventListener("change", handleStepJsonLibraryImport);
+  stepJsonLibraryElement.addEventListener("click", handleStepJsonLibraryActions);
 
   renderAll();
 }
@@ -1178,16 +1258,19 @@ function handleGenerateRoute(event) {
   try {
     const result = calculateRoute(originWard, destinationWard);
     currentRouteResult = result;
-    activeJourney = buildJourneyForRoute(result.origin.routeKey);
+    activePlaybackStepKey = "";
+    activePlaybackMapState = null;
+    activeJourney = null;
     renderResults(result);
-    renderMap();
+    startStepPlayback();
     showError("");
-    showSuccess(activeJourney ? "已產生路線結果，地圖會顯示相應動畫。" : "已產生路線結果，但目前未找到已對應的地圖路線。");
+    showSuccess(hasAnyStepJsonLoaded()
+      ? "已產生路線結果，會按 Step 1 至 Step 6 連續播放已載入的 JSON。"
+      : "已產生路線結果，但目前未載入任何 Step JSON。");
   } catch (error) {
     currentRouteResult = null;
-    activeJourney = null;
+    stopStepPlayback();
     resultsSection.classList.add("hidden");
-    stopAnimation();
     renderMap();
     showError(error.message);
   }
@@ -1198,10 +1281,11 @@ function calculateRoute(originWard, destinationWard) {
   const destination = parseDestinationWard(destinationWard);
   const segmentTemplate = INTER_BUILDING_SEGMENTS[origin.routeKey];
 
-  const steps = segmentTemplate.map((segment) => {
+  const steps = segmentTemplate.map((segment, index) => {
     if (segment.calculated === "origin") {
       return {
         stepTag: segment.stepTag,
+        playbackStepKey: PLAYBACK_STEP_KEYS[index] || segment.stepTag,
         label: segment.label,
         distance: 0,
         time: Math.abs(origin.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS
@@ -1211,13 +1295,17 @@ function calculateRoute(originWard, destinationWard) {
     if (segment.calculated === "destination") {
       return {
         stepTag: segment.stepTag,
+        playbackStepKey: PLAYBACK_STEP_KEYS[index] || segment.stepTag,
         label: segment.label,
         distance: 0,
         time: Math.abs(destination.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS
       };
     }
 
-    return { ...segment };
+    return {
+      ...segment,
+      playbackStepKey: PLAYBACK_STEP_KEYS[index] || segment.stepTag
+    };
   });
 
   const totals = steps.reduce(
@@ -1293,6 +1381,7 @@ function renderResults(result) {
 
   result.steps.forEach((step, index) => {
     const row = document.createElement("tr");
+    row.dataset.playbackStepKey = step.playbackStepKey || "";
     row.innerHTML = `
       <td>${index + 1}. ${step.label}</td>
       <td>${step.distance.toFixed(1)} m</td>
@@ -1302,6 +1391,7 @@ function renderResults(result) {
   });
 
   resultsSection.classList.remove("hidden");
+  updateStepBreakdownHighlight();
 }
 
 function handleBackgroundUpload(event) {
@@ -1556,9 +1646,12 @@ function handleListActions(event) {
     return;
   }
 
-  syncRouteVisualizationState();
   persistMapState();
   renderAll();
+
+  if (currentRouteResult) {
+    restartStepPlayback();
+  }
 }
 
 function handleManualSave() {
@@ -1585,10 +1678,9 @@ function loadSavedDraft() {
 
   mapState = savedState;
   currentRouteResult = null;
-  activeJourney = null;
   placementDraft = null;
   cancelRouteDraw(false);
-  stopAnimation();
+  stopStepPlayback();
   renderAll();
   showError("");
   showSuccess("已載入瀏覽器內的儲存草稿。");
@@ -1621,6 +1713,8 @@ function importMapState(event) {
       const parsed = JSON.parse(String(reader.result || ""));
       mapState = normalizeMapState(parsed);
       persistMapState();
+      currentRouteResult = null;
+      stopStepPlayback();
       renderAll();
       showError("");
       showSuccess("JSON 地圖檔已成功匯入。");
@@ -1637,10 +1731,9 @@ function importMapState(event) {
 function resetMapState() {
   mapState = getEmptyMapState();
   currentRouteResult = null;
-  activeJourney = null;
   placementDraft = null;
   cancelRouteDraw(false);
-  stopAnimation();
+  stopStepPlayback();
   persistMapState();
   renderAll();
   showSuccess("地圖已重設。");
@@ -1649,9 +1742,8 @@ function resetMapState() {
 function clearRoutesOnly() {
   mapState.segments = [];
   currentRouteResult = null;
-  activeJourney = null;
   cancelRouteDraw(false);
-  stopAnimation();
+  stopStepPlayback();
   persistMapState();
   renderAll();
   showError("");
@@ -1663,6 +1755,7 @@ function renderAll(shouldRerenderLists = true) {
   syncRouteVisualizationState();
   renderMap();
   refreshSelectOptions();
+  renderStepJsonLibrary();
 
   if (shouldRerenderLists) {
     renderAssetLists();
@@ -1670,18 +1763,20 @@ function renderAll(shouldRerenderLists = true) {
 }
 
 function renderMap() {
-  mapBackground.setAttributeNS("http://www.w3.org/1999/xlink", "href", mapState.backgroundImage || "");
-  mapBackground.setAttribute("href", mapState.backgroundImage || "");
-  mapEmptyState.style.display = mapState.backgroundImage || mapState.nodes.length ? "none" : "block";
+  const displayMapState = getDisplayMapState();
+
+  mapBackground.setAttributeNS("http://www.w3.org/1999/xlink", "href", displayMapState.backgroundImage || "");
+  mapBackground.setAttribute("href", displayMapState.backgroundImage || "");
+  mapEmptyState.style.display = displayMapState.backgroundImage || displayMapState.nodes.length ? "none" : "block";
 
   mapRoutesGroup.innerHTML = "";
   mapLabelsGroup.innerHTML = "";
 
   const activeSegmentIds = new Set(activeJourney ? activeJourney.segments.map((segment) => segment.id) : []);
 
-  mapState.segments.forEach((segment) => {
-    const fromNode = getNodeById(segment.fromId);
-    const toNode = getNodeById(segment.toId);
+  displayMapState.segments.forEach((segment) => {
+    const fromNode = getNodeById(segment.fromId, displayMapState);
+    const toNode = getNodeById(segment.toId, displayMapState);
     const pathPoints = getSegmentPathPoints(segment, fromNode, toNode);
 
     if (pathPoints.length < 2) {
@@ -1728,7 +1823,7 @@ function renderMap() {
     });
   }
 
-  mapState.nodes.forEach((node) => {
+  displayMapState.nodes.forEach((node) => {
     const meta = NODE_TYPE_META[node.type] || NODE_TYPE_META.waypoint;
     const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
     const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -1745,9 +1840,20 @@ function renderMap() {
 
   if (routeDraft) {
     mapStatus.textContent = "Drawing route";
-  } else if (currentRouteResult && activeJourney && activeJourney.points.length > 1) {
-    mapStatus.textContent = `Showing ${ROUTE_GROUP_META[currentRouteResult.origin.routeKey].label} route`;
-    startAnimation(activeJourney.points);
+  } else if (currentRouteResult && activePlaybackStepKey) {
+    const loadedEntry = stepJsonLibrary[activePlaybackStepKey];
+    const stepLabel = STEP_TAG_LABELS[activePlaybackStepKey] || activePlaybackStepKey;
+
+    if (activeJourney && activeJourney.points.length > 1) {
+      mapStatus.textContent = `Playing ${stepLabel}${loadedEntry ? ` · ${loadedEntry.fileName}` : ""}`;
+      startAnimation(activeJourney.points, activePlaybackDurationMs || undefined);
+    } else if (loadedEntry) {
+      mapStatus.textContent = `${stepLabel} loaded but no drawable path`;
+      stopAnimation();
+    } else {
+      mapStatus.textContent = `${stepLabel} has no JSON yet`;
+      stopAnimation();
+    }
   } else {
     mapStatus.textContent = currentRouteResult ? "No mapped path for this route yet" : "Waiting for route";
     stopAnimation();
@@ -1851,15 +1957,30 @@ function loadSegmentForEdit(segmentId) {
 function syncRouteVisualizationState() {
   if (!currentRouteResult) {
     activeJourney = null;
+    activePlaybackStepKey = "";
+    activePlaybackMapState = null;
+    activePlaybackDurationMs = 0;
+    updateStepBreakdownHighlight();
     return;
   }
 
-  activeJourney = buildJourneyForRoute(currentRouteResult.origin.routeKey);
+  if (!activePlaybackStepKey) {
+    activeJourney = null;
+    activePlaybackMapState = null;
+    activePlaybackDurationMs = 0;
+    updateStepBreakdownHighlight();
+    return;
+  }
+
+  const loadedEntry = stepJsonLibrary[activePlaybackStepKey];
+  activePlaybackMapState = loadedEntry ? loadedEntry.mapState : getEmptyMapState();
+  activeJourney = loadedEntry ? buildJourneyFromMapState(loadedEntry.mapState) : null;
+  updateStepBreakdownHighlight();
 }
 
-function buildJourneyForRoute(routeKey) {
-  const matchingSegments = mapState.segments
-    .filter((segment) => segment.routeGroup === routeKey || segment.routeGroup === "shared")
+function buildJourneyFromMapState(sourceMapState) {
+  const matchingSegments = sourceMapState.segments
+    .slice()
     .sort((left, right) => {
       const leftOrder = STEP_ORDER.indexOf(left.stepTag);
       const rightOrder = STEP_ORDER.indexOf(right.stepTag);
@@ -1873,7 +1994,11 @@ function buildJourneyForRoute(routeKey) {
   const points = [];
 
   matchingSegments.forEach((segment) => {
-    const segmentPoints = getSegmentPathPoints(segment, getNodeById(segment.fromId), getNodeById(segment.toId));
+    const segmentPoints = getSegmentPathPoints(
+      segment,
+      getNodeById(segment.fromId, sourceMapState),
+      getNodeById(segment.toId, sourceMapState)
+    );
 
     segmentPoints.forEach((point, index) => {
       if (points.length && index === 0 && isSamePoint(points[points.length - 1], point)) {
@@ -1892,7 +2017,7 @@ function buildJourneyForRoute(routeKey) {
     : null;
 }
 
-function startAnimation(points) {
+function startAnimation(points, durationOverrideMs) {
   stopAnimation(false);
   mapMarker.classList.remove("hidden");
 
@@ -1900,19 +2025,25 @@ function startAnimation(points) {
   const totalLength = pathSegments.reduce((sum, segment) => sum + segment.length, 0);
 
   if (!pathSegments.length || !totalLength) {
+    mapMarker.classList.add("hidden");
     return;
   }
 
-  const durationMs = Math.min(Math.max(totalLength * 8, 5000), 15000);
+  const durationMs = durationOverrideMs || Math.min(Math.max(totalLength * 8, 2200), 6000);
   const startedAt = performance.now();
 
   function animateFrame(now) {
-    const progress = ((now - startedAt) % durationMs) / durationMs;
+    const progress = Math.min((now - startedAt) / durationMs, 1);
     const targetDistance = totalLength * progress;
     const pointState = getPointStateAtDistance(pathSegments, targetDistance);
     mapMarker.setAttribute("transform", `translate(${pointState.x} ${pointState.y})`);
     mapMarkerWalker.setAttribute("transform", `rotate(${pointState.angle})`);
-    animationFrameId = window.requestAnimationFrame(animateFrame);
+
+    if (progress < 1) {
+      animationFrameId = window.requestAnimationFrame(animateFrame);
+    } else {
+      animationFrameId = null;
+    }
   }
 
   animationFrameId = window.requestAnimationFrame(animateFrame);
@@ -1927,6 +2058,186 @@ function stopAnimation(hideMarker = true) {
   if (hideMarker) {
     mapMarker.classList.add("hidden");
   }
+}
+
+function startStepPlayback() {
+  stopStepPlayback(false);
+
+  if (!currentRouteResult || !currentRouteResult.steps.length) {
+    renderAll(false);
+    return;
+  }
+
+  const playbackSteps = currentRouteResult.steps.slice();
+  const sequenceToken = ++playbackSequenceToken;
+
+  const playStepAtIndex = (index) => {
+    if (sequenceToken !== playbackSequenceToken || !currentRouteResult) {
+      return;
+    }
+
+    const step = playbackSteps[index];
+
+    if (!step) {
+      return;
+    }
+
+    activePlaybackStepKey = step.playbackStepKey || "";
+    activePlaybackDurationMs = getPlaybackDurationMs(step);
+    syncRouteVisualizationState();
+    renderAll(false);
+
+    playbackTimeoutId = window.setTimeout(() => {
+      const nextIndex = (index + 1) % playbackSteps.length;
+      playStepAtIndex(nextIndex);
+    }, activePlaybackDurationMs + 300);
+  };
+
+  playStepAtIndex(0);
+}
+
+function restartStepPlayback() {
+  if (!currentRouteResult) {
+    return;
+  }
+
+  startStepPlayback();
+}
+
+function stopStepPlayback(clearCurrentRoute = true) {
+  playbackSequenceToken += 1;
+
+  if (playbackTimeoutId) {
+    window.clearTimeout(playbackTimeoutId);
+    playbackTimeoutId = null;
+  }
+
+  stopAnimation();
+  activePlaybackStepKey = "";
+  activePlaybackMapState = null;
+  activePlaybackDurationMs = 0;
+  activeJourney = null;
+
+  if (clearCurrentRoute) {
+    currentRouteResult = null;
+  }
+
+  updateStepBreakdownHighlight();
+}
+
+function getPlaybackDurationMs(step) {
+  if (!step) {
+    return 1400;
+  }
+
+  return Math.min(Math.max((Number(step.time) || 0) * 80, 1400), 4200);
+}
+
+function getDisplayMapState() {
+  if (currentRouteResult && activePlaybackStepKey) {
+    return activePlaybackMapState || getEmptyMapState();
+  }
+
+  return mapState;
+}
+
+function hasAnyStepJsonLoaded() {
+  return PLAYBACK_STEP_KEYS.some((stepKey) => Boolean(stepJsonLibrary[stepKey]));
+}
+
+function handleStepJsonLibraryImport(event) {
+  const input = event.target.closest("input[data-step-json]");
+
+  if (!input) {
+    return;
+  }
+
+  const file = input.files && input.files[0];
+  const stepKey = input.dataset.stepJson;
+
+  if (!file || !stepKey) {
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(String(reader.result || ""));
+      stepJsonLibrary[stepKey] = {
+        fileName: file.name,
+        mapState: normalizeMapState(parsed)
+      };
+      persistStepJsonLibrary();
+      renderAll();
+
+      if (currentRouteResult) {
+        restartStepPlayback();
+      }
+
+      showError("");
+      showSuccess(`已為 ${STEP_TAG_LABELS[stepKey]} 載入 JSON：「${file.name}」。`);
+    } catch (error) {
+      showError(`無法讀取 ${STEP_TAG_LABELS[stepKey]} JSON，請使用有效的匯出地圖 JSON。`);
+    }
+  };
+  reader.readAsText(file);
+  input.value = "";
+}
+
+function handleStepJsonLibraryActions(event) {
+  const clearButton = event.target.closest("button[data-clear-step-json]");
+
+  if (!clearButton) {
+    return;
+  }
+
+  const stepKey = clearButton.dataset.clearStepJson;
+
+  if (!stepKey) {
+    return;
+  }
+
+  stepJsonLibrary[stepKey] = null;
+  persistStepJsonLibrary();
+  renderAll();
+
+  if (currentRouteResult) {
+    restartStepPlayback();
+  }
+
+  showSuccess(`${STEP_TAG_LABELS[stepKey]} JSON 已清除。`);
+}
+
+function renderStepJsonLibrary() {
+  stepJsonLibraryElement.innerHTML = PLAYBACK_STEP_KEYS.map((stepKey) => {
+    const entry = stepJsonLibrary[stepKey];
+    const mapSummary = entry
+      ? `${escapeHtml(entry.fileName)} · ${entry.mapState.segments.length} segment(s) · ${entry.mapState.nodes.length} point(s)`
+      : "No JSON uploaded yet.";
+
+    return `
+      <div class="step-json-item${activePlaybackStepKey === stepKey ? " active" : ""}">
+        <div class="step-json-head">
+          <p class="asset-title">${STEP_TAG_LABELS[stepKey]}</p>
+          <span class="step-json-status${entry ? " loaded" : ""}">${entry ? "Loaded" : "Empty"}</span>
+        </div>
+        <p class="asset-meta">${mapSummary}</p>
+        <div class="step-json-actions">
+          <label class="secondary-btn file-btn">
+            <span>Upload JSON</span>
+            <input type="file" accept="application/json" data-step-json="${stepKey}" />
+          </label>
+          <button class="secondary-btn danger-btn" type="button" data-clear-step-json="${stepKey}">Clear</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function updateStepBreakdownHighlight() {
+  document.querySelectorAll("#step-breakdown tr").forEach((row) => {
+    row.classList.toggle("step-row-active", row.dataset.playbackStepKey === activePlaybackStepKey);
+  });
 }
 
 function buildPathSegments(points) {
@@ -2044,8 +2355,8 @@ function getSvgPoint(event) {
   };
 }
 
-function getNodeById(id) {
-  return mapState.nodes.find((node) => node.id === id);
+function getNodeById(id, sourceMapState = mapState) {
+  return sourceMapState.nodes.find((node) => node.id === id);
 }
 
 function loadMapState() {
@@ -2075,6 +2386,29 @@ function clearLegacyStoredMapState() {
 function persistMapState() {
   try {
     window.localStorage.setItem(MAP_STORAGE_KEY, JSON.stringify(mapState));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function loadStepJsonLibrary() {
+  try {
+    const raw = window.localStorage.getItem(STEP_JSON_LIBRARY_STORAGE_KEY);
+
+    if (!raw) {
+      return getEmptyStepJsonLibrary();
+    }
+
+    return normalizeStepJsonLibrary(JSON.parse(raw));
+  } catch (error) {
+    return getEmptyStepJsonLibrary();
+  }
+}
+
+function persistStepJsonLibrary() {
+  try {
+    window.localStorage.setItem(STEP_JSON_LIBRARY_STORAGE_KEY, JSON.stringify(stepJsonLibrary));
     return true;
   } catch (error) {
     return false;
@@ -2116,6 +2450,29 @@ function normalizeMapState(value) {
   return safeState;
 }
 
+function normalizeStepJsonLibrary(value) {
+  const safeLibrary = getEmptyStepJsonLibrary();
+
+  if (!value || typeof value !== "object") {
+    return safeLibrary;
+  }
+
+  PLAYBACK_STEP_KEYS.forEach((stepKey) => {
+    const rawEntry = value[stepKey];
+
+    if (!rawEntry || typeof rawEntry !== "object") {
+      return;
+    }
+
+    safeLibrary[stepKey] = {
+      fileName: typeof rawEntry.fileName === "string" ? rawEntry.fileName : `${stepKey}.json`,
+      mapState: normalizeMapState(rawEntry.mapState || rawEntry)
+    };
+  });
+
+  return safeLibrary;
+}
+
 function normalizeSegmentWaypoints(segment) {
   if (Array.isArray(segment.waypoints)) {
     return segment.waypoints.map(clonePoint).filter(isValidPoint);
@@ -2134,6 +2491,13 @@ function getEmptyMapState() {
     nodes: [],
     segments: []
   };
+}
+
+function getEmptyStepJsonLibrary() {
+  return PLAYBACK_STEP_KEYS.reduce((library, stepKey) => {
+    library[stepKey] = null;
+    return library;
+  }, {});
 }
 
 function updateRouteDrawStatus(message) {
