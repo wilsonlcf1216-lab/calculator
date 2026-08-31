@@ -32,12 +32,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   background: linear-gradient(180deg, #eff6ff 0%, var(--bg) 45%, #eef2ff 100%);
   color: var(--text);
+  min-height: 100vh;
 }
 
 .app-shell {
-  width: min(1080px, calc(100% - 32px));
+  width: min(1720px, calc(100vw - 32px));
   margin: 0 auto;
-  padding: 48px 0 64px;
+  padding: clamp(24px, 3vw, 48px) 0 56px;
 }
 
 .hero {
@@ -82,8 +83,8 @@ body {
 
 .workspace-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
 }
 
@@ -91,6 +92,26 @@ body {
 .map-panel {
   display: grid;
   gap: 18px;
+  min-width: 0;
+}
+
+.map-panel-inline {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  height: 100%;
+  align-content: start;
+}
+
+.route-summary-card,
+.step-breakdown-card {
+  min-width: 0;
+  height: 100%;
+}
+
+.step-breakdown-scroll {
+  overflow-x: auto;
 }
 
 .route-form {
@@ -211,7 +232,7 @@ body {
 .results {
   margin-top: 24px;
   display: grid;
-  gap: 20px;
+  gap: 16px;
 }
 
 .summary-grid {
@@ -246,10 +267,11 @@ body {
   font-weight: 700;
 }
 
-.details-grid {
+.results-dashboard {
   display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 0.8fr) minmax(300px, 1.35fr) minmax(280px, 1.05fr);
   gap: 16px;
+  align-items: stretch;
 }
 
 .detail-card h2 {
@@ -294,11 +316,29 @@ table {
   border-collapse: collapse;
 }
 
+.step-table {
+  table-layout: fixed;
+}
+
+.step-table th:nth-child(1),
+.step-table td:nth-child(1) {
+  width: auto;
+}
+
+.step-table th:nth-child(2),
+.step-table td:nth-child(2),
+.step-table th:nth-child(3),
+.step-table td:nth-child(3) {
+  width: 108px;
+}
+
 th,
 td {
   text-align: left;
   padding: 12px 10px;
   border-bottom: 1px solid var(--border);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 th {
@@ -753,9 +793,10 @@ td {
   stroke-width: 4;
 }
 
-@media (max-width: 1140px) {
+@media (max-width: 860px) {
   .workspace-grid,
-  .editor-grid {
+  .editor-grid,
+  .results-dashboard {
     grid-template-columns: 1fr;
   }
 }
@@ -763,7 +804,6 @@ td {
 @media (max-width: 880px) {
   .route-form,
   .summary-grid,
-  .details-grid,
   .editor-columns,
   .route-draw-actions {
     grid-template-columns: 1fr;
@@ -786,6 +826,13 @@ td {
   .map-stage-wrap {
     min-height: 420px;
   }
+
+  .step-table th:nth-child(2),
+  .step-table td:nth-child(2),
+  .step-table th:nth-child(3),
+  .step-table td:nth-child(3) {
+    width: 88px;
+  }
 }
 
   </style>
@@ -796,9 +843,8 @@ td {
       <p class="eyebrow">Ward Decanting Generator</p>
       <h1>Travel Time, Distance, and Route Map</h1>
       <p class="subtitle">
-        Calculate the route, then display the movement path on a 2D map. You can
-        upload a floor plan, place labels for areas and lifts, draw route
-        segments, and reuse the same route definitions in the calculator view.
+        Calculate the route, then display the movement path on a responsive 2D
+        journey map with route summary, step breakdown, and live playback.
       </p>
     </section>
 
@@ -834,9 +880,8 @@ td {
           </form>
 
           <p class="helper-text">
-            Current model assumes arrival through the <strong>South Lift Lobby</strong>.
-            The map editor below lets you define shared route geometry for the
-            animated path.
+            Current model assumes arrival through the <strong>South Lift Lobby</strong>
+            and automatically uses any linked step JSON for the live journey view.
           </p>
 
           <div id="error-message" class="message error hidden" aria-live="polite"></div>
@@ -855,8 +900,8 @@ td {
               </article>
             </div>
 
-            <div class="details-grid">
-              <article class="detail-card">
+            <div class="results-dashboard">
+              <article class="detail-card route-summary-card">
                 <h2>Route Summary</h2>
                 <dl class="detail-list">
                   <div>
@@ -886,19 +931,95 @@ td {
                 </dl>
               </article>
 
-              <article class="detail-card">
+              <article class="detail-card step-breakdown-card">
                 <h2>Step Breakdown</h2>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Step</th>
-                      <th>Distance</th>
-                      <th>Time</th>
-                    </tr>
-                  </thead>
-                  <tbody id="step-breakdown"></tbody>
-                </table>
+                <div class="step-breakdown-scroll">
+                  <table class="step-table">
+                    <thead>
+                      <tr>
+                        <th>Step</th>
+                        <th>Distance</th>
+                        <th>Time</th>
+                      </tr>
+                    </thead>
+                    <tbody id="step-breakdown"></tbody>
+                  </table>
+                </div>
               </article>
+              <aside class="map-panel map-panel-inline">
+                <div class="panel-heading">
+                  <div>
+                    <p class="panel-eyebrow">Live Route Map</p>
+                    <h2>2D Journey View</h2>
+                  </div>
+                  <span id="map-status" class="map-status">Waiting for route</span>
+                </div>
+
+                <div class="map-stage-wrap">
+                  <svg id="map-svg" class="map-stage" viewBox="0 0 1000 1000" aria-label="Route map">
+                    <defs>
+                      <pattern id="grid-pattern" width="50" height="50" patternUnits="userSpaceOnUse">
+                        <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(148, 163, 184, 0.25)" stroke-width="1"></path>
+                      </pattern>
+                    </defs>
+                    <rect x="0" y="0" width="1000" height="1000" fill="url(#grid-pattern)"></rect>
+                    <image id="map-background" x="0" y="0" width="1000" height="1000" preserveAspectRatio="none"></image>
+                    <g id="map-routes"></g>
+                    <g id="map-labels"></g>
+                    <g id="map-marker" class="map-marker hidden">
+                      <g id="map-marker-walker" class="map-marker-bed-team">
+                        <rect class="bed-frame" x="-22" y="-18" width="44" height="68" rx="6"></rect>
+                        <rect class="bed-mattress" x="-16" y="-8" width="32" height="40" rx="4"></rect>
+                        <rect class="bed-pillow" x="-12" y="-3" width="24" height="11" rx="4"></rect>
+                        <path class="bed-handle" d="M -22 -10 L -32 -18 M 22 -10 L 32 -18"></path>
+                        <path class="bed-wheel" d="M -16 50 L -16 58 M 16 50 L 16 58"></path>
+                        <circle class="staff-head" cx="-42" cy="-24" r="9"></circle>
+                        <path class="staff-body" d="M -52 -10 Q -42 -16 -32 -10 L -34 10 Q -42 16 -50 10 Z"></path>
+                        <g class="lead-arm">
+                          <path class="staff-limb" d="M -34 -4 L -22 8"></path>
+                        </g>
+                        <path class="staff-limb" d="M -50 -4 L -58 8"></path>
+                        <g class="lead-leg-left">
+                          <path class="staff-limb" d="M -46 12 L -54 32"></path>
+                          <path class="staff-foot" d="M -54 32 L -46 32"></path>
+                        </g>
+                        <path class="staff-limb" d="M -38 12 L -30 32"></path>
+                        <path class="staff-foot" d="M -30 32 L -22 32"></path>
+                        <circle class="staff-head" cx="42" cy="-24" r="9"></circle>
+                        <path class="staff-body helper" d="M 32 -10 Q 42 -16 52 -10 L 50 10 Q 42 16 34 10 Z"></path>
+                        <g class="helper-arm">
+                          <path class="staff-limb" d="M 34 -4 L 22 8"></path>
+                        </g>
+                        <path class="staff-limb" d="M 50 -4 L 58 8"></path>
+                        <path class="staff-limb" d="M 38 12 L 30 32"></path>
+                        <path class="staff-foot" d="M 30 32 L 22 32"></path>
+                        <g class="helper-leg-right">
+                          <path class="staff-limb" d="M 46 12 L 54 32"></path>
+                          <path class="staff-foot" d="M 54 32 L 62 32"></path>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                  <div id="map-empty-state" class="map-empty-state">
+                    Upload a floor plan or start placing points on the blank canvas.
+                  </div>
+                </div>
+
+                <div class="legend-row">
+                  <span class="legend-chip area">Area</span>
+                  <span class="legend-chip entrance">Entrance</span>
+                  <span class="legend-chip lift-lobby">Lift Lobby</span>
+                  <span class="legend-chip lift">Lift</span>
+                  <span class="legend-chip waypoint">Route Node</span>
+                </div>
+
+                <p class="map-note">
+                  After you generate a route, the app highlights the relevant segments
+                  and animates a bed team across the mapped path. Saved points stay
+                  interactive for editing but no longer show names or dots on top of your
+                  floor-plan icons.
+                </p>
+              </aside>
             </div>
 
             <article class="detail-card assumptions">
@@ -919,84 +1040,9 @@ td {
             </article>
           </section>
         </section>
-
-        <aside class="map-panel">
-          <div class="panel-heading">
-            <div>
-              <p class="panel-eyebrow">Live Route Map</p>
-              <h2>2D Journey View</h2>
-            </div>
-            <span id="map-status" class="map-status">Waiting for route</span>
-          </div>
-
-          <div class="map-stage-wrap">
-            <svg id="map-svg" class="map-stage" viewBox="0 0 1000 1000" aria-label="Route map">
-              <defs>
-                <pattern id="grid-pattern" width="50" height="50" patternUnits="userSpaceOnUse">
-                  <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(148, 163, 184, 0.25)" stroke-width="1"></path>
-                </pattern>
-              </defs>
-              <rect x="0" y="0" width="1000" height="1000" fill="url(#grid-pattern)"></rect>
-              <image id="map-background" x="0" y="0" width="1000" height="1000" preserveAspectRatio="none"></image>
-              <g id="map-routes"></g>
-              <g id="map-labels"></g>
-              <g id="map-marker" class="map-marker hidden">
-                <g id="map-marker-walker" class="map-marker-bed-team">
-                  <rect class="bed-frame" x="-22" y="-18" width="44" height="68" rx="6"></rect>
-                  <rect class="bed-mattress" x="-16" y="-8" width="32" height="40" rx="4"></rect>
-                  <rect class="bed-pillow" x="-12" y="-3" width="24" height="11" rx="4"></rect>
-                  <path class="bed-handle" d="M -22 -10 L -32 -18 M 22 -10 L 32 -18"></path>
-                  <path class="bed-wheel" d="M -16 50 L -16 58 M 16 50 L 16 58"></path>
-                  <circle class="staff-head" cx="-42" cy="-24" r="9"></circle>
-                  <path class="staff-body" d="M -52 -10 Q -42 -16 -32 -10 L -34 10 Q -42 16 -50 10 Z"></path>
-                  <g class="lead-arm">
-                    <path class="staff-limb" d="M -34 -4 L -22 8"></path>
-                  </g>
-                  <path class="staff-limb" d="M -50 -4 L -58 8"></path>
-                  <g class="lead-leg-left">
-                    <path class="staff-limb" d="M -46 12 L -54 32"></path>
-                    <path class="staff-foot" d="M -54 32 L -46 32"></path>
-                  </g>
-                  <path class="staff-limb" d="M -38 12 L -30 32"></path>
-                  <path class="staff-foot" d="M -30 32 L -22 32"></path>
-                  <circle class="staff-head" cx="42" cy="-24" r="9"></circle>
-                  <path class="staff-body helper" d="M 32 -10 Q 42 -16 52 -10 L 50 10 Q 42 16 34 10 Z"></path>
-                  <g class="helper-arm">
-                    <path class="staff-limb" d="M 34 -4 L 22 8"></path>
-                  </g>
-                  <path class="staff-limb" d="M 50 -4 L 58 8"></path>
-                  <path class="staff-limb" d="M 38 12 L 30 32"></path>
-                  <path class="staff-foot" d="M 30 32 L 22 32"></path>
-                  <g class="helper-leg-right">
-                    <path class="staff-limb" d="M 46 12 L 54 32"></path>
-                    <path class="staff-foot" d="M 54 32 L 62 32"></path>
-                  </g>
-                </g>
-              </g>
-            </svg>
-            <div id="map-empty-state" class="map-empty-state">
-              Upload a floor plan or start placing points on the blank canvas.
-            </div>
-          </div>
-
-          <div class="legend-row">
-            <span class="legend-chip area">Area</span>
-            <span class="legend-chip entrance">Entrance</span>
-            <span class="legend-chip lift-lobby">Lift Lobby</span>
-            <span class="legend-chip lift">Lift</span>
-            <span class="legend-chip waypoint">Route Node</span>
-          </div>
-
-          <p class="map-note">
-            After you generate a route, the app highlights the relevant segments
-            and animates a walking person across the mapped path. Saved points stay
-            interactive for editing but no longer show names or dots on top of your
-            floor-plan icons.
-          </p>
-        </aside>
       </div>
 
-      <section class="editor-grid">
+      <section class="editor-grid hidden" aria-hidden="true">
         <article class="detail-card editor-card">
           <div class="panel-heading">
             <div>
