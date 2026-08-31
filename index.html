@@ -455,39 +455,53 @@ td {
 }
 
 .map-marker-bed-team .bed-top {
-  fill: #e2e8f0;
-  stroke: #64748b;
-  stroke-width: 1.8;
+  fill: #dfe8f6;
+  stroke: #7b8aa0;
+  stroke-width: 1.6;
 }
 
 .map-marker-bed-team .bed-side {
-  fill: #b8c4d3;
-  stroke: #64748b;
-  stroke-width: 1.8;
+  fill: #f3f4f6;
+  stroke: #cbd5e1;
+  stroke-width: 1.6;
 }
 
 .map-marker-bed-team .bed-front {
-  fill: #cbd5e1;
-  stroke: #64748b;
-  stroke-width: 1.8;
+  fill: #f8fafc;
+  stroke: #cbd5e1;
+  stroke-width: 1.6;
+}
+
+.map-marker-bed-team .bed-board {
+  fill: #f8fafc;
+  stroke: #cbd5e1;
+  stroke-width: 1.6;
 }
 
 .map-marker-bed-team .bed-mattress {
-  fill: #f8fafc;
-  stroke: #cbd5e1;
+  fill: #abcaf2;
+  stroke: #8db3df;
   stroke-width: 1.2;
 }
 
 .map-marker-bed-team .bed-mattress-side {
-  fill: #e2e8f0;
-  stroke: #cbd5e1;
+  fill: #8eb4e1;
+  stroke: #8db3df;
   stroke-width: 1.2;
 }
 
+.map-marker-bed-team .bed-blanket {
+  fill: #a9d390;
+}
+
+.map-marker-bed-team .bed-blanket-accent {
+  fill: #95cb96;
+}
+
 .map-marker-bed-team .bed-pillow {
-  fill: #dbeafe;
-  stroke: #93c5fd;
-  stroke-width: 1.2;
+  fill: #e9eff8;
+  stroke: #d7deea;
+  stroke-width: 1.1;
 }
 
 .map-marker-bed-team .bed-shadow {
@@ -1045,47 +1059,50 @@ td {
                     <g id="map-labels"></g>
                     <g id="map-marker" class="map-marker hidden">
                       <g id="map-marker-walker" class="map-marker-bed-team">
-                        <g class="marker-scale" transform="translate(-2 -3) scale(0.62)">
-                          <ellipse class="bed-shadow" cx="0" cy="16" rx="40" ry="8"></ellipse>
-                          <polygon class="bed-top" points="-18,-7 7,-18 22,-9 -3,2"></polygon>
-                          <polygon class="bed-side" points="-18,-7 -18,2 -3,11 -3,2"></polygon>
-                          <polygon class="bed-side" points="-3,2 22,-9 22,0 -3,11"></polygon>
-                          <polygon class="bed-front" points="-18,2 7,-9 22,0 -3,11"></polygon>
-                          <polygon class="bed-mattress" points="-14,-5 6,-14 18,-7 -2,2"></polygon>
-                          <polygon class="bed-mattress-side" points="-14,-5 -14,-1 -2,6 -2,2"></polygon>
-                          <polygon class="bed-pillow" points="7,-13 13,-15 17,-13 11,-10"></polygon>
-                          <path class="bed-rail" d="M -18 -7 L 7 -18 L 22 -9 M -18 2 L 7 -9 L 22 0 M -18 -7 L -18 2 M 22 -9 L 22 0"></path>
-                          <path class="bed-handle" d="M -27 -2 L -18 -7 M -27 6 L -18 2 M 31 -13 L 22 -9 M 31 -4 L 22 0"></path>
-                          <path class="bed-wheel-strut" d="M -13 5 L -16 12 M 0 9 L 0 16 M 16 2 L 18 10"></path>
-                          <circle class="bed-wheel-tyre" cx="-17" cy="15" r="4.6"></circle>
-                          <circle class="bed-wheel-core" cx="-17" cy="15" r="1.8"></circle>
-                          <circle class="bed-wheel-tyre" cx="1" cy="18" r="4.8"></circle>
-                          <circle class="bed-wheel-core" cx="1" cy="18" r="1.8"></circle>
-                          <circle class="bed-wheel-tyre" cx="19" cy="11" r="4.4"></circle>
-                          <circle class="bed-wheel-core" cx="19" cy="11" r="1.6"></circle>
-                          <circle class="staff-head" cx="-34" cy="2" r="5.8"></circle>
-                          <path class="staff-body" d="M -41 10 Q -34 5 -28 8 L -29 19 Q -34 22 -39 19 Z"></path>
+                        <g class="marker-scale" transform="translate(-4 -2) scale(0.68)">
+                          <ellipse class="bed-shadow" cx="0" cy="21" rx="43" ry="7"></ellipse>
+                          <rect class="bed-board" x="-39" y="-15" width="5.5" height="31" rx="2.5"></rect>
+                          <rect class="bed-board" x="38" y="-10" width="5.5" height="26" rx="2.5"></rect>
+                          <polygon class="bed-top" points="-33,-7 9,-7 9,6 -33,6"></polygon>
+                          <polygon class="bed-side" points="-33,6 9,6 9,12 -33,12"></polygon>
+                          <rect class="bed-front" x="-36" y="12" width="48" height="5.5" rx="1.5"></rect>
+                          <polygon class="bed-mattress" points="-31,-5 4,-5 4,5 -31,5"></polygon>
+                          <polygon class="bed-mattress-side" points="-31,5 4,5 4,8.5 -31,8.5"></polygon>
+                          <polygon class="bed-pillow" points="-31,-15 -22,-12 -16,-8 -31,-8"></polygon>
+                          <path class="bed-handle" d="M -43 -2 L -39 -2 M -43 5 L -39 5 M 43 -1 L 38 -1"></path>
+                          <path class="bed-rail" d="M -33 -7 L 9 -7 M -33 6 L 9 6"></path>
+                          <rect class="bed-blanket" x="13" y="-7" width="25" height="18" rx="4"></rect>
+                          <rect class="bed-blanket-accent" x="30" y="-7" width="8" height="18"></rect>
+                          <path class="bed-wheel-strut" d="M -34 17 L -34 21 M -8 17 L -8 21 M 38 15 L 38 21"></path>
+                          <circle class="bed-wheel-tyre" cx="-34" cy="23" r="4.2"></circle>
+                          <circle class="bed-wheel-core" cx="-34" cy="23" r="1.5"></circle>
+                          <circle class="bed-wheel-tyre" cx="-8" cy="23" r="4.2"></circle>
+                          <circle class="bed-wheel-core" cx="-8" cy="23" r="1.5"></circle>
+                          <circle class="bed-wheel-tyre" cx="38" cy="23" r="4.2"></circle>
+                          <circle class="bed-wheel-core" cx="38" cy="23" r="1.5"></circle>
+                          <circle class="staff-head" cx="-48" cy="-2" r="5.4"></circle>
+                          <path class="staff-body" d="M -54 5 Q -48 0 -43 3 L -44 14 Q -48 17 -53 14 Z"></path>
                           <g class="lead-arm">
-                            <path class="staff-limb" d="M -29 11 L -23 4"></path>
+                            <path class="staff-limb" d="M -44 7 L -39 3"></path>
                           </g>
-                          <path class="staff-limb" d="M -39 12 L -45 16"></path>
+                          <path class="staff-limb" d="M -53 7 L -58 11"></path>
                           <g class="lead-leg-left">
-                            <path class="staff-limb" d="M -38 20 L -43 30"></path>
-                            <path class="staff-foot" d="M -43 30 L -36 30"></path>
+                            <path class="staff-limb" d="M -52 14 L -57 23"></path>
+                            <path class="staff-foot" d="M -57 23 L -50 23"></path>
                           </g>
-                          <path class="staff-limb" d="M -31 20 L -26 30"></path>
-                          <path class="staff-foot" d="M -26 30 L -19 30"></path>
-                          <circle class="staff-head" cx="35" cy="-18" r="5.8"></circle>
-                          <path class="staff-body helper" d="M 28 -11 Q 35 -16 41 -12 L 40 0 Q 35 3 29 0 Z"></path>
+                          <path class="staff-limb" d="M -46 14 L -42 23"></path>
+                          <path class="staff-foot" d="M -42 23 L -35 23"></path>
+                          <circle class="staff-head" cx="50" cy="-5" r="5.4"></circle>
+                          <path class="staff-body helper" d="M 44 2 Q 50 -2 55 1 L 54 12 Q 50 15 45 12 Z"></path>
                           <g class="helper-arm">
-                            <path class="staff-limb" d="M 30 -9 L 25 -5"></path>
+                            <path class="staff-limb" d="M 45 4 L 39 2"></path>
                           </g>
-                          <path class="staff-limb" d="M 41 -8 L 46 -12"></path>
-                          <path class="staff-limb" d="M 31 0 L 27 11"></path>
-                          <path class="staff-foot" d="M 27 11 L 33 11"></path>
+                          <path class="staff-limb" d="M 55 4 L 60 1"></path>
+                          <path class="staff-limb" d="M 46 12 L 42 21"></path>
+                          <path class="staff-foot" d="M 42 21 L 48 21"></path>
                           <g class="helper-leg-right">
-                            <path class="staff-limb" d="M 38 1 L 43 12"></path>
-                            <path class="staff-foot" d="M 43 12 L 50 12"></path>
+                            <path class="staff-limb" d="M 53 12 L 58 21"></path>
+                            <path class="staff-foot" d="M 58 21 L 65 21"></path>
                           </g>
                         </g>
                       </g>
