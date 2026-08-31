@@ -377,25 +377,57 @@ td {
   line-height: 1.5;
 }
 
-.map-marker-person {
+.map-marker-bed-team {
   filter: drop-shadow(0 8px 12px rgba(15, 23, 42, 0.28));
 }
 
-.map-marker-person .person-head {
+.map-marker-bed-team .bed-frame {
+  fill: #e5e7eb;
+  stroke: #64748b;
+  stroke-width: 2;
+}
+
+.map-marker-bed-team .bed-mattress {
+  fill: #f8fafc;
+  stroke: #cbd5e1;
+  stroke-width: 1.5;
+}
+
+.map-marker-bed-team .bed-pillow {
+  fill: #dbeafe;
+  stroke: #93c5fd;
+  stroke-width: 1.5;
+}
+
+.map-marker-bed-team .bed-wheel,
+.map-marker-bed-team .bed-handle {
+  fill: none;
+  stroke: #334155;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-marker-bed-team .staff-head {
   fill: #f8d5c2;
   stroke: #8b5e3c;
   stroke-width: 2;
 }
 
-.map-marker-person .person-shirt {
+.map-marker-bed-team .staff-body {
   fill: #2563eb;
   stroke: #1e3a8a;
   stroke-width: 2;
   stroke-linejoin: round;
 }
 
-.map-marker-person .person-limb,
-.map-marker-person .person-foot {
+.map-marker-bed-team .staff-body.helper {
+  fill: #0f766e;
+  stroke: #115e59;
+}
+
+.map-marker-bed-team .staff-limb,
+.map-marker-bed-team .staff-foot {
   fill: none;
   stroke: #0f172a;
   stroke-width: 4;
@@ -403,15 +435,15 @@ td {
   stroke-linejoin: round;
 }
 
-.map-marker-person .person-arm-left,
-.map-marker-person .person-leg-right {
+.map-marker-bed-team .lead-arm,
+.map-marker-bed-team .helper-leg-right {
   transform-box: fill-box;
   transform-origin: top center;
   animation: swing-forward 0.7s ease-in-out infinite;
 }
 
-.map-marker-person .person-arm-right,
-.map-marker-person .person-leg-left {
+.map-marker-bed-team .lead-leg-left,
+.map-marker-bed-team .helper-arm {
   transform-box: fill-box;
   transform-origin: top center;
   animation: swing-backward 0.7s ease-in-out infinite;
@@ -681,14 +713,16 @@ td {
 
 .route-segment {
   fill: none;
+  stroke: #f97316 !important;
   stroke-width: 10;
   stroke-linecap: round;
   stroke-linejoin: round;
+  stroke-dasharray: 20 14;
   opacity: 0.55;
 }
 
 .route-segment.active {
-  stroke-width: 16;
+  stroke-width: 14;
   opacity: 0.92;
   filter: drop-shadow(0 8px 12px rgba(15, 23, 42, 0.18));
 }
@@ -907,22 +941,35 @@ td {
               <g id="map-routes"></g>
               <g id="map-labels"></g>
               <g id="map-marker" class="map-marker hidden">
-                <g id="map-marker-walker" class="map-marker-person">
-                  <circle class="person-head" cx="0" cy="-28" r="11"></circle>
-                  <path class="person-shirt" d="M -12 -12 Q 0 -18 12 -12 L 10 10 Q 0 16 -10 10 Z"></path>
-                  <g class="person-arm-left">
-                    <path class="person-limb" d="M -8 -8 L -18 8"></path>
+                <g id="map-marker-walker" class="map-marker-bed-team">
+                  <rect class="bed-frame" x="-22" y="-18" width="44" height="68" rx="6"></rect>
+                  <rect class="bed-mattress" x="-16" y="-8" width="32" height="40" rx="4"></rect>
+                  <rect class="bed-pillow" x="-12" y="-3" width="24" height="11" rx="4"></rect>
+                  <path class="bed-handle" d="M -22 -10 L -32 -18 M 22 -10 L 32 -18"></path>
+                  <path class="bed-wheel" d="M -16 50 L -16 58 M 16 50 L 16 58"></path>
+                  <circle class="staff-head" cx="-42" cy="-24" r="9"></circle>
+                  <path class="staff-body" d="M -52 -10 Q -42 -16 -32 -10 L -34 10 Q -42 16 -50 10 Z"></path>
+                  <g class="lead-arm">
+                    <path class="staff-limb" d="M -34 -4 L -22 8"></path>
                   </g>
-                  <g class="person-arm-right">
-                    <path class="person-limb" d="M 8 -8 L 18 8"></path>
+                  <path class="staff-limb" d="M -50 -4 L -58 8"></path>
+                  <g class="lead-leg-left">
+                    <path class="staff-limb" d="M -46 12 L -54 32"></path>
+                    <path class="staff-foot" d="M -54 32 L -46 32"></path>
                   </g>
-                  <g class="person-leg-left">
-                    <path class="person-limb" d="M -4 12 L -14 32"></path>
-                    <path class="person-foot" d="M -14 32 L -6 32"></path>
+                  <path class="staff-limb" d="M -38 12 L -30 32"></path>
+                  <path class="staff-foot" d="M -30 32 L -22 32"></path>
+                  <circle class="staff-head" cx="42" cy="-24" r="9"></circle>
+                  <path class="staff-body helper" d="M 32 -10 Q 42 -16 52 -10 L 50 10 Q 42 16 34 10 Z"></path>
+                  <g class="helper-arm">
+                    <path class="staff-limb" d="M 34 -4 L 22 8"></path>
                   </g>
-                  <g class="person-leg-right">
-                    <path class="person-limb" d="M 4 12 L 14 32"></path>
-                    <path class="person-foot" d="M 14 32 L 22 32"></path>
+                  <path class="staff-limb" d="M 50 -4 L 58 8"></path>
+                  <path class="staff-limb" d="M 38 12 L 30 32"></path>
+                  <path class="staff-foot" d="M 30 32 L 22 32"></path>
+                  <g class="helper-leg-right">
+                    <path class="staff-limb" d="M 46 12 L 54 32"></path>
+                    <path class="staff-foot" d="M 54 32 L 62 32"></path>
                   </g>
                 </g>
               </g>
@@ -2046,7 +2093,6 @@ function startAnimation(points, durationOverrideMs) {
     const targetDistance = totalLength * progress;
     const pointState = getPointStateAtDistance(pathSegments, targetDistance);
     mapMarker.setAttribute("transform", `translate(${pointState.x} ${pointState.y})`);
-    mapMarkerWalker.setAttribute("transform", `rotate(${pointState.angle})`);
 
     if (progress < 1) {
       animationFrameId = window.requestAnimationFrame(animateFrame);
