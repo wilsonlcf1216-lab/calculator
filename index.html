@@ -508,6 +508,46 @@ td {
   fill: rgba(15, 23, 42, 0.08);
 }
 
+.map-marker-bed-team .bed-solid-frame {
+  fill: #1f2437;
+}
+
+.map-marker-bed-team .bed-solid-accent {
+  fill: #35b4ef;
+}
+
+.map-marker-bed-team .bed-solid-mattress {
+  fill: #dce3ec;
+}
+
+.map-marker-bed-team .bed-solid-rail {
+  fill: #c8d2de;
+}
+
+.map-marker-bed-team .bed-solid-support {
+  fill: #1f2437;
+}
+
+.map-marker-bed-team .bed-solid-pole {
+  fill: #1f2437;
+}
+
+.map-marker-bed-team .bed-solid-bag {
+  fill: #2c334d;
+}
+
+.map-marker-bed-team .bed-solid-liquid {
+  fill: #ef4a67;
+}
+
+.map-marker-bed-team .bed-solid-wheel {
+  fill: #1f2437;
+}
+
+.map-marker-bed-team .bed-solid-wheel-core {
+  fill: #dfe7f2;
+}
+
 .map-marker-bed-team .bed-outline,
 .map-marker-bed-team .bed-outline-thin,
 .map-marker-bed-team .bed-outline-wheel,
@@ -1103,48 +1143,29 @@ td {
                     <g id="map-labels"></g>
                     <g id="map-marker" class="map-marker hidden">
                       <g id="map-marker-walker" class="map-marker-bed-team">
-                        <g class="marker-scale" transform="translate(-2 2) scale(0.58)">
-                          <ellipse class="bed-shadow" cx="0" cy="40" rx="68" ry="7"></ellipse>
-                          <path class="bed-outline" d="M -45 -42 L -45 8 Q -45 16 -37 16 L 43 16 Q 51 16 51 8 L 51 -6"></path>
-                          <path class="bed-outline" d="M -36 -14 L -22 -14 L -5 0 L 37 0 Q 47 0 51 5"></path>
-                          <path class="bed-outline" d="M -42 0 L 51 0"></path>
-                          <path class="bed-outline" d="M -29 16 L 42 16 M -29 28 L 42 28"></path>
-                          <path class="bed-outline" d="M -29 16 L -29 36 M 42 16 L 42 36"></path>
-                          <path class="bed-outline" d="M -20 -33 L -20 -15 L -10 -15 L -10 -28 L -20 -28"></path>
-                          <path class="bed-outline" d="M -45 -34 L -55 -34 M -50 -39 L -50 -26"></path>
-                          <path class="bed-outline-thin" d="M -40 -12 L -28 0"></path>
-                          <circle class="bed-outline-wheel" cx="-29" cy="43" r="8"></circle>
-                          <circle class="bed-outline-core" cx="-29" cy="43" r="3"></circle>
-                          <circle class="bed-outline-wheel" cx="42" cy="43" r="8"></circle>
-                          <circle class="bed-outline-core" cx="42" cy="43" r="3"></circle>
-                          <g class="lead-staff" transform="translate(-60 -10) scale(2) translate(60 10)">
-                            <circle class="staff-head" cx="-60" cy="-10" r="5.8"></circle>
-                            <path class="staff-body" d="M -67 -2 Q -60 -8 -54 -4 L -54 10 Q -60 14 -66 10 Z"></path>
-                            <g class="lead-arm">
-                              <path class="staff-limb" d="M -54 1 L -48 -4"></path>
-                            </g>
-                            <path class="staff-limb" d="M -64 1 L -70 6"></path>
-                            <g class="lead-leg-left">
-                              <path class="staff-limb" d="M -64 10 L -69 21"></path>
-                              <path class="staff-foot" d="M -69 21 L -61 21"></path>
-                            </g>
-                            <path class="staff-limb" d="M -57 10 L -52 21"></path>
-                            <path class="staff-foot" d="M -52 21 L -44 21"></path>
-                          </g>
-                          <g class="helper-staff" transform="translate(72 -10) scale(2) translate(-72 10)">
-                            <circle class="staff-head" cx="72" cy="-10" r="5.8"></circle>
-                            <path class="staff-body helper" d="M 65 -2 Q 72 -8 78 -4 L 78 10 Q 72 14 66 10 Z"></path>
-                            <g class="helper-arm">
-                              <path class="staff-limb" d="M 66 1 L 60 -3"></path>
-                            </g>
-                            <path class="staff-limb" d="M 78 1 L 84 6"></path>
-                            <path class="staff-limb" d="M 68 10 L 63 21"></path>
-                            <path class="staff-foot" d="M 63 21 L 71 21"></path>
-                            <g class="helper-leg-right">
-                              <path class="staff-limb" d="M 76 10 L 82 21"></path>
-                              <path class="staff-foot" d="M 82 21 L 90 21"></path>
-                            </g>
-                          </g>
+                        <g class="marker-scale" transform="translate(-4 2) scale(0.62)">
+                          <ellipse class="bed-shadow" cx="0" cy="38" rx="60" ry="8"></ellipse>
+                          <rect class="bed-solid-pole" x="-48" y="-45" width="4" height="86" rx="2"></rect>
+                          <rect class="bed-solid-pole" x="-54" y="-39" width="16" height="4" rx="2"></rect>
+                          <rect class="bed-solid-bag" x="-33" y="-33" width="12" height="20" rx="3"></rect>
+                          <rect class="bed-solid-liquid" x="-29" y="-29" width="6" height="11" rx="1"></rect>
+                          <rect class="bed-solid-frame" x="-54" y="-5" width="77" height="15" rx="4"></rect>
+                          <rect class="bed-solid-accent" x="-49" y="0" width="67" height="5" rx="2"></rect>
+                          <rect class="bed-solid-frame" x="-41" y="10" width="58" height="18" rx="5"></rect>
+                          <rect class="bed-solid-accent" x="-35" y="16" width="48" height="7" rx="2"></rect>
+                          <rect class="bed-solid-support" x="-18" y="28" width="4" height="9"></rect>
+                          <rect class="bed-solid-support" x="-26" y="37" width="28" height="5" rx="1"></rect>
+                          <path class="bed-solid-frame" d="M 18 -3 L 42 -18 Q 48 -22 52 -16 L 58 -6 Q 60 -2 56 1 L 29 18 Q 23 22 18 17 L 11 9 Q 8 4 12 1 Z"></path>
+                          <path class="bed-solid-accent" d="M 22 1 L 47 -14 L 51 -7 L 28 7 L -1 7 L -1 1 Z"></path>
+                          <rect class="bed-solid-frame" x="-49" y="-17" width="49" height="15" rx="7"></rect>
+                          <rect class="bed-solid-mattress" x="-45" y="-13" width="41" height="7" rx="3.5"></rect>
+                          <path class="bed-solid-frame" d="M 24 -19 L 38 -28 Q 42 -30 45 -27 L 49 -23 Q 52 -20 49 -16 L 35 -8 Q 31 -6 28 -9 L 23 -13 Q 20 -16 24 -19 Z"></path>
+                          <rect class="bed-solid-rail" x="27" y="-22" width="19" height="5" rx="2.5" transform="rotate(-33 36.5 -19.5)"></rect>
+                          <rect class="bed-solid-pole" x="39" y="-4" width="4" height="50" rx="2"></rect>
+                          <circle class="bed-solid-wheel" cx="-36" cy="48" r="8"></circle>
+                          <circle class="bed-solid-wheel-core" cx="-36" cy="48" r="3.2"></circle>
+                          <circle class="bed-solid-wheel" cx="40" cy="48" r="8"></circle>
+                          <circle class="bed-solid-wheel-core" cx="40" cy="48" r="3.2"></circle>
                         </g>
                       </g>
                     </g>
