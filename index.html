@@ -369,11 +369,66 @@ td {
   line-height: 1.5;
 }
 
-.map-marker circle {
-  fill: #f97316;
-  stroke: #ffffff;
-  stroke-width: 5;
-  filter: drop-shadow(0 8px 12px rgba(249, 115, 22, 0.35));
+.map-marker-person {
+  filter: drop-shadow(0 8px 12px rgba(15, 23, 42, 0.28));
+}
+
+.map-marker-person .person-head {
+  fill: #f8d5c2;
+  stroke: #8b5e3c;
+  stroke-width: 2;
+}
+
+.map-marker-person .person-shirt {
+  fill: #2563eb;
+  stroke: #1e3a8a;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.map-marker-person .person-limb,
+.map-marker-person .person-foot {
+  fill: none;
+  stroke: #0f172a;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-marker-person .person-arm-left,
+.map-marker-person .person-leg-right {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: swing-forward 0.7s ease-in-out infinite;
+}
+
+.map-marker-person .person-arm-right,
+.map-marker-person .person-leg-left {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: swing-backward 0.7s ease-in-out infinite;
+}
+
+@keyframes swing-forward {
+  0%,
+  100% {
+    transform: rotate(24deg);
+  }
+
+  50% {
+    transform: rotate(-24deg);
+  }
+}
+
+@keyframes swing-backward {
+  0%,
+  100% {
+    transform: rotate(-24deg);
+  }
+
+  50% {
+    transform: rotate(24deg);
+  }
 }
 
 .legend-row {
@@ -551,24 +606,19 @@ td {
   color: var(--muted);
 }
 
-.map-node-label {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  fill: var(--text);
-  paint-order: stroke;
-  stroke: rgba(255, 255, 255, 0.92);
-  stroke-width: 4px;
-}
-
 .map-node-point {
-  stroke: #ffffff;
-  stroke-width: 5;
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 24;
   cursor: grab;
+  pointer-events: all;
 }
 
 .map-node-point.dragging {
   cursor: grabbing;
+  fill: rgba(37, 99, 235, 0.16);
+  stroke: rgba(37, 99, 235, 0.7);
+  stroke-width: 6;
 }
 
 .route-segment {
@@ -799,7 +849,24 @@ td {
               <g id="map-routes"></g>
               <g id="map-labels"></g>
               <g id="map-marker" class="map-marker hidden">
-                <circle r="15"></circle>
+                <g id="map-marker-walker" class="map-marker-person">
+                  <circle class="person-head" cx="0" cy="-28" r="11"></circle>
+                  <path class="person-shirt" d="M -12 -12 Q 0 -18 12 -12 L 10 10 Q 0 16 -10 10 Z"></path>
+                  <g class="person-arm-left">
+                    <path class="person-limb" d="M -8 -8 L -18 8"></path>
+                  </g>
+                  <g class="person-arm-right">
+                    <path class="person-limb" d="M 8 -8 L 18 8"></path>
+                  </g>
+                  <g class="person-leg-left">
+                    <path class="person-limb" d="M -4 12 L -14 32"></path>
+                    <path class="person-foot" d="M -14 32 L -6 32"></path>
+                  </g>
+                  <g class="person-leg-right">
+                    <path class="person-limb" d="M 4 12 L 14 32"></path>
+                    <path class="person-foot" d="M 14 32 L 22 32"></path>
+                  </g>
+                </g>
               </g>
             </svg>
             <div id="map-empty-state" class="map-empty-state">
@@ -817,7 +884,9 @@ td {
 
           <p class="map-note">
             After you generate a route, the app highlights the relevant segments
-            and animates a marker across the mapped path.
+            and animates a walking person across the mapped path. Saved points stay
+            interactive for editing but no longer show names or dots on top of your
+            floor-plan icons.
           </p>
         </aside>
       </div>
@@ -1043,6 +1112,7 @@ const mapBackground = document.getElementById("map-background");
 const mapRoutesGroup = document.getElementById("map-routes");
 const mapLabelsGroup = document.getElementById("map-labels");
 const mapMarker = document.getElementById("map-marker");
+const mapMarkerWalker = document.getElementById("map-marker-walker");
 const mapStatus = document.getElementById("map-status");
 const mapEmptyState = document.getElementById("map-empty-state");
 const backgroundUpload = document.getElementById("background-upload");
@@ -1662,22 +1732,14 @@ function renderMap() {
     const meta = NODE_TYPE_META[node.type] || NODE_TYPE_META.waypoint;
     const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
     const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
 
     circle.setAttribute("cx", node.x);
     circle.setAttribute("cy", node.y);
-    circle.setAttribute("r", meta.radius);
-    circle.setAttribute("fill", meta.color);
+    circle.setAttribute("r", Math.max(meta.radius + 16, 28));
     circle.setAttribute("class", "map-node-point");
     circle.dataset.nodeId = node.id;
 
-    label.setAttribute("x", node.x + meta.radius + 12);
-    label.setAttribute("y", node.y + 8);
-    label.setAttribute("class", "map-node-label");
-    label.textContent = node.name;
-
     group.appendChild(circle);
-    group.appendChild(label);
     mapLabelsGroup.appendChild(group);
   });
 
@@ -1847,8 +1909,9 @@ function startAnimation(points) {
   function animateFrame(now) {
     const progress = ((now - startedAt) % durationMs) / durationMs;
     const targetDistance = totalLength * progress;
-    const point = getPointAtDistance(pathSegments, targetDistance);
-    mapMarker.setAttribute("transform", `translate(${point.x} ${point.y})`);
+    const pointState = getPointStateAtDistance(pathSegments, targetDistance);
+    mapMarker.setAttribute("transform", `translate(${pointState.x} ${pointState.y})`);
+    mapMarkerWalker.setAttribute("transform", `rotate(${pointState.angle})`);
     animationFrameId = window.requestAnimationFrame(animateFrame);
   }
 
@@ -1901,6 +1964,30 @@ function getPointAtDistance(pathSegments, targetDistance) {
 
   const lastSegment = pathSegments[pathSegments.length - 1];
   return { x: lastSegment.end.x, y: lastSegment.end.y };
+}
+
+function getPointStateAtDistance(pathSegments, targetDistance) {
+  let remaining = targetDistance;
+
+  for (const segment of pathSegments) {
+    if (remaining <= segment.length) {
+      const ratio = remaining / segment.length;
+      return {
+        x: segment.start.x + (segment.end.x - segment.start.x) * ratio,
+        y: segment.start.y + (segment.end.y - segment.start.y) * ratio,
+        angle: Math.atan2(segment.end.y - segment.start.y, segment.end.x - segment.start.x) * (180 / Math.PI) + 90
+      };
+    }
+
+    remaining -= segment.length;
+  }
+
+  const lastSegment = pathSegments[pathSegments.length - 1];
+  return {
+    x: lastSegment.end.x,
+    y: lastSegment.end.y,
+    angle: Math.atan2(lastSegment.end.y - lastSegment.start.y, lastSegment.end.x - lastSegment.start.x) * (180 / Math.PI) + 90
+  };
 }
 
 function getPointAtHalfway(points) {
