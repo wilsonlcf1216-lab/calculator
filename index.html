@@ -2455,7 +2455,7 @@ function startAnimation(points, durationOverrideMs) {
     return;
   }
 
-  const durationMs = durationOverrideMs || Math.min(Math.max(totalLength * 8, 2200), 6000);
+  const durationMs = durationOverrideMs || Math.min(Math.max(totalLength * 12, 3000), 9000);
   const startedAt = performance.now();
 
   function animateFrame(now) {
@@ -2601,7 +2601,7 @@ function getPlaybackDurationMs(step) {
     return 1400;
   }
 
-  return Math.min(Math.max((Number(step.time) || 0) * 80, 1400), 4200);
+  return Math.min(Math.max((Number(step.time) || 0) * 140, 2200), 7000);
 }
 
 function getDisplayMapState() {
