@@ -125,7 +125,27 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 12px;
+}
+
+.step-playback-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.playback-speed-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.speed-btn-active {
+  border-color: var(--accent);
+  background: #dbeafe;
+  color: var(--accent-dark);
 }
 
 .step-playback-meta {
@@ -1015,6 +1035,14 @@ td {
   fill: #f97316;
   stroke: #ffffff;
   stroke-width: 4;
+  cursor: grab;
+}
+
+.draft-route-point.dragging {
+  cursor: grabbing;
+  fill: #fb923c;
+  stroke: #1d4ed8;
+  stroke-width: 5;
 }
 
 @media (max-width: 880px) {
@@ -1160,7 +1188,14 @@ td {
                 <article class="detail-card step-breakdown-card">
                   <h2>Step Breakdown</h2>
                   <div class="step-playback-bar">
-                    <button id="playback-toggle" type="button" class="secondary-btn">Stop</button>
+                    <div class="step-playback-actions">
+                      <button id="playback-toggle" type="button" class="secondary-btn">Stop</button>
+                      <div id="playback-speed-controls" class="playback-speed-controls" role="group" aria-label="Animation speed">
+                        <button type="button" class="secondary-btn speed-btn speed-btn-active" data-speed="normal">Normal</button>
+                        <button type="button" class="secondary-btn speed-btn" data-speed="slow">Slow</button>
+                        <button type="button" class="secondary-btn speed-btn" data-speed="fast">Fast</button>
+                      </div>
+                    </div>
                     <p id="step-playback-meta" class="step-playback-meta">
                       Click any step row to jump there, then continue playback from that segment.
                     </p>
@@ -1434,6 +1469,11 @@ const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
 const MARKER_PATH_OFFSET_X = 40;
 const MARKER_PATH_OFFSET_Y = 24;
+const PLAYBACK_SPEED_OPTIONS = {
+  slow: { label: "Slow", multiplier: 1.55 },
+  normal: { label: "Normal", multiplier: 1 },
+  fast: { label: "Fast", multiplier: 0.72 }
+};
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const STEP_JSON_DEFAULTS = [
@@ -1516,6 +1556,7 @@ let activeJourney = null;
 let placementDraft = null;
 let routeDraft = null;
 let draggingNodeId = null;
+let draggingDraftWaypointIndex = -1;
 let animationFrameId = null;
 let playbackTimeoutId = null;
 let playbackSequenceToken = 0;
@@ -1524,6 +1565,8 @@ let activePlaybackMapState = null;
 let activePlaybackDurationMs = 0;
 let activePlaybackIndex = -1;
 let isPlaybackPaused = false;
+let playbackSpeedKey = "normal";
+let suppressMapClick = false;
 
 const form = document.getElementById("route-form");
 const resultsSection = document.getElementById("results");
@@ -1538,6 +1581,7 @@ const mapMarkerWalker = document.getElementById("map-marker-walker");
 const mapStatus = document.getElementById("map-status");
 const mapEmptyState = document.getElementById("map-empty-state");
 const playbackToggleButton = document.getElementById("playback-toggle");
+const playbackSpeedControls = document.getElementById("playback-speed-controls");
 const stepPlaybackMeta = document.getElementById("step-playback-meta");
 const backgroundUpload = document.getElementById("background-upload");
 const pointNameInput = document.getElementById("point-name");
@@ -1596,6 +1640,7 @@ function initialize() {
   stepJsonLibraryElement.addEventListener("click", handleStepJsonLibraryActions);
   document.getElementById("step-breakdown").addEventListener("click", handleStepBreakdownClick);
   playbackToggleButton.addEventListener("click", togglePlaybackState);
+  playbackSpeedControls.addEventListener("click", handlePlaybackSpeedControlClick);
 
   renderAll();
 }
@@ -1778,6 +1823,36 @@ function togglePlaybackState() {
   pauseStepPlayback();
 }
 
+function handlePlaybackSpeedControlClick(event) {
+  const button = event.target.closest("button[data-speed]");
+
+  if (!button) {
+    return;
+  }
+
+  const requestedSpeed = button.dataset.speed;
+
+  if (!PLAYBACK_SPEED_OPTIONS[requestedSpeed] || requestedSpeed === playbackSpeedKey) {
+    return;
+  }
+
+  playbackSpeedKey = requestedSpeed;
+  updatePlaybackSpeedControls();
+
+  if (!currentRouteResult || activePlaybackIndex < 0) {
+    return;
+  }
+
+  if (isPlaybackPaused) {
+    activePlaybackDurationMs = getPlaybackDurationMs(currentRouteResult.steps[activePlaybackIndex]);
+    syncRouteVisualizationState();
+    renderAll(false);
+    return;
+  }
+
+  playStepAtIndex(activePlaybackIndex, true);
+}
+
 function handleBackgroundUpload(event) {
   const file = event.target.files && event.target.files[0];
 
@@ -1884,7 +1959,7 @@ function startRouteDraw() {
     waypoints: []
   };
 
-  updateRouteDrawStatus(`Drawing from "${fromNode.name}" to "${toNode.name}". Click the map to add bend points, then finish the route.`);
+  updateRouteDrawStatus(`Drawing from "${fromNode.name}" to "${toNode.name}". Click the map to add bend points, drag bend dots to adjust them, then finish the route.`);
   showError("");
   renderMap();
 }
@@ -1954,20 +2029,26 @@ function cancelRouteDraw(shouldRender = true) {
 }
 
 function handleMapClick(event) {
-  if (draggingNodeId) {
+  if (draggingNodeId || draggingDraftWaypointIndex >= 0) {
     return;
   }
 
   const targetNodeId = event.target && event.target.dataset ? event.target.dataset.nodeId : "";
+  const targetWaypointIndex = event.target && event.target.dataset ? event.target.dataset.waypointIndex : "";
   const { x, y } = getSvgPoint(event);
 
+  if (suppressMapClick) {
+    suppressMapClick = false;
+    return;
+  }
+
   if (routeDraft) {
-    if (targetNodeId) {
+    if (targetNodeId || targetWaypointIndex) {
       return;
     }
 
     routeDraft.waypoints.push({ x, y });
-    updateRouteDrawStatus(`Added bend point ${routeDraft.waypoints.length}. Continue clicking along the path, then finish the route.`);
+    updateRouteDrawStatus(`Added bend point ${routeDraft.waypoints.length}. Continue clicking or drag bend dots to refine the path, then finish the route.`);
     renderMap();
     return;
   }
@@ -1993,6 +2074,14 @@ function handleMapClick(event) {
 
 function handleMapPointerDown(event) {
   const nodeId = event.target && event.target.dataset ? event.target.dataset.nodeId : "";
+  const waypointIndex = event.target && event.target.dataset ? event.target.dataset.waypointIndex : "";
+
+  if (routeDraft && waypointIndex !== "") {
+    draggingDraftWaypointIndex = Number(waypointIndex);
+    event.target.classList.add("dragging");
+    showError("");
+    return;
+  }
 
   if (!nodeId) {
     return;
@@ -2004,6 +2093,21 @@ function handleMapPointerDown(event) {
 }
 
 function handleMapPointerMove(event) {
+  if (draggingDraftWaypointIndex >= 0) {
+    const { x, y } = getSvgPoint(event);
+    const waypoint = routeDraft && routeDraft.waypoints[draggingDraftWaypointIndex];
+
+    if (!waypoint) {
+      return;
+    }
+
+    waypoint.x = x;
+    waypoint.y = y;
+    suppressMapClick = true;
+    renderMap();
+    return;
+  }
+
   if (!draggingNodeId) {
     return;
   }
@@ -2017,10 +2121,23 @@ function handleMapPointerMove(event) {
 
   node.x = x;
   node.y = y;
+  suppressMapClick = true;
   renderMap();
 }
 
 function handleMapPointerUp() {
+  if (draggingDraftWaypointIndex >= 0) {
+    const activeWaypoint = mapSvg.querySelector(`[data-waypoint-index="${draggingDraftWaypointIndex}"]`);
+
+    if (activeWaypoint) {
+      activeWaypoint.classList.remove("dragging");
+    }
+
+    draggingDraftWaypointIndex = -1;
+    renderMap();
+    return;
+  }
+
   if (!draggingNodeId) {
     return;
   }
@@ -2228,12 +2345,13 @@ function renderMap() {
       mapRoutesGroup.appendChild(draftLine);
     }
 
-    routeDraft.waypoints.forEach((point) => {
+    routeDraft.waypoints.forEach((point, index) => {
       const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       dot.setAttribute("cx", point.x);
       dot.setAttribute("cy", point.y);
       dot.setAttribute("r", 9);
       dot.setAttribute("class", "draft-route-point");
+      dot.dataset.waypointIndex = String(index);
       mapRoutesGroup.appendChild(dot);
     });
   }
@@ -2601,7 +2719,8 @@ function getPlaybackDurationMs(step) {
     return 1400;
   }
 
-  return Math.min(Math.max((Number(step.time) || 0) * 140, 2200), 7000);
+  const multiplier = PLAYBACK_SPEED_OPTIONS[playbackSpeedKey]?.multiplier || 1;
+  return Math.min(Math.max((Number(step.time) || 0) * 140 * multiplier, 2200), 7000 * multiplier);
 }
 
 function getDisplayMapState() {
@@ -2785,6 +2904,7 @@ function updatePlaybackControls() {
   if (!currentRouteResult) {
     playbackToggleButton.textContent = "Start";
     stepPlaybackMeta.textContent = "Click any step row to jump there, then continue playback from that segment.";
+    updatePlaybackSpeedControls();
     return;
   }
 
@@ -2798,10 +2918,22 @@ function updatePlaybackControls() {
     stepPlaybackMeta.textContent = isPlaybackPaused
       ? `${currentStepLabel} paused. Click Start to continue from this segment, or click another step to jump there.`
       : `${currentStepLabel} is playing. Click any step row to jump there and continue from that segment.`;
+    updatePlaybackSpeedControls();
     return;
   }
 
   stepPlaybackMeta.textContent = "Click any step row to jump there, then continue playback from that segment.";
+  updatePlaybackSpeedControls();
+}
+
+function updatePlaybackSpeedControls() {
+  if (!playbackSpeedControls) {
+    return;
+  }
+
+  playbackSpeedControls.querySelectorAll("button[data-speed]").forEach((button) => {
+    button.classList.toggle("speed-btn-active", button.dataset.speed === playbackSpeedKey);
+  });
 }
 
 function buildPathSegments(points) {
