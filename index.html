@@ -429,7 +429,7 @@ td {
 .map-stage {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--map-aspect-ratio, 4 / 3);
   cursor: crosshair;
 }
 
@@ -1381,14 +1381,7 @@ const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5", "step6"];
-const STEP_JSON_DEFAULTS = [
-  {
-    stepKey: "step1",
-    routeKey: "mcbtc",
-    fileName: "MCBTC_A.json",
-    filePath: "./MCBTC_A.json"
-  }
-];
+const STEP_JSON_DEFAULTS = [];
 
 const ORIGIN_BUILDING_RULES = {
   H: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
@@ -1397,7 +1390,9 @@ const ORIGIN_BUILDING_RULES = {
   M: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
   E: { building: "Old Block - EF Wing", transferFloor: 2, routeKey: "ef" },
   F: { building: "Old Block - EF Wing", transferFloor: 2, routeKey: "ef" },
-  A: { building: "MCBTC", transferFloor: 0, routeKey: "mcbtc" }
+  A: { building: "MCBTC", transferFloor: 0, routeKey: "mcbtc" },
+  B: { building: "MCBTC", transferFloor: 0, routeKey: "mcbtc" },
+  C: { building: "MCBTC", transferFloor: 0, routeKey: "mcbtc" }
 };
 
 const INTER_BUILDING_SEGMENTS = {
@@ -1514,6 +1509,7 @@ initialize();
 function initialize() {
   clearLegacyStoredMapState();
   stepJsonLibrary = loadStepJsonLibrary();
+  removeLegacyBundledStepJson();
   void ensureBundledStepJsonDefaults();
   form.addEventListener("submit", handleGenerateRoute);
   backgroundUpload.addEventListener("change", handleBackgroundUpload);
@@ -1633,7 +1629,7 @@ function parseOriginWard(input) {
   const config = ORIGIN_BUILDING_RULES[suffix];
 
   if (!config) {
-    throw new Error("Origin ward code is not mapped yet. Supported suffixes are A, E, F, H, K, L, and M.");
+    throw new Error("Origin ward code is not mapped yet. Supported suffixes are A, B, C, E, F, H, K, L, and M.");
   }
 
   return {
@@ -1729,18 +1725,46 @@ function handleBackgroundUpload(event) {
 
   const reader = new FileReader();
   reader.onload = () => {
-    mapState.backgroundImage = String(reader.result || "");
-    mapState.nodes = [];
-    mapState.segments = [];
-    currentRouteResult = null;
-    activeJourney = null;
-    placementDraft = null;
-    cancelRouteDraw(false);
-    stopAnimation();
-    persistMapState();
-    renderAll();
-    placementStatus.textContent = "New map loaded. Previous points and routes were cleared.";
-    showSuccess("新地圖已載入，舊有點位和路線已清除。");
+    const imageData = String(reader.result || "");
+
+    if (!imageData) {
+      return;
+    }
+
+    const image = new Image();
+    image.onload = () => {
+      mapState.backgroundImage = imageData;
+      mapState.backgroundWidth = normalizeMapDimension(image.naturalWidth);
+      mapState.backgroundHeight = normalizeMapDimension(image.naturalHeight);
+      mapState.nodes = [];
+      mapState.segments = [];
+      currentRouteResult = null;
+      activeJourney = null;
+      placementDraft = null;
+      cancelRouteDraw(false);
+      stopAnimation();
+      persistMapState();
+      renderAll();
+      placementStatus.textContent = "New map loaded. Previous points and routes were cleared.";
+      showSuccess("新地圖已載入，舊有點位和路線已清除。");
+    };
+    image.onerror = () => {
+      mapState.backgroundImage = imageData;
+      mapState.backgroundWidth = MAP_SIZE;
+      mapState.backgroundHeight = MAP_SIZE;
+      mapState.nodes = [];
+      mapState.segments = [];
+      currentRouteResult = null;
+      activeJourney = null;
+      placementDraft = null;
+      cancelRouteDraw(false);
+      stopAnimation();
+      persistMapState();
+      renderAll();
+      placementStatus.textContent = "New map loaded. Previous points and routes were cleared.";
+      showSuccess("新地圖已載入，舊有點位和路線已清除。");
+    };
+    image.src = imageData;
   };
   reader.readAsDataURL(file);
 }
@@ -2090,9 +2114,16 @@ function renderAll(shouldRerenderLists = true) {
 
 function renderMap() {
   const displayMapState = getDisplayMapState();
+  const mapWidth = getMapWidth(displayMapState);
+  const mapHeight = getMapHeight(displayMapState);
+
+  mapSvg.setAttribute("viewBox", `0 0 ${mapWidth} ${mapHeight}`);
+  mapSvg.style.setProperty("--map-aspect-ratio", `${mapWidth} / ${mapHeight}`);
 
   mapBackground.setAttributeNS("http://www.w3.org/1999/xlink", "href", displayMapState.backgroundImage || "");
   mapBackground.setAttribute("href", displayMapState.backgroundImage || "");
+  mapBackground.setAttribute("width", mapWidth);
+  mapBackground.setAttribute("height", mapHeight);
   mapEmptyState.style.display = displayMapState.backgroundImage || displayMapState.nodes.length ? "none" : "block";
 
   mapRoutesGroup.innerHTML = "";
@@ -2817,12 +2848,15 @@ function getDraftRoutePoints() {
 
 function getSvgPoint(event) {
   const rect = mapSvg.getBoundingClientRect();
-  const x = ((event.clientX - rect.left) / rect.width) * MAP_SIZE;
-  const y = ((event.clientY - rect.top) / rect.height) * MAP_SIZE;
+  const viewBox = mapSvg.viewBox.baseVal;
+  const maxX = viewBox && viewBox.width ? viewBox.width : getMapWidth(mapState);
+  const maxY = viewBox && viewBox.height ? viewBox.height : getMapHeight(mapState);
+  const x = ((event.clientX - rect.left) / rect.width) * maxX;
+  const y = ((event.clientY - rect.top) / rect.height) * maxY;
 
   return {
-    x: clamp(x, 0, MAP_SIZE),
-    y: clamp(y, 0, MAP_SIZE)
+    x: clamp(x, 0, maxX),
+    y: clamp(y, 0, maxY)
   };
 }
 
@@ -2886,6 +2920,21 @@ function persistStepJsonLibrary() {
   }
 }
 
+function removeLegacyBundledStepJson() {
+  const stepOneEntry = stepJsonLibrary.step1;
+
+  if (!stepOneEntry) {
+    return;
+  }
+
+  if (stepOneEntry.fileName !== "MCBTC_A.json" || stepOneEntry.routeKey !== "mcbtc") {
+    return;
+  }
+
+  stepJsonLibrary.step1 = null;
+  persistStepJsonLibrary();
+}
+
 function normalizeMapState(value) {
   const safeState = getEmptyMapState();
 
@@ -2894,6 +2943,12 @@ function normalizeMapState(value) {
   }
 
   safeState.backgroundImage = typeof value.backgroundImage === "string" ? value.backgroundImage : "";
+  safeState.backgroundWidth = normalizeMapDimension(
+    value.backgroundWidth ?? value.canvasWidth ?? value.width
+  );
+  safeState.backgroundHeight = normalizeMapDimension(
+    value.backgroundHeight ?? value.canvasHeight ?? value.height
+  );
   safeState.nodes = Array.isArray(value.nodes)
     ? value.nodes
         .filter((node) => node && typeof node.name === "string")
@@ -2901,8 +2956,8 @@ function normalizeMapState(value) {
           id: typeof node.id === "string" ? node.id : createId("node"),
           name: node.name,
           type: NODE_TYPE_META[node.type] ? node.type : "waypoint",
-          x: clamp(Number(node.x) || 0, 0, MAP_SIZE),
-          y: clamp(Number(node.y) || 0, 0, MAP_SIZE)
+          x: clamp(Number(node.x) || 0, 0, safeState.backgroundWidth),
+          y: clamp(Number(node.y) || 0, 0, safeState.backgroundHeight)
         }))
     : [];
   safeState.segments = Array.isArray(value.segments)
@@ -2915,7 +2970,7 @@ function normalizeMapState(value) {
           routeGroup: ROUTE_GROUP_META[segment.routeGroup] ? segment.routeGroup : "shared",
           stepTag: STEP_TAG_LABELS[segment.stepTag] ? segment.stepTag : "step3",
           label: typeof segment.label === "string" ? segment.label : "",
-          waypoints: normalizeSegmentWaypoints(segment)
+          waypoints: normalizeSegmentWaypoints(segment, safeState.backgroundWidth, safeState.backgroundHeight)
         }))
     : [];
   return safeState;
@@ -2945,13 +3000,13 @@ function normalizeStepJsonLibrary(value) {
   return safeLibrary;
 }
 
-function normalizeSegmentWaypoints(segment) {
+function normalizeSegmentWaypoints(segment, maxX = MAP_SIZE, maxY = MAP_SIZE) {
   if (Array.isArray(segment.waypoints)) {
-    return segment.waypoints.map(clonePoint).filter(isValidPoint);
+    return segment.waypoints.map((point) => clonePoint(point, maxX, maxY)).filter(isValidPoint);
   }
 
   if (Array.isArray(segment.pathPoints) && segment.pathPoints.length >= 2) {
-    return segment.pathPoints.slice(1, -1).map(clonePoint).filter(isValidPoint);
+    return segment.pathPoints.slice(1, -1).map((point) => clonePoint(point, maxX, maxY)).filter(isValidPoint);
   }
 
   return [];
@@ -2960,9 +3015,24 @@ function normalizeSegmentWaypoints(segment) {
 function getEmptyMapState() {
   return {
     backgroundImage: "",
+    backgroundWidth: MAP_SIZE,
+    backgroundHeight: MAP_SIZE,
     nodes: [],
     segments: []
   };
+}
+
+function getMapWidth(value) {
+  return normalizeMapDimension(value && value.backgroundWidth);
+}
+
+function getMapHeight(value) {
+  return normalizeMapDimension(value && value.backgroundHeight);
+}
+
+function normalizeMapDimension(value) {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) && numericValue > 0 ? numericValue : MAP_SIZE;
 }
 
 function getEmptyStepJsonLibrary() {
@@ -2980,10 +3050,10 @@ function formatSvgPoints(points) {
   return points.map((point) => `${point.x},${point.y}`).join(" ");
 }
 
-function clonePoint(point) {
+function clonePoint(point, maxX = MAP_SIZE, maxY = MAP_SIZE) {
   return {
-    x: clamp(Number(point.x) || 0, 0, MAP_SIZE),
-    y: clamp(Number(point.y) || 0, 0, MAP_SIZE)
+    x: clamp(Number(point.x) || 0, 0, maxX),
+    y: clamp(Number(point.y) || 0, 0, maxY)
   };
 }
 
