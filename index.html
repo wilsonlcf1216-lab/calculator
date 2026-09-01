@@ -419,7 +419,9 @@ td {
 
 .map-stage-wrap {
   position: relative;
-  min-height: clamp(560px, 68vh, 980px);
+  width: 85%;
+  margin: 0 auto;
+  min-height: clamp(476px, 57.8vh, 833px);
   border-radius: 22px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -998,6 +1000,7 @@ td {
   }
 
   .map-stage-wrap {
+    width: 100%;
     min-height: 420px;
   }
 
@@ -1807,6 +1810,11 @@ function startRouteDraw() {
   }
 
   placementDraft = null;
+  stopStepPlayback(false);
+  currentRouteResult = null;
+  activePlaybackStepKey = "";
+  activePlaybackMapState = null;
+  activeJourney = null;
   routeDraft = {
     editingSegmentId: null,
     fromId,
@@ -2547,6 +2555,10 @@ function getPlaybackDurationMs(step) {
 }
 
 function getDisplayMapState() {
+  if (routeDraft || placementDraft) {
+    return mapState;
+  }
+
   if (currentRouteResult && activePlaybackStepKey) {
     return activePlaybackMapState || getEmptyMapState();
   }
