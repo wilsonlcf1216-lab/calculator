@@ -125,6 +125,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 12px;
 }
 
@@ -435,6 +436,15 @@ td {
   cursor: crosshair;
 }
 
+.map-stage-wrap.lift-mode .map-stage {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.map-stage-wrap.lift-mode .map-empty-state {
+  display: none !important;
+}
+
 .map-empty-state {
   position: absolute;
   left: 20px;
@@ -446,6 +456,370 @@ td {
   border: 1px solid rgba(217, 226, 236, 0.92);
   color: var(--muted);
   line-height: 1.5;
+}
+
+.lift-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 3vw, 28px);
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.88) 32%, rgba(222, 232, 243, 0.92) 100%),
+    linear-gradient(180deg, #f8fbff 0%, #dce6f2 100%);
+}
+
+.lift-scene.hidden {
+  display: none;
+}
+
+.lift-scene-shell {
+  width: min(100%, 860px);
+  display: grid;
+  gap: clamp(12px, 2vw, 20px);
+}
+
+.lift-scene-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lift-scene-badge {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.82);
+  color: #f8fafc;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lift-scene-journey {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.lift-scene-floor-chip {
+  min-width: 74px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #edf2f7 100%);
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  text-align: center;
+}
+
+.lift-scene-floor-arrow {
+  color: #475569;
+  font-size: 1rem;
+}
+
+.lift-scene-elevator {
+  position: relative;
+  width: min(100%, 620px);
+  margin: 0 auto;
+  padding: clamp(18px, 2.4vw, 24px);
+  border-radius: 34px;
+  background: linear-gradient(180deg, #586579 0%, #2f3948 12%, #d3dde8 32%, #a3afbd 100%);
+  border: 2px solid rgba(71, 85, 105, 0.4);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -8px 24px rgba(15, 23, 42, 0.18),
+    0 26px 40px rgba(15, 23, 42, 0.18);
+}
+
+.lift-scene-lintel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin: 0 auto 18px;
+  padding: 14px 18px;
+  width: min(100%, 470px);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #2f3a49 0%, #161f2c 100%);
+  border: 1px solid rgba(203, 213, 225, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.lift-scene-display {
+  min-width: 142px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: #050816;
+  color: #86efac;
+  font-size: clamp(1.6rem, 5vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-shadow: 0 0 14px rgba(134, 239, 172, 0.46);
+  box-shadow:
+    inset 0 0 0 1px rgba(74, 222, 128, 0.28),
+    inset 0 0 28px rgba(22, 163, 74, 0.22);
+}
+
+.lift-scene-direction {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e2e8f0;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.lift-scene-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.lift-scene-building {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.16);
+  border: 1px solid rgba(191, 219, 254, 0.18);
+  color: #dbeafe;
+  font-size: 1.08rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.lift-scene-building[data-building="mcbtc"] {
+  background: rgba(244, 114, 182, 0.18);
+  border-color: rgba(251, 207, 232, 0.28);
+  color: #f9a8d4;
+}
+
+.lift-scene-building[data-building="hklm"] {
+  background: rgba(59, 130, 246, 0.18);
+  border-color: rgba(191, 219, 254, 0.28);
+  color: #93c5fd;
+}
+
+.lift-scene-building[data-building="csb"] {
+  background: rgba(34, 197, 94, 0.18);
+  border-color: rgba(187, 247, 208, 0.28);
+  color: #86efac;
+}
+
+.lift-scene-building[data-building="ipeb"] {
+  background: rgba(168, 85, 247, 0.18);
+  border-color: rgba(221, 214, 254, 0.28);
+  color: #c4b5fd;
+}
+
+.lift-scene-arrow-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.12);
+  color: #f8fafc;
+  font-size: 1.1rem;
+}
+
+.lift-scene-arrow-icon.up {
+  color: #38bdf8;
+}
+
+.lift-scene-arrow-icon.down {
+  color: #f97316;
+}
+
+.lift-scene-cabin {
+  position: relative;
+  width: min(100%, 500px);
+  height: clamp(290px, 50vw, 430px);
+  margin: 0 auto;
+  padding: clamp(18px, 2.4vw, 22px);
+  border-radius: 26px;
+  background: linear-gradient(180deg, #edf4fb 0%, #ccd7e3 100%);
+  border: 3px solid rgba(71, 85, 105, 0.36);
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 -12px 24px rgba(51, 65, 85, 0.12);
+}
+
+.lift-scene-interior {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.55) 0%, rgba(241, 245, 249, 0.7) 14%, rgba(241, 245, 249, 0.96) 50%, rgba(241, 245, 249, 0.7) 86%, rgba(148, 163, 184, 0.55) 100%),
+    linear-gradient(180deg, #eef5fb 0%, #cbd7e4 100%);
+  border: 2px solid rgba(148, 163, 184, 0.35);
+  overflow: hidden;
+}
+
+.lift-scene-light {
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  top: 20px;
+  height: 22px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(226, 232, 240, 0.8) 100%);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.65);
+}
+
+.lift-scene-rail {
+  position: absolute;
+  top: 58px;
+  bottom: 26px;
+  width: 8px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #94a3b8 0%, #cbd5e1 100%);
+  opacity: 0.8;
+}
+
+.lift-scene-rail.left {
+  left: 30px;
+}
+
+.lift-scene-rail.right {
+  right: 30px;
+}
+
+.lift-scene-floor-plate {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  width: 58%;
+  height: 16px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #9aa9bb 0%, #d5dde7 100%);
+}
+
+.lift-scene-bed {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: 72%;
+  height: 128px;
+  opacity: 0.98;
+}
+
+.lift-scene-bed svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.lift-scene-bed .map-marker-bed-team .lead-arm,
+.lift-scene-bed .map-marker-bed-team .lead-leg-left,
+.lift-scene-bed .map-marker-bed-team .helper-arm,
+.lift-scene-bed .map-marker-bed-team .helper-leg-right {
+  animation: none;
+  transform: none;
+}
+
+.lift-scene-door {
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  width: calc(50% - 7px);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(246, 250, 255, 0.95) 0%, rgba(198, 208, 219, 0.96) 100%);
+  border: 2px solid rgba(100, 116, 139, 0.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 -10px 18px rgba(100, 116, 139, 0.16);
+}
+
+.lift-scene-door::before {
+  content: "";
+  position: absolute;
+  top: 26px;
+  bottom: 26px;
+  width: 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(148, 163, 184, 0.62) 100%);
+}
+
+.lift-scene-door.left {
+  left: 14px;
+}
+
+.lift-scene-door.left::before {
+  right: 14px;
+}
+
+.lift-scene-door.right {
+  right: 14px;
+}
+
+.lift-scene-door.right::before {
+  left: 14px;
+}
+
+.lift-scene-caption {
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  text-align: center;
+  color: #334155;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+@media (max-width: 720px) {
+  .lift-scene-journey {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .lift-scene-floor-chip {
+    min-width: 64px;
+  }
+
+  .lift-scene-display {
+    min-width: 112px;
+    letter-spacing: 0.08em;
+  }
+
+  .lift-scene-status {
+    gap: 8px;
+  }
+
+  .lift-scene-building {
+    min-width: 78px;
+    font-size: 0.98rem;
+    letter-spacing: 0.1em;
+  }
+
+  .lift-scene-direction-text {
+    display: none;
+  }
 }
 
 .map-marker-bed-team {
@@ -1015,6 +1389,14 @@ td {
   fill: #f97316;
   stroke: #ffffff;
   stroke-width: 4;
+  cursor: grab;
+}
+
+.draft-route-point.dragging {
+  cursor: grabbing;
+  fill: #fb923c;
+  stroke: #1d4ed8;
+  stroke-width: 5;
 }
 
 @media (max-width: 880px) {
@@ -1239,6 +1621,77 @@ td {
                       </g>
                     </g>
                   </svg>
+                  <div id="lift-scene" class="lift-scene hidden" aria-hidden="true">
+                    <div class="lift-scene-shell">
+                      <div class="lift-scene-header">
+                        <div class="lift-scene-badge">Lift Travelling</div>
+                        <div class="lift-scene-journey">
+                          <span id="lift-scene-from" class="lift-scene-floor-chip">10/F</span>
+                          <span class="lift-scene-floor-arrow">to</span>
+                          <span id="lift-scene-to" class="lift-scene-floor-chip">G/F</span>
+                        </div>
+                      </div>
+                      <div class="lift-scene-elevator">
+                        <div class="lift-scene-lintel">
+                          <div id="lift-scene-display" class="lift-scene-display">10/F</div>
+                          <div class="lift-scene-status">
+                            <span id="lift-scene-building" class="lift-scene-building">MCBTC</span>
+                            <div class="lift-scene-direction">
+                              <span id="lift-scene-direction-arrow" class="lift-scene-arrow-icon up">▲</span>
+                              <span id="lift-scene-direction-text" class="lift-scene-direction-text">Moving Up</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="lift-scene-cabin">
+                          <div class="lift-scene-interior">
+                            <div class="lift-scene-light"></div>
+                            <div class="lift-scene-rail left"></div>
+                            <div class="lift-scene-rail right"></div>
+                            <div class="lift-scene-floor-plate"></div>
+                            <div class="lift-scene-bed" aria-hidden="true">
+                              <svg viewBox="-110 -90 220 170" preserveAspectRatio="xMidYMid meet">
+                                <g class="map-marker-bed-team">
+                                  <g class="marker-scale" transform="translate(10 4) scale(0.9)">
+                                    <g transform="scale(-1 1)">
+                                      <ellipse class="bed-shadow" cx="0" cy="40" rx="62" ry="7"></ellipse>
+                                      <path class="bed-frame-dark" d="M -51 -24 Q -57 -30 -64 -30 Q -73 -30 -76 -21 Q -78 -14 -72 -9 L -55 6 Q -49 12 -40 12 L 63 12 Q 70 12 74 6 Q 78 0 76 -7 Q 74 -14 66 -14 L -6 -14 L -18 -14 L -32 -14 Z"></path>
+                                      <path class="bed-lime" d="M -43 -21 Q -39 -17 -33 -17 L 63 -17 Q 68 -17 70 -14 Q 72 -11 72 -7 L 72 -3 L -22 -3 L -43 -21 Z"></path>
+                                      <rect class="bed-frame-dark" x="-44" y="12" width="8" height="17"></rect>
+                                      <rect class="bed-frame-dark" x="44" y="12" width="8" height="17"></rect>
+                                      <rect class="bed-iv-soft" x="-46" y="29" width="100" height="8" rx="1"></rect>
+                                      <circle class="bed-frame-dark" cx="-47" cy="47" r="12"></circle>
+                                      <circle class="bed-wheel-white" cx="-47" cy="47" r="8"></circle>
+                                      <circle class="bed-wheel-hub" cx="-47" cy="47" r="2.6"></circle>
+                                      <circle class="bed-frame-dark" cx="49" cy="47" r="12"></circle>
+                                      <circle class="bed-wheel-white" cx="49" cy="47" r="8"></circle>
+                                      <circle class="bed-wheel-hub" cx="49" cy="47" r="2.6"></circle>
+                                      <g class="helper-staff" transform="translate(-50 -43) scale(3.42)">
+                                        <circle class="staff-head" cx="-14" cy="0" r="5.8"></circle>
+                                        <path class="staff-body helper" d="M -21 8 Q -14 2 -8 6 L -8 19 Q -14 23 -20 19 Z"></path>
+                                        <g class="helper-arm">
+                                          <path class="staff-limb" d="M -20 9 L -26 3"></path>
+                                        </g>
+                                        <path class="staff-limb" d="M -8 9 L -2 4"></path>
+                                        <path class="staff-limb" d="M -18 19 L -18 31"></path>
+                                        <path class="staff-foot" d="M -18 31 L -13 31"></path>
+                                        <g class="helper-leg-right">
+                                          <path class="staff-limb" d="M -10 19 L -10 31"></path>
+                                          <path class="staff-foot" d="M -10 31 L -5 31"></path>
+                                        </g>
+                                      </g>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </div>
+                          </div>
+                          <div id="lift-scene-door-left" class="lift-scene-door left"></div>
+                          <div id="lift-scene-door-right" class="lift-scene-door right"></div>
+                        </div>
+                      </div>
+                      <div id="lift-scene-caption" class="lift-scene-caption">Doors opening</div>
+                    </div>
+                  </div>
                   <div id="map-empty-state" class="map-empty-state">
                     Upload a floor plan or start placing points on the blank canvas.
                   </div>
@@ -1516,7 +1969,9 @@ let activeJourney = null;
 let placementDraft = null;
 let routeDraft = null;
 let draggingNodeId = null;
+let draggingDraftWaypointIndex = -1;
 let animationFrameId = null;
+let liftAnimationFrameId = null;
 let playbackTimeoutId = null;
 let playbackSequenceToken = 0;
 let activePlaybackStepKey = "";
@@ -1524,6 +1979,9 @@ let activePlaybackMapState = null;
 let activePlaybackDurationMs = 0;
 let activePlaybackIndex = -1;
 let isPlaybackPaused = false;
+let suppressMapClick = false;
+let activeLiftSceneProgress = 0;
+let activeLiftSceneId = "";
 
 const form = document.getElementById("route-form");
 const resultsSection = document.getElementById("results");
@@ -1536,7 +1994,18 @@ const mapLabelsGroup = document.getElementById("map-labels");
 const mapMarker = document.getElementById("map-marker");
 const mapMarkerWalker = document.getElementById("map-marker-walker");
 const mapStatus = document.getElementById("map-status");
+const mapStageWrap = document.querySelector(".map-stage-wrap");
 const mapEmptyState = document.getElementById("map-empty-state");
+const liftScene = document.getElementById("lift-scene");
+const liftSceneFrom = document.getElementById("lift-scene-from");
+const liftSceneTo = document.getElementById("lift-scene-to");
+const liftSceneDisplay = document.getElementById("lift-scene-display");
+const liftSceneBuilding = document.getElementById("lift-scene-building");
+const liftSceneDirectionArrow = document.getElementById("lift-scene-direction-arrow");
+const liftSceneDirectionText = document.getElementById("lift-scene-direction-text");
+const liftSceneCaption = document.getElementById("lift-scene-caption");
+const liftSceneDoorLeft = document.getElementById("lift-scene-door-left");
+const liftSceneDoorRight = document.getElementById("lift-scene-door-right");
 const playbackToggleButton = document.getElementById("playback-toggle");
 const stepPlaybackMeta = document.getElementById("step-playback-meta");
 const backgroundUpload = document.getElementById("background-upload");
@@ -1635,22 +2104,38 @@ function calculateRoute(originWard, destinationWard) {
 
   const steps = segmentTemplate.map((segment, index) => {
     if (segment.calculated === "origin") {
+      const fromFloor = normalizeFloorLabel(`${origin.floor}/F`);
+      const toFloor = normalizeFloorLabel(toLiftCode(origin.transferFloor));
+
       return {
         stepTag: segment.stepTag,
         playbackStepKey: PLAYBACK_STEP_KEYS[index] || segment.stepTag,
         label: segment.label,
         distance: 0,
-        time: Math.abs(origin.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS
+        time: Math.abs(origin.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS,
+        liftScene: {
+          fromFloor,
+          toFloor,
+          buildingLabel: getLiftBuildingDisplayLabel(origin.routeKey, origin.building)
+        }
       };
     }
 
     if (segment.calculated === "destination") {
+      const fromFloor = normalizeFloorLabel(toLiftCode(origin.transferFloor));
+      const toFloor = normalizeFloorLabel(`${destination.floor}/F`);
+
       return {
         stepTag: segment.stepTag,
         playbackStepKey: PLAYBACK_STEP_KEYS[index] || segment.stepTag,
         label: segment.label,
         distance: 0,
-        time: Math.abs(destination.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS
+        time: Math.abs(destination.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS,
+        liftScene: {
+          fromFloor,
+          toFloor,
+          buildingLabel: getLiftBuildingDisplayLabel(destination.routeKey, destination.building)
+        }
       };
     }
 
@@ -1714,7 +2199,124 @@ function parseDestinationWard(input) {
   return {
     ward: input,
     wing: match[1],
-    floor: Number(match[2])
+    floor: Number(match[2]),
+    building: "IPEB",
+    routeKey: "ipeb"
+  };
+}
+
+function getLiftBuildingDisplayLabel(routeKey = "", fallback = "") {
+  const normalizedKey = String(routeKey || "").trim().toLowerCase();
+
+  if (normalizedKey === "mcbtc") {
+    return "MCBTC";
+  }
+
+  if (normalizedKey === "hklm") {
+    return "HKLM";
+  }
+
+  if (normalizedKey === "ef" || normalizedKey === "csb") {
+    return "CSB";
+  }
+
+  if (normalizedKey === "ipeb") {
+    return "IPEB";
+  }
+
+  const normalizedFallback = String(fallback || "").trim().toUpperCase();
+
+  if (normalizedFallback.includes("MCBTC")) {
+    return "MCBTC";
+  }
+
+  if (normalizedFallback.includes("HKLM")) {
+    return "HKLM";
+  }
+
+  if (normalizedFallback.includes("CSB") || normalizedFallback.includes("EF")) {
+    return "CSB";
+  }
+
+  if (normalizedFallback.includes("IPEB") || normalizedFallback.includes("WING")) {
+    return "IPEB";
+  }
+
+  return normalizedFallback || "--";
+}
+
+function getActiveLiftSceneBuildingLabel(scene) {
+  if (!currentRouteResult || !activePlaybackStepKey) {
+    return getLiftBuildingDisplayLabel("", scene?.buildingLabel || "");
+  }
+
+  if (activePlaybackStepKey === "step2") {
+    const step1Entry = getStepJsonEntry("step1", currentRouteResult.origin.routeKey);
+    return getLiftBuildingDisplayLabel(step1Entry?.routeKey || currentRouteResult.origin.routeKey, currentRouteResult.origin.building || scene?.buildingLabel || "");
+  }
+
+  if (activePlaybackStepKey === "step5") {
+    const step6Entry = stepJsonLibrary.step6;
+    return getLiftBuildingDisplayLabel(step6Entry?.routeKey || currentRouteResult.destination.routeKey || "ipeb", currentRouteResult.destination.building || scene?.buildingLabel || "");
+  }
+
+  return getLiftBuildingDisplayLabel("", scene?.buildingLabel || "");
+}
+
+function toLiftCode(floorNumber) {
+  return `L${String(Math.max(0, Number(floorNumber) || 0)).padStart(2, "0")}`;
+}
+
+function normalizeFloorLabel(value) {
+  const raw = String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+
+  if (!raw) {
+    return {
+      raw: "",
+      code: "",
+      display: "",
+      numericFloor: null
+    };
+  }
+
+  if (raw === "L00" || raw === "G/F" || raw === "GF" || raw === "00/F" || raw === "0/F") {
+    return {
+      raw,
+      code: "L00",
+      display: "G/F",
+      numericFloor: 0
+    };
+  }
+
+  const liftCodeMatch = raw.match(/^L(\d{2})$/);
+
+  if (liftCodeMatch) {
+    const numericFloor = Number(liftCodeMatch[1]);
+    return {
+      raw,
+      code: `L${liftCodeMatch[1]}`,
+      display: numericFloor === 0 ? "G/F" : `${numericFloor}/F`,
+      numericFloor
+    };
+  }
+
+  const floorMatch = raw.match(/(?:[A-Z]+)?(\d{1,2})\/F$/);
+
+  if (floorMatch) {
+    const numericFloor = Number(floorMatch[1]);
+    return {
+      raw,
+      code: toLiftCode(numericFloor),
+      display: numericFloor === 0 ? "G/F" : `${numericFloor}/F`,
+      numericFloor
+    };
+  }
+
+  return {
+    raw,
+    code: raw,
+    display: raw,
+    numericFloor: null
   };
 }
 
@@ -1723,10 +2325,10 @@ function renderResults(result) {
   document.getElementById("total-time").textContent = `${result.totalTime.toFixed(1)} s`;
   document.getElementById("total-time-minutes").textContent = result.totalTimeMinutes;
   document.getElementById("origin-building").textContent = result.origin.building;
-  document.getElementById("origin-floor").textContent = `${result.origin.floor}/F`;
-  document.getElementById("transfer-floor").textContent = `L${String(result.origin.transferFloor).padStart(2, "0")}`;
+  document.getElementById("origin-floor").textContent = normalizeFloorLabel(`${result.origin.floor}/F`).display;
+  document.getElementById("transfer-floor").textContent = normalizeFloorLabel(toLiftCode(result.origin.transferFloor)).display;
   document.getElementById("destination-wing").textContent = `${result.destination.wing} Wing`;
-  document.getElementById("destination-floor").textContent = `${result.destination.floor}/F`;
+  document.getElementById("destination-floor").textContent = normalizeFloorLabel(`${result.destination.floor}/F`).display;
 
   const tableBody = document.getElementById("step-breakdown");
   tableBody.innerHTML = "";
@@ -1884,7 +2486,7 @@ function startRouteDraw() {
     waypoints: []
   };
 
-  updateRouteDrawStatus(`Drawing from "${fromNode.name}" to "${toNode.name}". Click the map to add bend points, then finish the route.`);
+  updateRouteDrawStatus(`Drawing from "${fromNode.name}" to "${toNode.name}". Click the map to add bend points, drag bend dots to adjust them, then finish the route.`);
   showError("");
   renderMap();
 }
@@ -1954,20 +2556,26 @@ function cancelRouteDraw(shouldRender = true) {
 }
 
 function handleMapClick(event) {
-  if (draggingNodeId) {
+  if (draggingNodeId || draggingDraftWaypointIndex >= 0) {
     return;
   }
 
   const targetNodeId = event.target && event.target.dataset ? event.target.dataset.nodeId : "";
+  const targetWaypointIndex = event.target && event.target.dataset ? event.target.dataset.waypointIndex : "";
   const { x, y } = getSvgPoint(event);
 
+  if (suppressMapClick) {
+    suppressMapClick = false;
+    return;
+  }
+
   if (routeDraft) {
-    if (targetNodeId) {
+    if (targetNodeId || targetWaypointIndex) {
       return;
     }
 
     routeDraft.waypoints.push({ x, y });
-    updateRouteDrawStatus(`Added bend point ${routeDraft.waypoints.length}. Continue clicking along the path, then finish the route.`);
+    updateRouteDrawStatus(`Added bend point ${routeDraft.waypoints.length}. Continue clicking or drag bend dots to refine the path, then finish the route.`);
     renderMap();
     return;
   }
@@ -1993,6 +2601,14 @@ function handleMapClick(event) {
 
 function handleMapPointerDown(event) {
   const nodeId = event.target && event.target.dataset ? event.target.dataset.nodeId : "";
+  const waypointIndex = event.target && event.target.dataset ? event.target.dataset.waypointIndex : "";
+
+  if (routeDraft && waypointIndex !== "") {
+    draggingDraftWaypointIndex = Number(waypointIndex);
+    event.target.classList.add("dragging");
+    showError("");
+    return;
+  }
 
   if (!nodeId) {
     return;
@@ -2004,6 +2620,21 @@ function handleMapPointerDown(event) {
 }
 
 function handleMapPointerMove(event) {
+  if (draggingDraftWaypointIndex >= 0) {
+    const { x, y } = getSvgPoint(event);
+    const waypoint = routeDraft && routeDraft.waypoints[draggingDraftWaypointIndex];
+
+    if (!waypoint) {
+      return;
+    }
+
+    waypoint.x = x;
+    waypoint.y = y;
+    suppressMapClick = true;
+    renderMap();
+    return;
+  }
+
   if (!draggingNodeId) {
     return;
   }
@@ -2017,10 +2648,23 @@ function handleMapPointerMove(event) {
 
   node.x = x;
   node.y = y;
+  suppressMapClick = true;
   renderMap();
 }
 
 function handleMapPointerUp() {
+  if (draggingDraftWaypointIndex >= 0) {
+    const activeWaypoint = mapSvg.querySelector(`[data-waypoint-index="${draggingDraftWaypointIndex}"]`);
+
+    if (activeWaypoint) {
+      activeWaypoint.classList.remove("dragging");
+    }
+
+    draggingDraftWaypointIndex = -1;
+    renderMap();
+    return;
+  }
+
   if (!draggingNodeId) {
     return;
   }
@@ -2183,6 +2827,8 @@ function renderMap() {
   const displayMapState = getDisplayMapState();
   const mapWidth = getMapWidth(displayMapState);
   const mapHeight = getMapHeight(displayMapState);
+  const activePlaybackStep = getActivePlaybackStep();
+  const activeLiftScene = activePlaybackStep && activePlaybackStep.liftScene ? activePlaybackStep.liftScene : null;
 
   mapSvg.setAttribute("viewBox", `0 0 ${mapWidth} ${mapHeight}`);
   mapSvg.style.setProperty("--map-aspect-ratio", `${mapWidth} / ${mapHeight}`);
@@ -2228,12 +2874,13 @@ function renderMap() {
       mapRoutesGroup.appendChild(draftLine);
     }
 
-    routeDraft.waypoints.forEach((point) => {
+    routeDraft.waypoints.forEach((point, index) => {
       const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       dot.setAttribute("cx", point.x);
       dot.setAttribute("cy", point.y);
       dot.setAttribute("r", 9);
       dot.setAttribute("class", "draft-route-point");
+      dot.dataset.waypointIndex = String(index);
       mapRoutesGroup.appendChild(dot);
     });
   }
@@ -2254,31 +2901,176 @@ function renderMap() {
   });
 
   if (routeDraft) {
+    stopLiftScene();
     mapStatus.textContent = "Drawing route";
   } else if (currentRouteResult && activePlaybackStepKey) {
     const loadedEntry = getStepJsonEntry(activePlaybackStepKey, currentRouteResult.origin.routeKey);
     const stepLabel = STEP_TAG_LABELS[activePlaybackStepKey] || activePlaybackStepKey;
 
-    if (isPlaybackPaused && activeJourney && activeJourney.points.length > 1) {
+    if (activeLiftScene) {
+      mapStatus.textContent = `${isPlaybackPaused ? "Paused on" : "Playing"} ${stepLabel} · Lift scene`;
+      stopAnimation();
+      renderLiftScene(activeLiftScene, activePlaybackDurationMs || 2400, isPlaybackPaused);
+    } else if (isPlaybackPaused && activeJourney && activeJourney.points.length > 1) {
+      stopLiftScene();
       mapStatus.textContent = `Paused on ${stepLabel}${loadedEntry ? ` · ${loadedEntry.fileName}` : ""}`;
       stopAnimation(false);
     } else if (isPlaybackPaused) {
+      stopLiftScene();
       mapStatus.textContent = `Paused on ${stepLabel}`;
       stopAnimation();
     } else if (activeJourney && activeJourney.points.length > 1) {
+      stopLiftScene();
       mapStatus.textContent = `Playing ${stepLabel}${loadedEntry ? ` · ${loadedEntry.fileName}` : ""}`;
       startAnimation(activeJourney.points, activePlaybackDurationMs || undefined);
     } else if (loadedEntry) {
+      stopLiftScene();
       mapStatus.textContent = `${stepLabel} loaded but no drawable path`;
       stopAnimation();
     } else {
+      stopLiftScene();
       mapStatus.textContent = `${stepLabel} has no JSON yet`;
       stopAnimation();
     }
   } else {
+    stopLiftScene();
     mapStatus.textContent = currentRouteResult ? "No mapped path for this route yet" : "Waiting for route";
     stopAnimation();
   }
+}
+
+function getActivePlaybackStep() {
+  if (!currentRouteResult || activePlaybackIndex < 0) {
+    return null;
+  }
+
+  return currentRouteResult.steps[activePlaybackIndex] || null;
+}
+
+function stopLiftScene() {
+  if (liftAnimationFrameId) {
+    window.cancelAnimationFrame(liftAnimationFrameId);
+    liftAnimationFrameId = null;
+  }
+
+  activeLiftSceneId = "";
+  activeLiftSceneProgress = 0;
+  mapStageWrap.classList.remove("lift-mode");
+  liftScene.classList.add("hidden");
+  liftScene.setAttribute("aria-hidden", "true");
+}
+
+function renderLiftScene(scene, durationMs, isPaused) {
+  if (!scene) {
+    stopLiftScene();
+    return;
+  }
+
+  const sceneId = `${activePlaybackStepKey}:${scene.fromFloor.code}:${scene.toFloor.code}`;
+
+  if (sceneId !== activeLiftSceneId) {
+    activeLiftSceneId = sceneId;
+    activeLiftSceneProgress = 0;
+  }
+
+  if (liftAnimationFrameId) {
+    window.cancelAnimationFrame(liftAnimationFrameId);
+    liftAnimationFrameId = null;
+  }
+
+  mapStageWrap.classList.add("lift-mode");
+  liftScene.classList.remove("hidden");
+  liftScene.setAttribute("aria-hidden", "false");
+  liftSceneFrom.textContent = scene.fromFloor.display || scene.fromFloor.code || "--";
+  liftSceneTo.textContent = scene.toFloor.display || scene.toFloor.code || "--";
+  liftSceneBuilding.textContent = getActiveLiftSceneBuildingLabel(scene);
+  liftSceneBuilding.dataset.building = liftSceneBuilding.textContent.trim().toLowerCase();
+
+  const renderFrame = (progress) => {
+    const state = getLiftSceneFrameState(scene, progress);
+    const doorTravelPercent = 86 * state.openRatio;
+
+    liftSceneDisplay.textContent = state.displayFloor;
+    liftSceneCaption.textContent = state.caption;
+    liftSceneDirectionArrow.textContent = state.direction === "down" ? "▼" : "▲";
+    liftSceneDirectionArrow.className = `lift-scene-arrow-icon ${state.direction === "down" ? "down" : "up"}`;
+    liftSceneDirectionText.textContent = state.direction === "down" ? "Moving Down" : "Moving Up";
+    liftSceneDoorLeft.style.transform = `translateX(${-doorTravelPercent}%)`;
+    liftSceneDoorRight.style.transform = `translateX(${doorTravelPercent}%)`;
+  };
+
+  if (isPaused) {
+    renderFrame(activeLiftSceneProgress);
+    return;
+  }
+
+  const safeDurationMs = Math.max(durationMs || 0, 2200);
+  const startedAt = performance.now() - (activeLiftSceneProgress * safeDurationMs);
+
+  function animateFrame(now) {
+    activeLiftSceneProgress = Math.min((now - startedAt) / safeDurationMs, 1);
+    renderFrame(activeLiftSceneProgress);
+
+    if (activeLiftSceneProgress < 1) {
+      liftAnimationFrameId = window.requestAnimationFrame(animateFrame);
+    } else {
+      liftAnimationFrameId = null;
+    }
+  }
+
+  liftAnimationFrameId = window.requestAnimationFrame(animateFrame);
+}
+
+function getLiftSceneFrameState(scene, progress) {
+  const clampedProgress = Math.min(Math.max(progress, 0), 1);
+  const closePhase = 0.22;
+  const openPhaseStart = 0.78;
+  const numericStart = scene.fromFloor.numericFloor;
+  const numericEnd = scene.toFloor.numericFloor;
+  const direction = numericStart !== null && numericEnd !== null && numericEnd < numericStart ? "down" : "up";
+
+  if (clampedProgress < closePhase) {
+    const closeProgress = clampedProgress / closePhase;
+    return {
+      openRatio: 1 - closeProgress,
+      displayFloor: scene.fromFloor.display || scene.fromFloor.code || "--",
+      caption: `Doors closing · ${scene.fromFloor.display || scene.fromFloor.code || "--"} to ${scene.toFloor.display || scene.toFloor.code || "--"}`,
+      direction
+    };
+  }
+
+  if (clampedProgress < openPhaseStart) {
+    const travelProgress = (clampedProgress - closePhase) / (openPhaseStart - closePhase);
+    return {
+      openRatio: 0,
+      displayFloor: getAnimatedLiftFloor(scene.fromFloor, scene.toFloor, travelProgress),
+      caption: `${direction === "down" ? "Descending" : "Ascending"} inside lift`,
+      direction
+    };
+  }
+
+  const openProgress = (clampedProgress - openPhaseStart) / (1 - openPhaseStart);
+  return {
+    openRatio: openProgress,
+    displayFloor: scene.toFloor.display || scene.toFloor.code || "--",
+    caption: `Doors opening · arriving ${scene.toFloor.display || scene.toFloor.code || "--"}`,
+    direction
+  };
+}
+
+function getAnimatedLiftFloor(fromFloor, toFloor, progress) {
+  if (fromFloor.numericFloor === null || toFloor.numericFloor === null) {
+    return progress < 0.5
+      ? (fromFloor.display || fromFloor.code || "--")
+      : (toFloor.display || toFloor.code || "--");
+  }
+
+  const exactFloor = fromFloor.numericFloor + ((toFloor.numericFloor - fromFloor.numericFloor) * progress);
+  const steppedFloor = toFloor.numericFloor >= fromFloor.numericFloor
+    ? Math.floor(exactFloor)
+    : Math.ceil(exactFloor);
+
+  return normalizeFloorLabel(toLiftCode(steppedFloor)).display;
 }
 
 function refreshSelectOptions() {
@@ -2455,7 +3247,7 @@ function startAnimation(points, durationOverrideMs) {
     return;
   }
 
-  const durationMs = durationOverrideMs || Math.min(Math.max(totalLength * 8, 2200), 6000);
+  const durationMs = durationOverrideMs || Math.min(Math.max(totalLength * 12, 3000), 9000);
   const startedAt = performance.now();
 
   function animateFrame(now) {
@@ -2507,6 +3299,7 @@ function stopStepPlayback(clearCurrentRoute = true) {
   clearPlaybackTimer();
 
   stopAnimation();
+  stopLiftScene();
   activePlaybackStepKey = "";
   activePlaybackMapState = null;
   activePlaybackDurationMs = 0;
@@ -2601,7 +3394,7 @@ function getPlaybackDurationMs(step) {
     return 1400;
   }
 
-  return Math.min(Math.max((Number(step.time) || 0) * 80, 1400), 4200);
+  return Math.min(Math.max((Number(step.time) || 0) * 140, 2200), 7000);
 }
 
 function getDisplayMapState() {
