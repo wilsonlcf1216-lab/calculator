@@ -978,15 +978,15 @@ td {
 .route-segment {
   fill: none;
   stroke: #f97316 !important;
-  stroke-width: 10;
+  stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 20 14;
+  stroke-dasharray: 9 20;
   opacity: 0.55;
 }
 
 .route-segment.active {
-  stroke-width: 14;
+  stroke-width: 8;
   opacity: 0.92;
   filter: drop-shadow(0 8px 12px rgba(15, 23, 42, 0.18));
 }
@@ -1004,10 +1004,10 @@ td {
 .draft-route {
   fill: none;
   stroke: #f97316;
-  stroke-width: 9;
+  stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 20 14;
+  stroke-dasharray: 9 20;
   opacity: 0.95;
 }
 
@@ -1432,6 +1432,8 @@ const MAP_STORAGE_KEY = "ward-decanting-map-state-v2";
 const STEP_JSON_LIBRARY_STORAGE_KEY = "ward-decanting-step-json-library-v1";
 const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
+const MARKER_PATH_OFFSET_X = 40;
+const MARKER_PATH_OFFSET_Y = 24;
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const STEP_JSON_DEFAULTS = [
@@ -2469,7 +2471,7 @@ function startAnimation(points, durationOverrideMs) {
     const progress = Math.min((now - startedAt) / durationMs, 1);
     const targetDistance = totalLength * progress;
     const pointState = getPointStateAtDistance(pathSegments, targetDistance);
-    mapMarker.setAttribute("transform", `translate(${pointState.x} ${pointState.y})`);
+    mapMarker.setAttribute("transform", `translate(${pointState.x + MARKER_PATH_OFFSET_X} ${pointState.y + MARKER_PATH_OFFSET_Y})`);
 
     if (progress < 1) {
       animationFrameId = window.requestAnimationFrame(animateFrame);
