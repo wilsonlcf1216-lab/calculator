@@ -669,11 +669,11 @@ td {
 .lift-scene-bed {
   position: absolute;
   left: 50%;
-  bottom: 38px;
+  bottom: 28px;
   transform: translateX(-50%);
-  width: 55%;
-  height: 74px;
-  opacity: 0.92;
+  width: 72%;
+  height: 128px;
+  opacity: 0.98;
 }
 
 .lift-scene-bed svg {
@@ -1577,23 +1577,38 @@ td {
                             <div class="lift-scene-rail right"></div>
                             <div class="lift-scene-floor-plate"></div>
                             <div class="lift-scene-bed" aria-hidden="true">
-                              <svg viewBox="0 0 240 80">
-                                <ellipse cx="120" cy="70" rx="78" ry="7" fill="rgba(15, 23, 42, 0.12)"></ellipse>
-                                <path d="M 46 50 L 62 24 Q 66 18 74 18 L 172 18 Q 184 18 190 28 L 198 42 Q 201 47 197 50 Q 194 53 188 53 L 46 53 Q 41 53 39 50 Q 37 47 40 44 Z" fill="#a9d57a"></path>
-                                <rect x="58" y="53" width="124" height="8" rx="3" fill="#abd9e7"></rect>
-                                <rect x="65" y="61" width="8" height="10" rx="2" fill="#0a1070"></rect>
-                                <rect x="168" y="61" width="8" height="10" rx="2" fill="#0a1070"></rect>
-                                <circle cx="64" cy="73" r="9" fill="#0a1070"></circle>
-                                <circle cx="64" cy="73" r="5.8" fill="#f5f7f8"></circle>
-                                <circle cx="176" cy="73" r="9" fill="#0a1070"></circle>
-                                <circle cx="176" cy="73" r="5.8" fill="#f5f7f8"></circle>
-                                <g transform="translate(90 6) scale(1.3)">
-                                  <circle cx="0" cy="6" r="5.8" fill="#f8d5c2" stroke="#8b5e3c" stroke-width="1.2"></circle>
-                                  <path d="M -6 14 Q 0 9 6 14 L 5 28 Q 0 31 -5 28 Z" fill="#0f766e" stroke="#115e59" stroke-width="1.1"></path>
-                                  <path d="M -6 16 L -12 10" fill="none" stroke="#0f172a" stroke-width="2.1" stroke-linecap="round"></path>
-                                  <path d="M 6 16 L 12 12" fill="none" stroke="#0f172a" stroke-width="2.1" stroke-linecap="round"></path>
-                                  <path d="M -4 28 L -7 40" fill="none" stroke="#0f172a" stroke-width="2.1" stroke-linecap="round"></path>
-                                  <path d="M 4 28 L 8 40" fill="none" stroke="#0f172a" stroke-width="2.1" stroke-linecap="round"></path>
+                              <svg viewBox="-110 -90 220 170" preserveAspectRatio="xMidYMid meet">
+                                <g class="map-marker-bed-team">
+                                  <g class="marker-scale" transform="translate(10 4) scale(0.9)">
+                                    <g transform="scale(-1 1)">
+                                      <ellipse class="bed-shadow" cx="0" cy="40" rx="62" ry="7"></ellipse>
+                                      <path class="bed-frame-dark" d="M -51 -24 Q -57 -30 -64 -30 Q -73 -30 -76 -21 Q -78 -14 -72 -9 L -55 6 Q -49 12 -40 12 L 63 12 Q 70 12 74 6 Q 78 0 76 -7 Q 74 -14 66 -14 L -6 -14 L -18 -14 L -32 -14 Z"></path>
+                                      <path class="bed-lime" d="M -43 -21 Q -39 -17 -33 -17 L 63 -17 Q 68 -17 70 -14 Q 72 -11 72 -7 L 72 -3 L -22 -3 L -43 -21 Z"></path>
+                                      <rect class="bed-frame-dark" x="-44" y="12" width="8" height="17"></rect>
+                                      <rect class="bed-frame-dark" x="44" y="12" width="8" height="17"></rect>
+                                      <rect class="bed-iv-soft" x="-46" y="29" width="100" height="8" rx="1"></rect>
+                                      <circle class="bed-frame-dark" cx="-47" cy="47" r="12"></circle>
+                                      <circle class="bed-wheel-white" cx="-47" cy="47" r="8"></circle>
+                                      <circle class="bed-wheel-hub" cx="-47" cy="47" r="2.6"></circle>
+                                      <circle class="bed-frame-dark" cx="49" cy="47" r="12"></circle>
+                                      <circle class="bed-wheel-white" cx="49" cy="47" r="8"></circle>
+                                      <circle class="bed-wheel-hub" cx="49" cy="47" r="2.6"></circle>
+                                      <g class="helper-staff" transform="translate(-50 -43) scale(3.42)">
+                                        <circle class="staff-head" cx="-14" cy="0" r="5.8"></circle>
+                                        <path class="staff-body helper" d="M -21 8 Q -14 2 -8 6 L -8 19 Q -14 23 -20 19 Z"></path>
+                                        <g class="helper-arm">
+                                          <path class="staff-limb" d="M -20 9 L -26 3"></path>
+                                        </g>
+                                        <path class="staff-limb" d="M -8 9 L -2 4"></path>
+                                        <path class="staff-limb" d="M -18 19 L -21 31"></path>
+                                        <path class="staff-foot" d="M -21 31 L -13 31"></path>
+                                        <g class="helper-leg-right">
+                                          <path class="staff-limb" d="M -10 19 L -6 31"></path>
+                                          <path class="staff-foot" d="M -6 31 L 2 31"></path>
+                                        </g>
+                                      </g>
+                                    </g>
+                                  </g>
                                 </g>
                               </svg>
                             </div>
