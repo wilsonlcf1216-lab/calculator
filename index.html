@@ -2219,7 +2219,7 @@ function normalizeSearchQuery(value) {
 }
 
 function buildOriginOptionLabel(origin) {
-  return `${origin.wardCode} · ${origin.building} ${origin.floor} Route ${origin.route} · ${origin.area}`;
+  return `${origin.wardCode} · ${origin.floor} · ${origin.building} · ${origin.area}`;
 }
 
 function buildDestinationOptionLabel(destination) {
@@ -2259,7 +2259,6 @@ function findOriginMatches(query) {
     .sort((left, right) => right.score - left.score
       || right.origin.floorNumber - left.origin.floorNumber
       || left.origin.wardCode.localeCompare(right.origin.wardCode))
-    .slice(0, 8)
     .map((entry) => entry.origin);
 }
 
@@ -2272,8 +2271,8 @@ function renderOriginSuggestions(matches) {
 
   originSuggestions.innerHTML = matches.map((origin) => `
     <button type="button" class="autocomplete-item" data-origin-id="${escapeHtml(origin.id)}">
-      <span class="autocomplete-item-title">${escapeHtml(origin.wardCode)} · ${escapeHtml(origin.floor)} · Route ${escapeHtml(origin.route)}</span>
-      <span class="autocomplete-item-meta">${escapeHtml(origin.building)} · ${escapeHtml(origin.area)} · ${origin.destinations.length} destination(s)</span>
+      <span class="autocomplete-item-title">${escapeHtml(origin.wardCode)} · ${escapeHtml(origin.floor)} · ${escapeHtml(origin.building)}</span>
+      <span class="autocomplete-item-meta">${escapeHtml(origin.area)}</span>
     </button>
   `).join("");
   originSuggestions.classList.remove("hidden");
