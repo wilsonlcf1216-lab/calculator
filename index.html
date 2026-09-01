@@ -1384,7 +1384,14 @@ const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5", "step6"];
-const STEP_JSON_DEFAULTS = [];
+const STEP_JSON_DEFAULTS = [
+  {
+    stepKey: "step1",
+    routeKey: "mcbtc",
+    fileName: "MCBTC_A_Floor.json",
+    filePath: "./MCBTC_A_Floor.json"
+  }
+];
 
 const ORIGIN_BUILDING_RULES = {
   H: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
@@ -1512,7 +1519,7 @@ initialize();
 function initialize() {
   clearLegacyStoredMapState();
   stepJsonLibrary = loadStepJsonLibrary();
-  removeLegacyBundledStepJson();
+  syncBundledMcbtcStepJsonSelection();
   void ensureBundledStepJsonDefaults();
   form.addEventListener("submit", handleGenerateRoute);
   backgroundUpload.addEventListener("change", handleBackgroundUpload);
@@ -2932,14 +2939,18 @@ function persistStepJsonLibrary() {
   }
 }
 
-function removeLegacyBundledStepJson() {
+function syncBundledMcbtcStepJsonSelection() {
   const stepOneEntry = stepJsonLibrary.step1;
 
   if (!stepOneEntry) {
     return;
   }
 
-  if (stepOneEntry.fileName !== "MCBTC_A.json" || stepOneEntry.routeKey !== "mcbtc") {
+  if (stepOneEntry.fileName === "MCBTC_A_Floor.json" && stepOneEntry.routeKey === "mcbtc") {
+    return;
+  }
+
+  if (stepOneEntry.routeKey !== "mcbtc") {
     return;
   }
 
