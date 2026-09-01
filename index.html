@@ -510,6 +510,34 @@ td {
   fill: rgba(15, 23, 42, 0.08);
 }
 
+.map-marker-bed-team .bed-frame-dark {
+  fill: #0b0f72;
+}
+
+.map-marker-bed-team .bed-frame-light {
+  fill: #cad1da;
+}
+
+.map-marker-bed-team .bed-board-light {
+  fill: #a9c3df;
+}
+
+.map-marker-bed-team .bed-blanket-cyan {
+  fill: #65c7e3;
+}
+
+.map-marker-bed-team .bed-blanket-cyan-dark {
+  fill: #41bfe1;
+}
+
+.map-marker-bed-team .bed-wheel-navy {
+  fill: #172866;
+}
+
+.map-marker-bed-team .bed-wheel-cap {
+  fill: #8fb7dc;
+}
+
 .map-marker-bed-team .bed-gradient-fill {
   fill: url(#bed-icon-gradient);
 }
@@ -1158,19 +1186,25 @@ td {
                     <g id="map-labels"></g>
                     <g id="map-marker" class="map-marker hidden">
                       <g id="map-marker-walker" class="map-marker-bed-team">
-                        <g class="marker-scale" transform="translate(-10 -8) scale(0.62)">
-                          <ellipse class="bed-shadow" cx="0" cy="36" rx="68" ry="8"></ellipse>
-                          <rect class="bed-gradient-fill" x="-64" y="-14" width="128" height="30" rx="10"></rect>
-                          <path class="bed-gradient-fill" d="M -62 -14 Q -58 -34 -40 -34 L -12 -34 Q 3 -34 5 -14 Z"></path>
-                          <path class="bed-gradient-fill" d="M 18 -14 L 49 -45 Q 56 -52 62 -45 L 74 -32 Q 80 -25 75 -18 L 52 3 L 18 3 Z"></path>
-                          <rect class="bed-gradient-fill" x="72" y="-48" width="10" height="64" rx="2"></rect>
-                          <rect class="bed-cutout-dark" x="-49" y="-25" width="18" height="7" rx="2"></rect>
-                          <rect class="bed-cutout-dark" x="-14" y="-25" width="18" height="7" rx="2"></rect>
-                          <path class="bed-gradient-fill" d="M -9 16 L -9 30 Q -25 30 -31 42 L -18 42 Q -12 33 -1 33 L 28 33 Q 39 33 45 42 L 58 42 Q 52 30 36 30 L 36 16 Z"></path>
-                          <circle class="bed-gradient-fill" cx="-35" cy="50" r="11"></circle>
-                          <circle class="bed-wheel-inner" cx="-35" cy="50" r="4.5"></circle>
-                          <circle class="bed-gradient-fill" cx="49" cy="50" r="11"></circle>
-                          <circle class="bed-wheel-inner" cx="49" cy="50" r="4.5"></circle>
+                        <g class="marker-scale" transform="translate(-8 -8) scale(0.62)">
+                          <ellipse class="bed-shadow" cx="0" cy="40" rx="70" ry="8"></ellipse>
+                          <rect class="bed-frame-dark" x="-60" y="-4" width="126" height="18" rx="7"></rect>
+                          <path class="bed-frame-dark" d="M -60 -52 Q -72 -52 -72 -39 L -72 9 Q -72 20 -60 20 L -52 20 L -52 10 L -58 10 Q -62 10 -62 6 L -62 -34 Q -62 -38 -58 -38 L -52 -38 L -52 -52 Z"></path>
+                          <path class="bed-board-light" d="M -62 -46 Q -66 -46 -66 -41 L -66 4 Q -66 9 -62 9 L -58 9 Q -54 9 -54 4 L -54 -41 Q -54 -46 -58 -46 Z"></path>
+                          <path class="bed-frame-dark" d="M 54 -40 Q 66 -40 66 -28 L 66 0 Q 66 20 50 20 L 43 20 L 43 10 L 47 10 Q 56 10 56 1 L 56 -34 Q 56 -40 50 -40 Z"></path>
+                          <path class="bed-board-light" d="M 56 -40 Q 61 -40 61 -35 L 61 1 Q 61 6 56 6 L 53 6 Q 49 6 49 1 L 49 -35 Q 49 -40 53 -40 Z"></path>
+                          <path class="bed-frame-dark" d="M -52 -30 L -22 -30 Q -8 -30 -2 -15 L -2 -4 L -52 -4 Z"></path>
+                          <path class="bed-blanket-cyan" d="M -43 -16 L -26 -16 Q -16 -16 -12 -6 L -12 -4 L -43 -4 Z"></path>
+                          <rect class="bed-frame-light" x="-42" y="-17" width="44" height="9" rx="1"></rect>
+                          <path class="bed-frame-dark" d="M 2 -25 Q 5 -30 13 -30 L 43 -30 L 43 10 L 28 10 Q 16 10 10 2 L 2 -8 Z"></path>
+                          <path class="bed-blanket-cyan" d="M 8 -26 L 43 -26 L 43 0 Q 43 10 33 10 L 8 10 Q 2 10 2 4 L 2 -20 Q 2 -26 8 -26 Z"></path>
+                          <rect class="bed-frame-light" x="-52" y="20" width="111" height="10"></rect>
+                          <rect class="bed-frame-light" x="52" y="20" width="6" height="10"></rect>
+                          <rect class="bed-frame-dark" x="-52" y="30" width="111" height="8"></rect>
+                          <circle class="bed-wheel-navy" cx="-58" cy="52" r="10.5"></circle>
+                          <circle class="bed-wheel-cap" cx="-58" cy="52" r="4.2"></circle>
+                          <circle class="bed-wheel-navy" cx="59" cy="52" r="10.5"></circle>
+                          <circle class="bed-wheel-cap" cx="59" cy="52" r="4.2"></circle>
                           <g class="helper-staff" transform="translate(84 2) scale(1.78) translate(-84 -2)">
                             <circle class="staff-head" cx="82" cy="0" r="5.8"></circle>
                             <path class="staff-body helper" d="M 75 8 Q 82 2 88 6 L 88 19 Q 82 23 76 19 Z"></path>
