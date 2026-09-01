@@ -1560,8 +1560,9 @@ td {
           </form>
 
           <p class="helper-text">
-            Current model assumes arrival through the <strong>South Lift Lobby</strong>
-            and automatically uses any linked step JSON for the live journey view.
+            Current model uses the selected route directory to determine the
+            matching IPEB lobby assumption and automatically uses any linked
+            step JSON for the live journey view.
           </p>
 
           <div id="error-message" class="message error hidden" aria-live="polite"></div>
@@ -1607,7 +1608,7 @@ td {
                     </div>
                     <div>
                       <dt>Lobby Assumption</dt>
-                      <dd>South Lift Lobby</dd>
+                      <dd id="lobby-assumption"></dd>
                     </div>
                   </dl>
                 </article>
@@ -1794,12 +1795,12 @@ td {
                 <li>Walking speed is fixed at 1.2 m/s.</li>
                 <li>Lift travel time is 4 seconds per floor.</li>
                 <li>
-                  MCBTC uses the decanting path defined by the provided MCBTC to
-                  IPEB South Lift route values.
+                  MCBTC uses the decanting path defined by the provided
+                  MCBTC route directory and the matched IPEB lobby assumption.
                 </li>
                 <li>
                   Old Block HKLM and EF Wing use the route values defined by the
-                  provided old building to IPEB South Lift path.
+                  provided old building decanting path.
                 </li>
               </ul>
             </article>
@@ -2470,8 +2471,59 @@ function toRouteDestinationEntry(destination) {
     wing: destination.wing,
     floor: destination.floorNumber,
     building: destination.building,
-    routeKey: destination.routeKey
+    routeKey: destination.routeKey,
+    liftSelection: destination.liftSelection
   };
+}
+
+function getIpebLobbyAssumption(destination) {
+  const token = String(destination?.liftSelection || destination?.wing || "")
+    .trim()
+    .toUpperCase();
+
+  if (token === "A" || token === "B") {
+    return {
+      key: "south",
+      label: "South Lift Lobby"
+    };
+  }
+
+  if (token === "C" || token === "D") {
+    return {
+      key: "north",
+      label: "North Wing Lift Lobby"
+    };
+  }
+
+  return {
+    key: "south",
+    label: "South Lift Lobby"
+  };
+}
+
+function buildMcbtcTransitSegments(lobbyAssumption) {
+  const baseSegments = INTER_BUILDING_SEGMENTS.mcbtc;
+  const northSegment = baseSegments[2];
+  const southConnector = baseSegments[3];
+
+  if (lobbyAssumption.key === "south") {
+    return [
+      {
+        stepTag: "step3",
+        playbackStepKey: "step3",
+        label: "MCBTC Lift to IPEB South Wing Lift",
+        distance: roundOneDecimal(northSegment.distance + southConnector.distance),
+        time: roundOneDecimal(northSegment.time + southConnector.time)
+      }
+    ];
+  }
+
+  return [
+    {
+      ...northSegment,
+      playbackStepKey: "step3"
+    }
+  ];
 }
 
 function applyGeneratedRouteResult(result) {
@@ -2547,7 +2599,31 @@ function calculateRouteFromDirectoryEntries(originEntry, destinationEntry) {
 }
 
 function buildRouteResult(origin, destination) {
-  const segmentTemplate = INTER_BUILDING_SEGMENTS[origin.routeKey];
+  const lobbyAssumption = getIpebLobbyAssumption(destination);
+  let segmentTemplate = INTER_BUILDING_SEGMENTS[origin.routeKey];
+
+  if (origin.routeKey === "mcbtc") {
+    const mcbtcBaseSegments = INTER_BUILDING_SEGMENTS.mcbtc;
+    segmentTemplate = [
+      {
+        ...mcbtcBaseSegments[0],
+        playbackStepKey: "step1"
+      },
+      {
+        ...mcbtcBaseSegments[1],
+        playbackStepKey: "step2"
+      },
+      ...buildMcbtcTransitSegments(lobbyAssumption),
+      {
+        ...mcbtcBaseSegments[4],
+        playbackStepKey: lobbyAssumption.key === "south" ? "step5" : "step4"
+      },
+      {
+        ...mcbtcBaseSegments[5],
+        playbackStepKey: lobbyAssumption.key === "south" ? "step6" : "step5"
+      }
+    ];
+  }
 
   const steps = segmentTemplate.map((segment, index) => {
     if (segment.calculated === "origin") {
@@ -2556,7 +2632,7 @@ function buildRouteResult(origin, destination) {
 
       return {
         stepTag: segment.stepTag,
-        playbackStepKey: PLAYBACK_STEP_KEYS[index] || segment.stepTag,
+        playbackStepKey: segment.playbackStepKey || PLAYBACK_STEP_KEYS[index] || segment.stepTag,
         label: segment.label,
         distance: 0,
         time: Math.abs(origin.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS,
@@ -2574,7 +2650,7 @@ function buildRouteResult(origin, destination) {
 
       return {
         stepTag: segment.stepTag,
-        playbackStepKey: PLAYBACK_STEP_KEYS[index] || segment.stepTag,
+        playbackStepKey: segment.playbackStepKey || PLAYBACK_STEP_KEYS[index] || segment.stepTag,
         label: segment.label,
         distance: 0,
         time: Math.abs(destination.floor - origin.transferFloor) * LIFT_TIME_PER_FLOOR_SECONDS,
@@ -2588,7 +2664,7 @@ function buildRouteResult(origin, destination) {
 
     return {
       ...segment,
-      playbackStepKey: PLAYBACK_STEP_KEYS[index] || segment.stepTag
+      playbackStepKey: segment.playbackStepKey || PLAYBACK_STEP_KEYS[index] || segment.stepTag
     };
   });
 
@@ -2604,6 +2680,7 @@ function buildRouteResult(origin, destination) {
   return {
     origin,
     destination,
+    lobbyAssumptionLabel: lobbyAssumption.label,
     steps,
     totalDistance: roundOneDecimal(totals.distance),
     totalTime: roundOneDecimal(totals.time),
@@ -2776,6 +2853,7 @@ function renderResults(result) {
   document.getElementById("transfer-floor").textContent = normalizeFloorLabel(toLiftCode(result.origin.transferFloor)).display;
   document.getElementById("destination-wing").textContent = `${result.destination.wing} Wing`;
   document.getElementById("destination-floor").textContent = normalizeFloorLabel(`${result.destination.floor}/F`).display;
+  document.getElementById("lobby-assumption").textContent = result.lobbyAssumptionLabel || "--";
 
   const tableBody = document.getElementById("step-breakdown");
   tableBody.innerHTML = "";
