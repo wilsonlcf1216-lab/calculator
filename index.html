@@ -2390,11 +2390,6 @@ function handleOriginInput() {
   const matches = findOriginMatches(query);
   renderOriginSuggestions(matches);
 
-  if (matches.length === 1 && matches[0].wardCode === query) {
-    selectOriginEntry(matches[0], { autoGenerate: true, focusDestination: false });
-    return;
-  }
-
   originHint.textContent = matches.length
     ? `${matches.length} matching origin(s) found.`
     : "No matching origin found in the current list.";
