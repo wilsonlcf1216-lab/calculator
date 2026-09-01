@@ -150,6 +150,10 @@ body {
   font-weight: 700;
 }
 
+.autocomplete-field {
+  position: relative;
+}
+
 .field span {
   font-size: 0.95rem;
 }
@@ -180,6 +184,68 @@ body {
   background: var(--surface-alt);
   border: 1px solid var(--border);
   border-radius: 14px;
+}
+
+.field select:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.field-meta {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 12;
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.autocomplete-item {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(226, 232, 240, 0.92);
+  border-radius: 12px;
+  background: #f8fafc;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item:focus {
+  outline: none;
+  border-color: rgba(37, 99, 235, 0.26);
+  background: #eff6ff;
+}
+
+.autocomplete-item-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.autocomplete-item-meta {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--muted);
+  font-weight: 600;
 }
 
 .primary-btn {
@@ -1459,28 +1525,35 @@ td {
       <div class="workspace-grid">
         <section class="calculator-panel">
           <form id="route-form" class="route-form">
-            <label class="field">
+            <label class="field autocomplete-field">
               <span>Origin Ward</span>
               <input
                 id="originWard"
                 name="originWard"
                 type="text"
-                placeholder="e.g. 10H, 8E, 10A"
+                placeholder="Search ward code / floor / area keyword"
                 autocomplete="off"
                 required
               />
+              <div id="origin-suggestions" class="autocomplete-list hidden"></div>
+              <p id="origin-hint" class="field-meta">
+                Type ward code, floor, route, or area keyword to search available origins from the list.
+              </p>
             </label>
 
             <label class="field">
               <span>Destination Ward</span>
-              <input
+              <select
                 id="destinationWard"
                 name="destinationWard"
-                type="text"
-                placeholder="e.g. A10"
-                autocomplete="off"
+                disabled
                 required
-              />
+              >
+                <option value="">Select origin first</option>
+              </select>
+              <p id="destination-hint" class="field-meta">
+                After selecting origin, only matching destinations from the list will be shown here.
+              </p>
             </label>
 
             <button type="submit" class="primary-btn">Generate</button>
@@ -1883,6 +1956,7 @@ const WALKING_SPEED_METERS_PER_SECOND = 1.2;
 const LIFT_TIME_PER_FLOOR_SECONDS = 4;
 const MAP_STORAGE_KEY = "ward-decanting-map-state-v2";
 const STEP_JSON_LIBRARY_STORAGE_KEY = "ward-decanting-step-json-library-v1";
+const ROUTE_DIRECTORY_PATH = "./route-directory.json";
 const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
 const MARKER_PATH_OFFSET_X = 40;
@@ -1982,8 +2056,16 @@ let isPlaybackPaused = false;
 let suppressMapClick = false;
 let activeLiftSceneProgress = 0;
 let activeLiftSceneId = "";
+let routeDirectoryOrigins = [];
+let selectedOriginDirectoryId = "";
+let selectedDestinationDirectoryId = "";
 
 const form = document.getElementById("route-form");
+const originWardInput = document.getElementById("originWard");
+const originSuggestions = document.getElementById("origin-suggestions");
+const originHint = document.getElementById("origin-hint");
+const destinationWardSelect = document.getElementById("destinationWard");
+const destinationHint = document.getElementById("destination-hint");
 const resultsSection = document.getElementById("results");
 const errorMessage = document.getElementById("error-message");
 const successMessage = document.getElementById("success-message");
@@ -2042,7 +2124,13 @@ function initialize() {
   stepJsonLibrary = loadStepJsonLibrary();
   syncBundledMcbtcStepJsonSelection();
   void ensureBundledStepJsonDefaults();
+  void loadRouteDirectory();
   form.addEventListener("submit", handleGenerateRoute);
+  originWardInput.addEventListener("input", handleOriginInput);
+  originWardInput.addEventListener("focus", handleOriginFocus);
+  destinationWardSelect.addEventListener("change", handleDestinationChange);
+  originSuggestions.addEventListener("click", handleOriginSuggestionClick);
+  document.addEventListener("click", handleDocumentClick);
   backgroundUpload.addEventListener("change", handleBackgroundUpload);
   startPlacementButton.addEventListener("click", startPointPlacement);
   startRouteDrawButton.addEventListener("click", startRouteDraw);
@@ -2069,37 +2157,402 @@ function initialize() {
   renderAll();
 }
 
+async function loadRouteDirectory() {
+  try {
+    const response = await fetch(ROUTE_DIRECTORY_PATH);
+
+    if (!response.ok) {
+      return;
+    }
+
+    const parsed = await response.json();
+    routeDirectoryOrigins = normalizeRouteDirectory(parsed && parsed.origins ? parsed.origins : []);
+    resetDestinationSelection("Select origin first");
+  } catch (error) {
+    routeDirectoryOrigins = [];
+  }
+}
+
+function normalizeRouteDirectory(origins) {
+  if (!Array.isArray(origins)) {
+    return [];
+  }
+
+  return origins
+    .map((origin) => ({
+      id: String(origin.id || ""),
+      wardCode: String(origin.wardCode || "").trim().toUpperCase(),
+      building: String(origin.building || "").trim(),
+      route: String(origin.route || "").trim().toUpperCase(),
+      floor: String(origin.floor || "").trim().toUpperCase(),
+      floorNumber: Number(origin.floorNumber) || floorNumberFromLabel(origin.floor),
+      area: String(origin.area || "").trim(),
+      routeKey: String(origin.routeKey || "").trim().toLowerCase(),
+      searchText: String(origin.searchText || "").trim().toUpperCase(),
+      destinations: Array.isArray(origin.destinations)
+        ? origin.destinations.map((destination) => ({
+          id: String(destination.id || ""),
+          wardCode: String(destination.wardCode || "").trim().toUpperCase(),
+          building: String(destination.building || "").trim(),
+          route: String(destination.route || "").trim().toUpperCase(),
+          wing: String(destination.wing || destination.route || "").trim().toUpperCase(),
+          floor: String(destination.floor || "").trim().toUpperCase(),
+          floorNumber: Number(destination.floorNumber) || floorNumberFromLabel(destination.floor),
+          area: String(destination.area || "").trim(),
+          routeKey: String(destination.routeKey || "").trim().toLowerCase(),
+          searchText: String(destination.searchText || "").trim().toUpperCase(),
+          liftSelection: String(destination.liftSelection || "").trim().toUpperCase(),
+          remark: String(destination.remark || "").trim()
+        }))
+        : []
+    }))
+    .filter((origin) => origin.id && origin.wardCode);
+}
+
+function floorNumberFromLabel(value) {
+  const match = String(value || "").match(/(\d{1,2})/);
+  return match ? Number(match[1]) : 0;
+}
+
+function normalizeSearchQuery(value) {
+  return String(value || "").trim().toUpperCase().replace(/\s+/g, " ");
+}
+
+function buildOriginOptionLabel(origin) {
+  return `${origin.wardCode} · ${origin.building} ${origin.floor} Route ${origin.route} · ${origin.area}`;
+}
+
+function buildDestinationOptionLabel(destination) {
+  return `${destination.wardCode} · ${destination.building} ${destination.floor} Route ${destination.route} · ${destination.area}`;
+}
+
+function getOriginMatchScore(origin, query) {
+  if (!query) {
+    return 1;
+  }
+
+  const normalizedQuery = normalizeSearchQuery(query);
+  const code = origin.wardCode;
+  const haystack = origin.searchText || buildOriginOptionLabel(origin).toUpperCase();
+
+  if (code === normalizedQuery) {
+    return 500;
+  }
+
+  if (code.startsWith(normalizedQuery)) {
+    return 350;
+  }
+
+  if (haystack.includes(normalizedQuery)) {
+    return 120;
+  }
+
+  return 0;
+}
+
+function findOriginMatches(query) {
+  const normalizedQuery = normalizeSearchQuery(query);
+
+  return routeDirectoryOrigins
+    .map((origin) => ({ origin, score: getOriginMatchScore(origin, normalizedQuery) }))
+    .filter((entry) => entry.score > 0)
+    .sort((left, right) => right.score - left.score
+      || right.origin.floorNumber - left.origin.floorNumber
+      || left.origin.wardCode.localeCompare(right.origin.wardCode))
+    .slice(0, 8)
+    .map((entry) => entry.origin);
+}
+
+function renderOriginSuggestions(matches) {
+  if (!matches.length) {
+    originSuggestions.innerHTML = "";
+    originSuggestions.classList.add("hidden");
+    return;
+  }
+
+  originSuggestions.innerHTML = matches.map((origin) => `
+    <button type="button" class="autocomplete-item" data-origin-id="${escapeHtml(origin.id)}">
+      <span class="autocomplete-item-title">${escapeHtml(origin.wardCode)} · ${escapeHtml(origin.floor)} · Route ${escapeHtml(origin.route)}</span>
+      <span class="autocomplete-item-meta">${escapeHtml(origin.building)} · ${escapeHtml(origin.area)} · ${origin.destinations.length} destination(s)</span>
+    </button>
+  `).join("");
+  originSuggestions.classList.remove("hidden");
+}
+
+function hideOriginSuggestions() {
+  originSuggestions.innerHTML = "";
+  originSuggestions.classList.add("hidden");
+}
+
+function getOriginDirectoryEntryById(originId) {
+  return routeDirectoryOrigins.find((origin) => origin.id === originId) || null;
+}
+
+function getDestinationDirectoryEntry(origin, destinationId) {
+  if (!origin || !Array.isArray(origin.destinations)) {
+    return null;
+  }
+
+  return origin.destinations.find((destination) => destination.id === destinationId) || null;
+}
+
+function resetDestinationSelection(message = "Select origin first") {
+  selectedDestinationDirectoryId = "";
+  destinationWardSelect.innerHTML = `<option value="">${escapeHtml(message)}</option>`;
+  destinationWardSelect.value = "";
+  destinationWardSelect.disabled = true;
+}
+
+function populateDestinationOptions(origin) {
+  if (!origin || !origin.destinations.length) {
+    resetDestinationSelection("No mapped destinations found for this origin yet");
+    destinationHint.textContent = "This origin is not linked to any destination in the current list yet.";
+    return;
+  }
+
+  destinationWardSelect.disabled = false;
+  destinationWardSelect.innerHTML = [
+    `<option value="">Choose one of ${origin.destinations.length} matching destinations</option>`,
+    ...origin.destinations.map((destination) => `
+      <option value="${escapeHtml(destination.id)}">${escapeHtml(buildDestinationOptionLabel(destination))}</option>
+    `)
+  ].join("");
+  destinationWardSelect.value = "";
+  destinationHint.textContent = origin.destinations.length === 1
+    ? "Only one linked destination was found for this origin. The route will generate automatically."
+    : "Choose the matching destination from the list.";
+}
+
+function selectOriginEntry(origin, options = {}) {
+  if (!origin) {
+    return;
+  }
+
+  selectedOriginDirectoryId = origin.id;
+  originWardInput.value = buildOriginOptionLabel(origin);
+  originHint.textContent = `${origin.destinations.length} linked destination(s) found for ${origin.wardCode}.`;
+  hideOriginSuggestions();
+  populateDestinationOptions(origin);
+
+  if (origin.destinations.length === 1) {
+    const onlyDestination = origin.destinations[0];
+    selectedDestinationDirectoryId = onlyDestination.id;
+    destinationWardSelect.value = onlyDestination.id;
+
+    if (options.autoGenerate !== false) {
+      generateRouteFromDirectorySelection(origin, onlyDestination);
+    }
+
+    return;
+  }
+
+  if (options.focusDestination !== false) {
+    destinationWardSelect.focus();
+  }
+}
+
+function resolveOriginEntryFromInput() {
+  const query = normalizeSearchQuery(originWardInput.value);
+
+  if (!query) {
+    return null;
+  }
+
+  if (selectedOriginDirectoryId) {
+    return getOriginDirectoryEntryById(selectedOriginDirectoryId);
+  }
+
+  const exactMatches = routeDirectoryOrigins.filter((origin) => {
+    const label = buildOriginOptionLabel(origin).toUpperCase();
+    return origin.wardCode === query || label === query || origin.searchText === query;
+  });
+
+  if (exactMatches.length === 1) {
+    return exactMatches[0];
+  }
+
+  return null;
+}
+
+function handleOriginInput() {
+  selectedOriginDirectoryId = "";
+  selectedDestinationDirectoryId = "";
+  resetDestinationSelection("Select origin first");
+  destinationHint.textContent = "After selecting origin, only matching destinations from the list will be shown here.";
+
+  const query = normalizeSearchQuery(originWardInput.value);
+
+  if (!query) {
+    originHint.textContent = "Type ward code, floor, route, or area keyword to search available origins from the list.";
+    hideOriginSuggestions();
+    return;
+  }
+
+  const matches = findOriginMatches(query);
+  renderOriginSuggestions(matches);
+
+  if (matches.length === 1 && matches[0].wardCode === query) {
+    selectOriginEntry(matches[0], { autoGenerate: true, focusDestination: false });
+    return;
+  }
+
+  originHint.textContent = matches.length
+    ? `${matches.length} matching origin(s) found.`
+    : "No matching origin found in the current list.";
+}
+
+function handleOriginFocus() {
+  if (!originWardInput.value.trim()) {
+    return;
+  }
+
+  const matches = findOriginMatches(originWardInput.value);
+  renderOriginSuggestions(matches);
+}
+
+function handleOriginSuggestionClick(event) {
+  const button = event.target.closest("button[data-origin-id]");
+
+  if (!button) {
+    return;
+  }
+
+  const origin = getOriginDirectoryEntryById(button.dataset.originId);
+
+  if (!origin) {
+    return;
+  }
+
+  selectOriginEntry(origin, { autoGenerate: true });
+}
+
+function handleDocumentClick(event) {
+  if (event.target === originWardInput || originSuggestions.contains(event.target)) {
+    return;
+  }
+
+  hideOriginSuggestions();
+}
+
+function handleDestinationChange() {
+  selectedDestinationDirectoryId = destinationWardSelect.value;
+
+  const origin = getOriginDirectoryEntryById(selectedOriginDirectoryId);
+  const destination = getDestinationDirectoryEntry(origin, selectedDestinationDirectoryId);
+
+  if (!origin || !destination) {
+    return;
+  }
+
+  generateRouteFromDirectorySelection(origin, destination);
+}
+
+function getTransferFloorForRouteKey(routeKey) {
+  if (routeKey === "mcbtc") {
+    return 0;
+  }
+
+  if (routeKey === "hklm" || routeKey === "ef") {
+    return 2;
+  }
+
+  return 0;
+}
+
+function toRouteOriginEntry(origin) {
+  return {
+    ward: origin.wardCode,
+    floor: origin.floorNumber,
+    suffix: origin.route,
+    building: origin.building,
+    transferFloor: getTransferFloorForRouteKey(origin.routeKey),
+    routeKey: origin.routeKey
+  };
+}
+
+function toRouteDestinationEntry(destination) {
+  return {
+    ward: destination.wardCode,
+    wing: destination.wing,
+    floor: destination.floorNumber,
+    building: destination.building,
+    routeKey: destination.routeKey
+  };
+}
+
+function applyGeneratedRouteResult(result) {
+  currentRouteResult = result;
+  activePlaybackStepKey = "";
+  activePlaybackMapState = null;
+  activeJourney = null;
+  renderResults(result);
+  startStepPlayback();
+  showError("");
+  showSuccess(hasAnyStepJsonLoadedForRoute(result.origin.routeKey)
+    ? "已產生路線結果，會按 Step 1 至 Step 6 連續播放已載入的 JSON。"
+    : "已產生路線結果，但目前未載入任何 Step JSON。");
+}
+
+function clearGeneratedRouteResult(error) {
+  currentRouteResult = null;
+  stopStepPlayback();
+  resultsSection.classList.add("hidden");
+  renderMap();
+  showError(error.message);
+}
+
+function generateRouteFromDirectorySelection(origin, destination) {
+  try {
+    const result = calculateRouteFromDirectoryEntries(origin, destination);
+    applyGeneratedRouteResult(result);
+  } catch (error) {
+    clearGeneratedRouteResult(error);
+  }
+}
+
 function handleGenerateRoute(event) {
   event.preventDefault();
 
-  const formData = new FormData(form);
-  const originWard = String(formData.get("originWard") || "").trim().toUpperCase();
-  const destinationWard = String(formData.get("destinationWard") || "").trim().toUpperCase();
-
   try {
-    const result = calculateRoute(originWard, destinationWard);
-    currentRouteResult = result;
-    activePlaybackStepKey = "";
-    activePlaybackMapState = null;
-    activeJourney = null;
-    renderResults(result);
-    startStepPlayback();
-    showError("");
-    showSuccess(hasAnyStepJsonLoadedForRoute(result.origin.routeKey)
-      ? "已產生路線結果，會按 Step 1 至 Step 6 連續播放已載入的 JSON。"
-      : "已產生路線結果，但目前未載入任何 Step JSON。");
+    const selectedOrigin = resolveOriginEntryFromInput();
+
+    if (selectedOrigin) {
+      if (selectedOrigin.id !== selectedOriginDirectoryId) {
+        selectOriginEntry(selectedOrigin, { autoGenerate: false, focusDestination: false });
+      }
+
+      let selectedDestination = getDestinationDirectoryEntry(selectedOrigin, destinationWardSelect.value);
+
+      if (!selectedDestination && selectedOrigin.destinations.length === 1) {
+        selectedDestination = selectedOrigin.destinations[0];
+      }
+
+      if (!selectedDestination) {
+        throw new Error("請先揀選相應的 Destination Ward。");
+      }
+
+      const result = calculateRouteFromDirectoryEntries(selectedOrigin, selectedDestination);
+      applyGeneratedRouteResult(result);
+      return;
+    }
+
+    throw new Error("請先喺 Origin Ward 揀選清單內的有效位置。");
   } catch (error) {
-    currentRouteResult = null;
-    stopStepPlayback();
-    resultsSection.classList.add("hidden");
-    renderMap();
-    showError(error.message);
+    clearGeneratedRouteResult(error);
   }
 }
 
 function calculateRoute(originWard, destinationWard) {
   const origin = parseOriginWard(originWard);
   const destination = parseDestinationWard(destinationWard);
+  return buildRouteResult(origin, destination);
+}
+
+function calculateRouteFromDirectoryEntries(originEntry, destinationEntry) {
+  return buildRouteResult(toRouteOriginEntry(originEntry), toRouteDestinationEntry(destinationEntry));
+}
+
+function buildRouteResult(origin, destination) {
   const segmentTemplate = INTER_BUILDING_SEGMENTS[origin.routeKey];
 
   const steps = segmentTemplate.map((segment, index) => {
