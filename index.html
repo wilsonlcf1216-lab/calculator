@@ -579,6 +579,27 @@ td {
   font-weight: 700;
 }
 
+.lift-scene-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lift-scene-building {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.16);
+  border: 1px solid rgba(191, 219, 254, 0.18);
+  color: #dbeafe;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
 .lift-scene-arrow-icon {
   display: inline-flex;
   align-items: center;
@@ -745,6 +766,15 @@ td {
 
   .lift-scene-display {
     min-width: 112px;
+    letter-spacing: 0.08em;
+  }
+
+  .lift-scene-status {
+    gap: 8px;
+  }
+
+  .lift-scene-building {
+    font-size: 0.74rem;
     letter-spacing: 0.08em;
   }
 
@@ -1565,9 +1595,12 @@ td {
                       <div class="lift-scene-elevator">
                         <div class="lift-scene-lintel">
                           <div id="lift-scene-display" class="lift-scene-display">10/F</div>
-                          <div class="lift-scene-direction">
-                            <span id="lift-scene-direction-arrow" class="lift-scene-arrow-icon up">▲</span>
-                            <span id="lift-scene-direction-text" class="lift-scene-direction-text">Moving Up</span>
+                          <div class="lift-scene-status">
+                            <span id="lift-scene-building" class="lift-scene-building">MCBTC</span>
+                            <div class="lift-scene-direction">
+                              <span id="lift-scene-direction-arrow" class="lift-scene-arrow-icon up">▲</span>
+                              <span id="lift-scene-direction-text" class="lift-scene-direction-text">Moving Up</span>
+                            </div>
                           </div>
                         </div>
                         <div class="lift-scene-cabin">
@@ -1928,6 +1961,7 @@ const liftScene = document.getElementById("lift-scene");
 const liftSceneFrom = document.getElementById("lift-scene-from");
 const liftSceneTo = document.getElementById("lift-scene-to");
 const liftSceneDisplay = document.getElementById("lift-scene-display");
+const liftSceneBuilding = document.getElementById("lift-scene-building");
 const liftSceneDirectionArrow = document.getElementById("lift-scene-direction-arrow");
 const liftSceneDirectionText = document.getElementById("lift-scene-direction-text");
 const liftSceneCaption = document.getElementById("lift-scene-caption");
@@ -2043,7 +2077,7 @@ function calculateRoute(originWard, destinationWard) {
         liftScene: {
           fromFloor,
           toFloor,
-          buildingLabel: origin.building
+          buildingLabel: getLiftBuildingDisplayLabel(origin.routeKey, origin.building)
         }
       };
     }
@@ -2061,7 +2095,7 @@ function calculateRoute(originWard, destinationWard) {
         liftScene: {
           fromFloor,
           toFloor,
-          buildingLabel: `${destination.wing} Wing`
+          buildingLabel: getLiftBuildingDisplayLabel(destination.routeKey, destination.building)
         }
       };
     }
@@ -2126,8 +2160,68 @@ function parseDestinationWard(input) {
   return {
     ward: input,
     wing: match[1],
-    floor: Number(match[2])
+    floor: Number(match[2]),
+    building: "IPEB",
+    routeKey: "ipeb"
   };
+}
+
+function getLiftBuildingDisplayLabel(routeKey = "", fallback = "") {
+  const normalizedKey = String(routeKey || "").trim().toLowerCase();
+
+  if (normalizedKey === "mcbtc") {
+    return "MCBTC";
+  }
+
+  if (normalizedKey === "hklm") {
+    return "HKLM";
+  }
+
+  if (normalizedKey === "ef" || normalizedKey === "csb") {
+    return "CSB";
+  }
+
+  if (normalizedKey === "ipeb") {
+    return "IPEB";
+  }
+
+  const normalizedFallback = String(fallback || "").trim().toUpperCase();
+
+  if (normalizedFallback.includes("MCBTC")) {
+    return "MCBTC";
+  }
+
+  if (normalizedFallback.includes("HKLM")) {
+    return "HKLM";
+  }
+
+  if (normalizedFallback.includes("CSB") || normalizedFallback.includes("EF")) {
+    return "CSB";
+  }
+
+  if (normalizedFallback.includes("IPEB") || normalizedFallback.includes("WING")) {
+    return "IPEB";
+  }
+
+  return normalizedFallback || "--";
+}
+
+function getActiveLiftSceneBuildingLabel(scene) {
+  if (!currentRouteResult || !activePlaybackStepKey) {
+    return getLiftBuildingDisplayLabel("", scene?.buildingLabel || "");
+  }
+
+  if (activePlaybackStepKey === "step2") {
+    const step1Entry = getStepJsonEntry("step1", currentRouteResult.origin.routeKey);
+    return getLiftBuildingDisplayLabel(step1Entry?.routeKey || currentRouteResult.origin.routeKey, currentRouteResult.origin.building || scene?.buildingLabel || "");
+  }
+
+  if (activePlaybackStepKey === "step5") {
+    const step6Entry = stepJsonLibrary.step6;
+    return getLiftBuildingDisplayLabel(step6Entry?.routeKey || currentRouteResult.destination.routeKey || "ipeb", currentRouteResult.destination.building || scene?.buildingLabel || "");
+  }
+
+  return getLiftBuildingDisplayLabel("", scene?.buildingLabel || "");
 }
 
 function toLiftCode(floorNumber) {
@@ -2850,6 +2944,7 @@ function renderLiftScene(scene, durationMs, isPaused) {
   liftScene.setAttribute("aria-hidden", "false");
   liftSceneFrom.textContent = scene.fromFloor.display || scene.fromFloor.code || "--";
   liftSceneTo.textContent = scene.toFloor.display || scene.toFloor.code || "--";
+  liftSceneBuilding.textContent = getActiveLiftSceneBuildingLabel(scene);
 
   const renderFrame = (progress) => {
     const state = getLiftSceneFrameState(scene, progress);
