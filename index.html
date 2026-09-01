@@ -2216,15 +2216,6 @@ function renderMap() {
     polyline.dataset.segmentId = segment.id;
     mapRoutesGroup.appendChild(polyline);
 
-    if (segment.label) {
-      const labelPoint = getPointAtHalfway(pathPoints);
-      const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      label.setAttribute("x", labelPoint.x + 8);
-      label.setAttribute("y", labelPoint.y - 8);
-      label.setAttribute("class", "route-segment-label");
-      label.textContent = segment.label;
-      mapRoutesGroup.appendChild(label);
-    }
   });
 
   if (routeDraft) {
