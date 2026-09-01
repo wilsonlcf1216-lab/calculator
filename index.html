@@ -129,25 +129,6 @@ body {
   margin-bottom: 12px;
 }
 
-.step-playback-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.playback-speed-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.speed-btn-active {
-  border-color: var(--accent);
-  background: #dbeafe;
-  color: var(--accent-dark);
-}
-
 .step-playback-meta {
   margin: 0;
   color: var(--muted);
@@ -1188,14 +1169,7 @@ td {
                 <article class="detail-card step-breakdown-card">
                   <h2>Step Breakdown</h2>
                   <div class="step-playback-bar">
-                    <div class="step-playback-actions">
-                      <button id="playback-toggle" type="button" class="secondary-btn">Stop</button>
-                      <div id="playback-speed-controls" class="playback-speed-controls" role="group" aria-label="Animation speed">
-                        <button type="button" class="secondary-btn speed-btn speed-btn-active" data-speed="normal">Normal</button>
-                        <button type="button" class="secondary-btn speed-btn" data-speed="slow">Slow</button>
-                        <button type="button" class="secondary-btn speed-btn" data-speed="fast">Fast</button>
-                      </div>
-                    </div>
+                    <button id="playback-toggle" type="button" class="secondary-btn">Stop</button>
                     <p id="step-playback-meta" class="step-playback-meta">
                       Click any step row to jump there, then continue playback from that segment.
                     </p>
@@ -1469,11 +1443,6 @@ const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
 const MARKER_PATH_OFFSET_X = 40;
 const MARKER_PATH_OFFSET_Y = 24;
-const PLAYBACK_SPEED_OPTIONS = {
-  slow: { label: "Slow", multiplier: 1.55 },
-  normal: { label: "Normal", multiplier: 1 },
-  fast: { label: "Fast", multiplier: 0.72 }
-};
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const STEP_JSON_DEFAULTS = [
@@ -1565,7 +1534,6 @@ let activePlaybackMapState = null;
 let activePlaybackDurationMs = 0;
 let activePlaybackIndex = -1;
 let isPlaybackPaused = false;
-let playbackSpeedKey = "normal";
 let suppressMapClick = false;
 
 const form = document.getElementById("route-form");
@@ -1581,7 +1549,6 @@ const mapMarkerWalker = document.getElementById("map-marker-walker");
 const mapStatus = document.getElementById("map-status");
 const mapEmptyState = document.getElementById("map-empty-state");
 const playbackToggleButton = document.getElementById("playback-toggle");
-const playbackSpeedControls = document.getElementById("playback-speed-controls");
 const stepPlaybackMeta = document.getElementById("step-playback-meta");
 const backgroundUpload = document.getElementById("background-upload");
 const pointNameInput = document.getElementById("point-name");
@@ -1640,7 +1607,6 @@ function initialize() {
   stepJsonLibraryElement.addEventListener("click", handleStepJsonLibraryActions);
   document.getElementById("step-breakdown").addEventListener("click", handleStepBreakdownClick);
   playbackToggleButton.addEventListener("click", togglePlaybackState);
-  playbackSpeedControls.addEventListener("click", handlePlaybackSpeedControlClick);
 
   renderAll();
 }
@@ -1821,36 +1787,6 @@ function togglePlaybackState() {
   }
 
   pauseStepPlayback();
-}
-
-function handlePlaybackSpeedControlClick(event) {
-  const button = event.target.closest("button[data-speed]");
-
-  if (!button) {
-    return;
-  }
-
-  const requestedSpeed = button.dataset.speed;
-
-  if (!PLAYBACK_SPEED_OPTIONS[requestedSpeed] || requestedSpeed === playbackSpeedKey) {
-    return;
-  }
-
-  playbackSpeedKey = requestedSpeed;
-  updatePlaybackSpeedControls();
-
-  if (!currentRouteResult || activePlaybackIndex < 0) {
-    return;
-  }
-
-  if (isPlaybackPaused) {
-    activePlaybackDurationMs = getPlaybackDurationMs(currentRouteResult.steps[activePlaybackIndex]);
-    syncRouteVisualizationState();
-    renderAll(false);
-    return;
-  }
-
-  playStepAtIndex(activePlaybackIndex, true);
 }
 
 function handleBackgroundUpload(event) {
@@ -2719,8 +2655,7 @@ function getPlaybackDurationMs(step) {
     return 1400;
   }
 
-  const multiplier = PLAYBACK_SPEED_OPTIONS[playbackSpeedKey]?.multiplier || 1;
-  return Math.min(Math.max((Number(step.time) || 0) * 140 * multiplier, 2200), 7000 * multiplier);
+  return Math.min(Math.max((Number(step.time) || 0) * 140, 2200), 7000);
 }
 
 function getDisplayMapState() {
@@ -2904,7 +2839,6 @@ function updatePlaybackControls() {
   if (!currentRouteResult) {
     playbackToggleButton.textContent = "Start";
     stepPlaybackMeta.textContent = "Click any step row to jump there, then continue playback from that segment.";
-    updatePlaybackSpeedControls();
     return;
   }
 
@@ -2918,22 +2852,10 @@ function updatePlaybackControls() {
     stepPlaybackMeta.textContent = isPlaybackPaused
       ? `${currentStepLabel} paused. Click Start to continue from this segment, or click another step to jump there.`
       : `${currentStepLabel} is playing. Click any step row to jump there and continue from that segment.`;
-    updatePlaybackSpeedControls();
     return;
   }
 
   stepPlaybackMeta.textContent = "Click any step row to jump there, then continue playback from that segment.";
-  updatePlaybackSpeedControls();
-}
-
-function updatePlaybackSpeedControls() {
-  if (!playbackSpeedControls) {
-    return;
-  }
-
-  playbackSpeedControls.querySelectorAll("button[data-speed]").forEach((button) => {
-    button.classList.toggle("speed-btn-active", button.dataset.speed === playbackSpeedKey);
-  });
 }
 
 function buildPathSegments(points) {
