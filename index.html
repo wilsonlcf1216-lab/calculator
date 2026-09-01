@@ -1863,7 +1863,7 @@ function finishRouteDraw() {
     routeGroup: routeDraft.routeGroup,
     stepTag: routeDraft.stepTag,
     label: routeDraft.label,
-    waypoints: routeDraft.waypoints.map(clonePoint)
+    waypoints: routeDraft.waypoints.map((point) => clonePoint(point))
   };
 
   if (routeDraft.editingSegmentId) {
@@ -2317,7 +2317,7 @@ function loadSegmentForEdit(segmentId) {
     routeGroup: segment.routeGroup,
     stepTag: segment.stepTag,
     label: segment.label || "",
-    waypoints: Array.isArray(segment.waypoints) ? segment.waypoints.map(clonePoint) : []
+    waypoints: Array.isArray(segment.waypoints) ? segment.waypoints.map((point) => clonePoint(point)) : []
   };
 
   updateRouteDrawStatus(`Editing "${segment.label || `${fromNode.name} to ${toNode.name}`}". Add or undo bend points, then click Finish Drawn Route.`);
@@ -2834,7 +2834,7 @@ function getSegmentPathPoints(segment, fromNode, toNode) {
   const waypoints = Array.isArray(segment.waypoints) ? segment.waypoints : [];
   return [
     { x: fromNode.x, y: fromNode.y },
-    ...waypoints.map(clonePoint),
+    ...waypoints.map((point) => clonePoint(point)),
     { x: toNode.x, y: toNode.y }
   ];
 }
@@ -2853,7 +2853,7 @@ function getDraftRoutePoints() {
 
   return [
     { x: fromNode.x, y: fromNode.y },
-    ...routeDraft.waypoints.map(clonePoint),
+    ...routeDraft.waypoints.map((point) => clonePoint(point)),
     { x: toNode.x, y: toNode.y }
   ];
 }
