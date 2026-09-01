@@ -510,6 +510,54 @@ td {
   fill: rgba(15, 23, 42, 0.08);
 }
 
+.map-marker-bed-team .bed-frame-dark {
+  fill: #0a1070;
+}
+
+.map-marker-bed-team .bed-frame-light {
+  fill: #d4d9e2;
+}
+
+.map-marker-bed-team .bed-board-light {
+  fill: #a7bfdc;
+}
+
+.map-marker-bed-team .bed-blanket-cyan {
+  fill: #66c9e7;
+}
+
+.map-marker-bed-team .bed-blanket-cyan-dark {
+  fill: #47c1e7;
+}
+
+.map-marker-bed-team .bed-wheel-navy {
+  fill: #1b2a6d;
+}
+
+.map-marker-bed-team .bed-wheel-cap {
+  fill: #8db3d8;
+}
+
+.map-marker-bed-team .bed-lime {
+  fill: #b1d85d;
+}
+
+.map-marker-bed-team .bed-rail-blue {
+  fill: #4aa5de;
+}
+
+.map-marker-bed-team .bed-iv-soft {
+  fill: #abd9e7;
+}
+
+.map-marker-bed-team .bed-wheel-white {
+  fill: #f5f7f8;
+}
+
+.map-marker-bed-team .bed-wheel-hub {
+  fill: #5b4b72;
+}
+
 .map-marker-bed-team .bed-gradient-fill {
   fill: url(#bed-icon-gradient);
 }
@@ -930,15 +978,15 @@ td {
 .route-segment {
   fill: none;
   stroke: #f97316 !important;
-  stroke-width: 10;
+  stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 20 14;
+  stroke-dasharray: 9 20;
   opacity: 0.55;
 }
 
 .route-segment.active {
-  stroke-width: 14;
+  stroke-width: 8;
   opacity: 0.92;
   filter: drop-shadow(0 8px 12px rgba(15, 23, 42, 0.18));
 }
@@ -956,10 +1004,10 @@ td {
 .draft-route {
   fill: none;
   stroke: #f97316;
-  stroke-width: 9;
+  stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 20 14;
+  stroke-dasharray: 9 20;
   opacity: 0.95;
 }
 
@@ -1158,32 +1206,34 @@ td {
                     <g id="map-labels"></g>
                     <g id="map-marker" class="map-marker hidden">
                       <g id="map-marker-walker" class="map-marker-bed-team">
-                        <g class="marker-scale" transform="translate(-10 -8) scale(0.62)">
-                          <ellipse class="bed-shadow" cx="0" cy="36" rx="68" ry="8"></ellipse>
-                          <rect class="bed-gradient-fill" x="-64" y="-14" width="128" height="30" rx="10"></rect>
-                          <path class="bed-gradient-fill" d="M -62 -14 Q -58 -34 -40 -34 L -12 -34 Q 3 -34 5 -14 Z"></path>
-                          <path class="bed-gradient-fill" d="M 18 -14 L 49 -45 Q 56 -52 62 -45 L 74 -32 Q 80 -25 75 -18 L 52 3 L 18 3 Z"></path>
-                          <rect class="bed-gradient-fill" x="72" y="-48" width="10" height="64" rx="2"></rect>
-                          <rect class="bed-cutout-dark" x="-49" y="-25" width="18" height="7" rx="2"></rect>
-                          <rect class="bed-cutout-dark" x="-14" y="-25" width="18" height="7" rx="2"></rect>
-                          <path class="bed-gradient-fill" d="M -9 16 L -9 30 Q -25 30 -31 42 L -18 42 Q -12 33 -1 33 L 28 33 Q 39 33 45 42 L 58 42 Q 52 30 36 30 L 36 16 Z"></path>
-                          <circle class="bed-gradient-fill" cx="-35" cy="50" r="11"></circle>
-                          <circle class="bed-wheel-inner" cx="-35" cy="50" r="4.5"></circle>
-                          <circle class="bed-gradient-fill" cx="49" cy="50" r="11"></circle>
-                          <circle class="bed-wheel-inner" cx="49" cy="50" r="4.5"></circle>
-                          <g class="helper-staff" transform="translate(84 2) scale(1.78) translate(-84 -2)">
-                            <circle class="staff-head" cx="82" cy="0" r="5.8"></circle>
-                            <path class="staff-body helper" d="M 75 8 Q 82 2 88 6 L 88 19 Q 82 23 76 19 Z"></path>
+                        <g class="marker-scale" transform="translate(3 -1) scale(0.34)">
+                          <g transform="scale(-1 1)">
+                          <ellipse class="bed-shadow" cx="0" cy="40" rx="62" ry="7"></ellipse>
+                          <path class="bed-frame-dark" d="M -51 -24 Q -57 -30 -64 -30 Q -73 -30 -76 -21 Q -78 -14 -72 -9 L -55 6 Q -49 12 -40 12 L 63 12 Q 70 12 74 6 Q 78 0 76 -7 Q 74 -14 66 -14 L -6 -14 L -18 -14 L -32 -14 Z"></path>
+                          <path class="bed-lime" d="M -43 -21 Q -39 -17 -33 -17 L 63 -17 Q 68 -17 70 -14 Q 72 -11 72 -7 L 72 -3 L -22 -3 L -43 -21 Z"></path>
+                          <rect class="bed-frame-dark" x="-44" y="12" width="8" height="17"></rect>
+                          <rect class="bed-frame-dark" x="44" y="12" width="8" height="17"></rect>
+                          <rect class="bed-iv-soft" x="-46" y="29" width="100" height="8" rx="1"></rect>
+                          <circle class="bed-frame-dark" cx="-47" cy="47" r="12"></circle>
+                          <circle class="bed-wheel-white" cx="-47" cy="47" r="8"></circle>
+                          <circle class="bed-wheel-hub" cx="-47" cy="47" r="2.6"></circle>
+                          <circle class="bed-frame-dark" cx="49" cy="47" r="12"></circle>
+                          <circle class="bed-wheel-white" cx="49" cy="47" r="8"></circle>
+                          <circle class="bed-wheel-hub" cx="49" cy="47" r="2.6"></circle>
+                          <g class="helper-staff" transform="translate(-40 -43) scale(3.42)">
+                            <circle class="staff-head" cx="-14" cy="0" r="5.8"></circle>
+                            <path class="staff-body helper" d="M -21 8 Q -14 2 -8 6 L -8 19 Q -14 23 -20 19 Z"></path>
                             <g class="helper-arm">
-                              <path class="staff-limb" d="M 76 10 L 69 5"></path>
+                              <path class="staff-limb" d="M -20 9 L -26 3"></path>
                             </g>
-                            <path class="staff-limb" d="M 88 10 L 94 15"></path>
-                            <path class="staff-limb" d="M 78 19 L 73 31"></path>
-                            <path class="staff-foot" d="M 73 31 L 81 31"></path>
+                            <path class="staff-limb" d="M -8 9 L -2 4"></path>
+                            <path class="staff-limb" d="M -18 19 L -21 31"></path>
+                            <path class="staff-foot" d="M -21 31 L -13 31"></path>
                             <g class="helper-leg-right">
-                              <path class="staff-limb" d="M 86 19 L 92 31"></path>
-                              <path class="staff-foot" d="M 92 31 L 100 31"></path>
+                              <path class="staff-limb" d="M -10 19 L -6 31"></path>
+                              <path class="staff-foot" d="M -6 31 L 2 31"></path>
                             </g>
+                          </g>
                           </g>
                         </g>
                       </g>
@@ -1382,9 +1432,18 @@ const MAP_STORAGE_KEY = "ward-decanting-map-state-v2";
 const STEP_JSON_LIBRARY_STORAGE_KEY = "ward-decanting-step-json-library-v1";
 const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
+const MARKER_PATH_OFFSET_X = 40;
+const MARKER_PATH_OFFSET_Y = 24;
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5", "step6"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5", "step6"];
-const STEP_JSON_DEFAULTS = [];
+const STEP_JSON_DEFAULTS = [
+  {
+    stepKey: "step1",
+    routeKey: "mcbtc",
+    fileName: "MCBTC_A_Floor.json",
+    filePath: "./MCBTC_A_Floor.json"
+  }
+];
 
 const ORIGIN_BUILDING_RULES = {
   H: { building: "Old Block - HKLM", transferFloor: 2, routeKey: "hklm" },
@@ -1512,7 +1571,7 @@ initialize();
 function initialize() {
   clearLegacyStoredMapState();
   stepJsonLibrary = loadStepJsonLibrary();
-  removeLegacyBundledStepJson();
+  syncBundledMcbtcStepJsonSelection();
   void ensureBundledStepJsonDefaults();
   form.addEventListener("submit", handleGenerateRoute);
   backgroundUpload.addEventListener("change", handleBackgroundUpload);
@@ -2412,7 +2471,7 @@ function startAnimation(points, durationOverrideMs) {
     const progress = Math.min((now - startedAt) / durationMs, 1);
     const targetDistance = totalLength * progress;
     const pointState = getPointStateAtDistance(pathSegments, targetDistance);
-    mapMarker.setAttribute("transform", `translate(${pointState.x} ${pointState.y})`);
+    mapMarker.setAttribute("transform", `translate(${pointState.x + MARKER_PATH_OFFSET_X} ${pointState.y + MARKER_PATH_OFFSET_Y})`);
 
     if (progress < 1) {
       animationFrameId = window.requestAnimationFrame(animateFrame);
@@ -2932,14 +2991,18 @@ function persistStepJsonLibrary() {
   }
 }
 
-function removeLegacyBundledStepJson() {
+function syncBundledMcbtcStepJsonSelection() {
   const stepOneEntry = stepJsonLibrary.step1;
 
   if (!stepOneEntry) {
     return;
   }
 
-  if (stepOneEntry.fileName !== "MCBTC_A.json" || stepOneEntry.routeKey !== "mcbtc") {
+  if (stepOneEntry.fileName === "MCBTC_A_Floor.json" && stepOneEntry.routeKey === "mcbtc") {
+    return;
+  }
+
+  if (stepOneEntry.routeKey !== "mcbtc") {
     return;
   }
 
