@@ -1,0 +1,1066 @@
+{
+  "origins": [
+    {
+      "id": "MCBTC|B|10/F|10B MED Ward/ Poison Treatment Centre",
+      "wardCode": "10B",
+      "building": "MCBTC",
+      "route": "B",
+      "floor": "10/F",
+      "floorNumber": 10,
+      "area": "10B MED Ward/ Poison Treatment Centre",
+      "routeKey": "mcbtc",
+      "searchText": "10B MCBTC 10/F B 10B MED WARD/ POISON TREATMENT CENTRE",
+      "destinations": [
+        {
+          "id": "IPEB|B|11/F|NIV/GI Ward",
+          "wardCode": "B11",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "NIV/GI Ward",
+          "routeKey": "ipeb",
+          "searchText": "B11 IPEB 11/F B NIV/GI WARD",
+          "liftSelection": "B",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|C|11/F|M&T Dept Office",
+          "wardCode": "C11",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "M&T Dept Office",
+          "routeKey": "ipeb",
+          "searchText": "C11 IPEB 11/F C M&T DEPT OFFICE",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|14/F|Medical Ward",
+          "wardCode": "B14",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "14/F",
+          "floorNumber": 14,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B14 IPEB 14/F B MEDICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|C|10/F|10C MED Ward (CCU/ HDU)",
+      "wardCode": "10C",
+      "building": "MCBTC",
+      "route": "C",
+      "floor": "10/F",
+      "floorNumber": 10,
+      "area": "10C MED Ward (CCU/ HDU)",
+      "routeKey": "mcbtc",
+      "searchText": "10C MCBTC 10/F C 10C MED WARD (CCU/ HDU)",
+      "destinations": [
+        {
+          "id": "IPEB|D|4/F|HDU (4/F)",
+          "wardCode": "D4",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "4/F",
+          "floorNumber": 4,
+          "area": "HDU (4/F)",
+          "routeKey": "ipeb",
+          "searchText": "D4 IPEB 4/F D HDU (4/F)",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|10/F|CTS Ward",
+          "wardCode": "B10",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "10/F",
+          "floorNumber": 10,
+          "area": "CTS Ward",
+          "routeKey": "ipeb",
+          "searchText": "B10 IPEB 10/F B CTS WARD",
+          "liftSelection": "B",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|C|10/F|CCU",
+          "wardCode": "C10",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "10/F",
+          "floorNumber": 10,
+          "area": "CCU",
+          "routeKey": "ipeb",
+          "searchText": "C10 IPEB 10/F C CCU",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|C|8/F|8C SUR Ward / Surgical HDU",
+      "wardCode": "8C",
+      "building": "MCBTC",
+      "route": "C",
+      "floor": "8/F",
+      "floorNumber": 8,
+      "area": "8C SUR Ward / Surgical HDU",
+      "routeKey": "mcbtc",
+      "searchText": "8C MCBTC 8/F C 8C SUR WARD / SURGICAL HDU",
+      "destinations": [
+        {
+          "id": "IPEB|D|5/F|HDU (5/F)",
+          "wardCode": "D5",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "5/F",
+          "floorNumber": 5,
+          "area": "HDU (5/F)",
+          "routeKey": "ipeb",
+          "searchText": "D5 IPEB 5/F D HDU (5/F)",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|8/F|Surgical Ward",
+          "wardCode": "B8",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "8/F",
+          "floorNumber": 8,
+          "area": "Surgical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B8 IPEB 8/F B SURGICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|A|11/F|GI Ward",
+          "wardCode": "A11",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "GI Ward",
+          "routeKey": "ipeb",
+          "searchText": "A11 IPEB 11/F A GI WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|C|7/F|7C SUR Ward (Cardiothoracic)/ CTS HDU",
+      "wardCode": "7C",
+      "building": "MCBTC",
+      "route": "C",
+      "floor": "7/F",
+      "floorNumber": 7,
+      "area": "7C SUR Ward (Cardiothoracic)/ CTS HDU",
+      "routeKey": "mcbtc",
+      "searchText": "7C MCBTC 7/F C 7C SUR WARD (CARDIOTHORACIC)/ CTS HDU",
+      "destinations": [
+        {
+          "id": "IPEB|D|5/F|HDU (5/F)",
+          "wardCode": "D5",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "5/F",
+          "floorNumber": 5,
+          "area": "HDU (5/F)",
+          "routeKey": "ipeb",
+          "searchText": "D5 IPEB 5/F D HDU (5/F)",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|A|10/F|CTS Ward",
+          "wardCode": "A10",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "10/F",
+          "floorNumber": 10,
+          "area": "CTS Ward",
+          "routeKey": "ipeb",
+          "searchText": "A10 IPEB 10/F A CTS WARD",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|C|10/F|CCU",
+          "wardCode": "C10",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "10/F",
+          "floorNumber": 10,
+          "area": "CCU",
+          "routeKey": "ipeb",
+          "searchText": "C10 IPEB 10/F C CCU",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|A|12/F|12A MED Ward/Infectious Disease Ward",
+      "wardCode": "12A",
+      "building": "MCBTC",
+      "route": "A",
+      "floor": "12/F",
+      "floorNumber": 12,
+      "area": "12A MED Ward/Infectious Disease Ward",
+      "routeKey": "mcbtc",
+      "searchText": "12A MCBTC 12/F A 12A MED WARD/INFECTIOUS DISEASE WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|11/F|NIV/GI Ward",
+          "wardCode": "B11",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "NIV/GI Ward",
+          "routeKey": "ipeb",
+          "searchText": "B11 IPEB 11/F B NIV/GI WARD",
+          "liftSelection": "B",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|19/F|ISOL Ward B",
+          "wardCode": "B19",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "19/F",
+          "floorNumber": 19,
+          "area": "ISOL Ward B",
+          "routeKey": "ipeb",
+          "searchText": "B19 IPEB 19/F B ISOL WARD B",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|A|9/F|9A ORT Ward",
+      "wardCode": "9A",
+      "building": "MCBTC",
+      "route": "A",
+      "floor": "9/F",
+      "floorNumber": 9,
+      "area": "9A ORT Ward",
+      "routeKey": "mcbtc",
+      "searchText": "9A MCBTC 9/F A 9A ORT WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|13/F|MSK Ward A",
+          "wardCode": "A13",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "13/F",
+          "floorNumber": 13,
+          "area": "MSK Ward A",
+          "routeKey": "ipeb",
+          "searchText": "A13 IPEB 13/F A MSK WARD A",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|13/F|MSK Ward B",
+          "wardCode": "B13",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "13/F",
+          "floorNumber": 13,
+          "area": "MSK Ward B",
+          "routeKey": "ipeb",
+          "searchText": "B13 IPEB 13/F B MSK WARD B",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|B|9/F|9B ORT Ward",
+      "wardCode": "9B",
+      "building": "MCBTC",
+      "route": "B",
+      "floor": "9/F",
+      "floorNumber": 9,
+      "area": "9B ORT Ward",
+      "routeKey": "mcbtc",
+      "searchText": "9B MCBTC 9/F B 9B ORT WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|13/F|MSK Ward A",
+          "wardCode": "A13",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "13/F",
+          "floorNumber": 13,
+          "area": "MSK Ward A",
+          "routeKey": "ipeb",
+          "searchText": "A13 IPEB 13/F A MSK WARD A",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|13/F|MSK Ward B",
+          "wardCode": "B13",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "13/F",
+          "floorNumber": 13,
+          "area": "MSK Ward B",
+          "routeKey": "ipeb",
+          "searchText": "B13 IPEB 13/F B MSK WARD B",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|C|9/F|9C ORT Ward",
+      "wardCode": "9C",
+      "building": "MCBTC",
+      "route": "C",
+      "floor": "9/F",
+      "floorNumber": 9,
+      "area": "9C ORT Ward",
+      "routeKey": "mcbtc",
+      "searchText": "9C MCBTC 9/F C 9C ORT WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|13/F|MSK Ward A",
+          "wardCode": "A13",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "13/F",
+          "floorNumber": 13,
+          "area": "MSK Ward A",
+          "routeKey": "ipeb",
+          "searchText": "A13 IPEB 13/F A MSK WARD A",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|13/F|MSK Ward B",
+          "wardCode": "B13",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "13/F",
+          "floorNumber": 13,
+          "area": "MSK Ward B",
+          "routeKey": "ipeb",
+          "searchText": "B13 IPEB 13/F B MSK WARD B",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|A|7/F|7A MED Ward (Stroke Unit)/ Neurosurgery HDU",
+      "wardCode": "7A",
+      "building": "MCBTC",
+      "route": "A",
+      "floor": "7/F",
+      "floorNumber": 7,
+      "area": "7A MED Ward (Stroke Unit)/ Neurosurgery HDU",
+      "routeKey": "mcbtc",
+      "searchText": "7A MCBTC 7/F A 7A MED WARD (STROKE UNIT)/ NEUROSURGERY HDU",
+      "destinations": [
+        {
+          "id": "IPEB|D|5/F|HDU (5/F)",
+          "wardCode": "D5",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "5/F",
+          "floorNumber": 5,
+          "area": "HDU (5/F)",
+          "routeKey": "ipeb",
+          "searchText": "D5 IPEB 5/F D HDU (5/F)",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|A|9/F|NEURO Ward",
+          "wardCode": "A9",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "9/F",
+          "floorNumber": 9,
+          "area": "NEURO Ward",
+          "routeKey": "ipeb",
+          "searchText": "A9 IPEB 9/F A NEURO WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|5/F|ICU (5/F)",
+      "wardCode": "5D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "5/F",
+      "floorNumber": 5,
+      "area": "ICU (5/F)",
+      "routeKey": "d",
+      "searchText": "5D MCBTC 5/F D ICU (5/F)",
+      "destinations": [
+        {
+          "id": "IPEB|D|4/F|ICU (4/F)",
+          "wardCode": "D4",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "4/F",
+          "floorNumber": 4,
+          "area": "ICU (4/F)",
+          "routeKey": "ipeb",
+          "searchText": "D4 IPEB 4/F D ICU (4/F)",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|D|5/F|ICU (5/F)",
+          "wardCode": "D5",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "5/F",
+          "floorNumber": 5,
+          "area": "ICU (5/F)",
+          "routeKey": "ipeb",
+          "searchText": "D5 IPEB 5/F D ICU (5/F)",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|5/F|OT (5/F)",
+      "wardCode": "5D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "5/F",
+      "floorNumber": 5,
+      "area": "OT (5/F)",
+      "routeKey": "d",
+      "searchText": "5D MCBTC 5/F D OT (5/F)",
+      "destinations": [
+        {
+          "id": "IPEB|D|5/F|Peri-op Suite 1",
+          "wardCode": "D5",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "5/F",
+          "floorNumber": 5,
+          "area": "Peri-op Suite 1",
+          "routeKey": "ipeb",
+          "searchText": "D5 IPEB 5/F D PERI-OP SUITE 1",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|D|7/F|Peri-op Suite 2",
+          "wardCode": "D7",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "7/F",
+          "floorNumber": 7,
+          "area": "Peri-op Suite 2",
+          "routeKey": "ipeb",
+          "searchText": "D7 IPEB 7/F D PERI-OP SUITE 2",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|4/F|ICU (4/F)",
+      "wardCode": "4D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "4/F",
+      "floorNumber": 4,
+      "area": "ICU (4/F)",
+      "routeKey": "d",
+      "searchText": "4D MCBTC 4/F D ICU (4/F)",
+      "destinations": [
+        {
+          "id": "IPEB|D|4/F|ICU (4/F)",
+          "wardCode": "D4",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "4/F",
+          "floorNumber": 4,
+          "area": "ICU (4/F)",
+          "routeKey": "ipeb",
+          "searchText": "D4 IPEB 4/F D ICU (4/F)",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|D|5/F|ICU (5/F)",
+          "wardCode": "D5",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "5/F",
+          "floorNumber": 5,
+          "area": "ICU (5/F)",
+          "routeKey": "ipeb",
+          "searchText": "D5 IPEB 5/F D ICU (5/F)",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|3/F|OT (3/F)",
+      "wardCode": "3D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "3/F",
+      "floorNumber": 3,
+      "area": "OT (3/F)",
+      "routeKey": "d",
+      "searchText": "3D MCBTC 3/F D OT (3/F)",
+      "destinations": [
+        {
+          "id": "IPEB|D|5/F|Peri-op Suite 1",
+          "wardCode": "D5",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "5/F",
+          "floorNumber": 5,
+          "area": "Peri-op Suite 1",
+          "routeKey": "ipeb",
+          "searchText": "D5 IPEB 5/F D PERI-OP SUITE 1",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|D|7/F|Peri-op Suite 2",
+          "wardCode": "D7",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "7/F",
+          "floorNumber": 7,
+          "area": "Peri-op Suite 2",
+          "routeKey": "ipeb",
+          "searchText": "D7 IPEB 7/F D PERI-OP SUITE 2",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|2/F|DIIR",
+      "wardCode": "2D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "2/F",
+      "floorNumber": 2,
+      "area": "DIIR",
+      "routeKey": "d",
+      "searchText": "2D MCBTC 2/F D DIIR",
+      "destinations": [
+        {
+          "id": "IPEB|D|0/F|DIIR",
+          "wardCode": "D0",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "0/F",
+          "floorNumber": 0,
+          "area": "DIIR",
+          "routeKey": "ipeb",
+          "searchText": "D0 IPEB 0/F D DIIR",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|D|1/F|DIIR Office",
+          "wardCode": "D1",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "1/F",
+          "floorNumber": 1,
+          "area": "DIIR Office",
+          "routeKey": "ipeb",
+          "searchText": "D1 IPEB 1/F D DIIR OFFICE",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|B|12/F|12B MED Ward",
+      "wardCode": "12B",
+      "building": "MCBTC",
+      "route": "B",
+      "floor": "12/F",
+      "floorNumber": 12,
+      "area": "12B MED Ward",
+      "routeKey": "mcbtc",
+      "searchText": "12B MCBTC 12/F B 12B MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|10/F|CTS Ward",
+          "wardCode": "B10",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "10/F",
+          "floorNumber": 10,
+          "area": "CTS Ward",
+          "routeKey": "ipeb",
+          "searchText": "B10 IPEB 10/F B CTS WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|C|12/F|12C MED Ward/Infectious Disease Ward",
+      "wardCode": "12C",
+      "building": "MCBTC",
+      "route": "C",
+      "floor": "12/F",
+      "floorNumber": 12,
+      "area": "12C MED Ward/Infectious Disease Ward",
+      "routeKey": "mcbtc",
+      "searchText": "12C MCBTC 12/F C 12C MED WARD/INFECTIOUS DISEASE WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|19/F|ISOL Ward A",
+          "wardCode": "A19",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "19/F",
+          "floorNumber": 19,
+          "area": "ISOL Ward A",
+          "routeKey": "ipeb",
+          "searchText": "A19 IPEB 19/F A ISOL WARD A",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|A|11/F|11A MED Ward",
+      "wardCode": "11A",
+      "building": "MCBTC",
+      "route": "A",
+      "floor": "11/F",
+      "floorNumber": 11,
+      "area": "11A MED Ward",
+      "routeKey": "mcbtc",
+      "searchText": "11A MCBTC 11/F A 11A MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|15/F|Medical Ward",
+          "wardCode": "B15",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "15/F",
+          "floorNumber": 15,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B15 IPEB 15/F B MEDICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|B|11/F|11B MED Ward",
+      "wardCode": "11B",
+      "building": "MCBTC",
+      "route": "B",
+      "floor": "11/F",
+      "floorNumber": 11,
+      "area": "11B MED Ward",
+      "routeKey": "mcbtc",
+      "searchText": "11B MCBTC 11/F B 11B MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|15/F|Medical Ward",
+          "wardCode": "A15",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "15/F",
+          "floorNumber": 15,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "A15 IPEB 15/F A MEDICAL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|C|11/F|11C MED Ward",
+      "wardCode": "11C",
+      "building": "MCBTC",
+      "route": "C",
+      "floor": "11/F",
+      "floorNumber": 11,
+      "area": "11C MED Ward",
+      "routeKey": "mcbtc",
+      "searchText": "11C MCBTC 11/F C 11C MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|9/F|NEURO Ward",
+          "wardCode": "A9",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "9/F",
+          "floorNumber": 9,
+          "area": "NEURO Ward",
+          "routeKey": "ipeb",
+          "searchText": "A9 IPEB 9/F A NEURO WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|A|10/F|10A MED Ward (Renal Transplant Centre)",
+      "wardCode": "10A",
+      "building": "MCBTC",
+      "route": "A",
+      "floor": "10/F",
+      "floorNumber": 10,
+      "area": "10A MED Ward (Renal Transplant Centre)",
+      "routeKey": "mcbtc",
+      "searchText": "10A MCBTC 10/F A 10A MED WARD (RENAL TRANSPLANT CENTRE)",
+      "destinations": [
+        {
+          "id": "IPEB|B|12/F|RENAL/URO Ward",
+          "wardCode": "B12",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "RENAL/URO Ward",
+          "routeKey": "ipeb",
+          "searchText": "B12 IPEB 12/F B RENAL/URO WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|A|8/F|8A SUR Ward",
+      "wardCode": "8A",
+      "building": "MCBTC",
+      "route": "A",
+      "floor": "8/F",
+      "floorNumber": 8,
+      "area": "8A SUR Ward",
+      "routeKey": "mcbtc",
+      "searchText": "8A MCBTC 8/F A 8A SUR WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|8/F|Surgical Ward",
+          "wardCode": "B8",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "8/F",
+          "floorNumber": 8,
+          "area": "Surgical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B8 IPEB 8/F B SURGICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|B|8/F|8B SUR Ward",
+      "wardCode": "8B",
+      "building": "MCBTC",
+      "route": "B",
+      "floor": "8/F",
+      "floorNumber": 8,
+      "area": "8B SUR Ward",
+      "routeKey": "mcbtc",
+      "searchText": "8B MCBTC 8/F B 8B SUR WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|11/F|GI Ward",
+          "wardCode": "A11",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "GI Ward",
+          "routeKey": "ipeb",
+          "searchText": "A11 IPEB 11/F A GI WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|B|7/F|7B SUR Ward (Neurosurgery)",
+      "wardCode": "7B",
+      "building": "MCBTC",
+      "route": "B",
+      "floor": "7/F",
+      "floorNumber": 7,
+      "area": "7B SUR Ward (Neurosurgery)",
+      "routeKey": "mcbtc",
+      "searchText": "7B MCBTC 7/F B 7B SUR WARD (NEUROSURGERY)",
+      "destinations": [
+        {
+          "id": "IPEB|B|9/F|NEURO Ward",
+          "wardCode": "B9",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "9/F",
+          "floorNumber": 9,
+          "area": "NEURO Ward",
+          "routeKey": "ipeb",
+          "searchText": "B9 IPEB 9/F B NEURO WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|6/F|Private Ward",
+      "wardCode": "6D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "6/F",
+      "floorNumber": 6,
+      "area": "Private Ward",
+      "routeKey": "d",
+      "searchText": "6D MCBTC 6/F D PRIVATE WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|18/F|PAED IP Ward",
+          "wardCode": "B18",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "18/F",
+          "floorNumber": 18,
+          "area": "PAED IP Ward",
+          "routeKey": "ipeb",
+          "searchText": "B18 IPEB 18/F B PAED IP WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|5/F|Burns Centre",
+      "wardCode": "5D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "5/F",
+      "floorNumber": 5,
+      "area": "Burns Centre",
+      "routeKey": "d",
+      "searchText": "5D MCBTC 5/F D BURNS CENTRE",
+      "destinations": [
+        {
+          "id": "IPEB|A|10/F|CTS Ward",
+          "wardCode": "A10",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "10/F",
+          "floorNumber": 10,
+          "area": "CTS Ward",
+          "routeKey": "ipeb",
+          "searchText": "A10 IPEB 10/F A CTS WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|3/F|DSU",
+      "wardCode": "3D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "3/F",
+      "floorNumber": 3,
+      "area": "DSU",
+      "routeKey": "d",
+      "searchText": "3D MCBTC 3/F D DSU",
+      "destinations": [
+        {
+          "id": "IPEB|D|7/F|DSU",
+          "wardCode": "D7",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "7/F",
+          "floorNumber": 7,
+          "area": "DSU",
+          "routeKey": "ipeb",
+          "searchText": "D7 IPEB 7/F D DSU",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|2/F|Cardiovascular Intervention Centre",
+      "wardCode": "2D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "2/F",
+      "floorNumber": 2,
+      "area": "Cardiovascular Intervention Centre",
+      "routeKey": "d",
+      "searchText": "2D MCBTC 2/F D CARDIOVASCULAR INTERVENTION CENTRE",
+      "destinations": [
+        {
+          "id": "IPEB|C|10/F|CIC",
+          "wardCode": "C10",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "10/F",
+          "floorNumber": 10,
+          "area": "CIC",
+          "routeKey": "ipeb",
+          "searchText": "C10 IPEB 10/F C CIC",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|2/F|EM Ward",
+      "wardCode": "2D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "2/F",
+      "floorNumber": 2,
+      "area": "EM Ward",
+      "routeKey": "d",
+      "searchText": "2D MCBTC 2/F D EM WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|8/F|EM Ward",
+          "wardCode": "A8",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "8/F",
+          "floorNumber": 8,
+          "area": "EM Ward",
+          "routeKey": "ipeb",
+          "searchText": "A8 IPEB 8/F A EM WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|0/F|A&E",
+      "wardCode": "0D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "0/F",
+      "floorNumber": 0,
+      "area": "A&E",
+      "routeKey": "d",
+      "searchText": "0D MCBTC 0/F D A&E",
+      "destinations": [
+        {
+          "id": "IPEB|D|0/F|A&E",
+          "wardCode": "D0",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "0/F",
+          "floorNumber": 0,
+          "area": "A&E",
+          "routeKey": "ipeb",
+          "searchText": "D0 IPEB 0/F D A&E",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "MCBTC|D|0/F|Mortuary",
+      "wardCode": "0D",
+      "building": "MCBTC",
+      "route": "D",
+      "floor": "0/F",
+      "floorNumber": 0,
+      "area": "Mortuary",
+      "routeKey": "d",
+      "searchText": "0D MCBTC 0/F D MORTUARY",
+      "destinations": [
+        {
+          "id": "IPEB|D|B01/F|Mortuary",
+          "wardCode": "D1",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "B01/F",
+          "floorNumber": 1,
+          "area": "Mortuary",
+          "routeKey": "ipeb",
+          "searchText": "D1 IPEB B01/F D MORTUARY",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    }
+  ]
+}
