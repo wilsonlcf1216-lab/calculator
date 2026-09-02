@@ -1772,11 +1772,8 @@ td {
                 </div>
 
                 <div class="legend-row">
-                  <span class="legend-chip area">Area</span>
                   <span class="legend-chip entrance">Entrance</span>
-                  <span class="legend-chip lift-lobby">Lift Lobby</span>
                   <span class="legend-chip lift">Lift</span>
-                  <span class="legend-chip waypoint">Route Node</span>
                 </div>
 
                 <p class="map-note">
@@ -1834,11 +1831,8 @@ td {
               <label class="field">
                 <span>Point Type</span>
                 <select id="point-type">
-                  <option value="area">Area</option>
                   <option value="entrance">Entrance</option>
-                  <option value="liftLobby">Lift Lobby</option>
                   <option value="lift">Lift</option>
-                  <option value="waypoint">Route Node</option>
                 </select>
               </label>
               <button id="start-point-placement" type="button" class="secondary-btn">
@@ -1875,8 +1869,7 @@ td {
                   <option value="step2">Step 2</option>
                   <option value="step3">Step 3</option>
                   <option value="step4">Step 4</option>
-                  <option value="step5">Step 5</option>
-                  <option value="step6">Step 6: Arrival</option>
+                  <option value="step5">Step 5: Arrival</option>
                 </select>
               </label>
               <label class="field">
@@ -1944,7 +1937,7 @@ td {
 
           <div class="asset-section">
             <h3>Step JSON Library</h3>
-            <p class="asset-meta">Upload one JSON per step. Playback will run Step 1 to Step 6 in sequence and highlight the active step.</p>
+            <p class="asset-meta">Bundled JSON will auto-match by route. Playback runs Step 1 to Step 5 in sequence and highlights the active step.</p>
             <div id="step-json-library" class="step-json-library"></div>
           </div>
         </article>
@@ -1962,14 +1955,62 @@ const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
 const MARKER_PATH_OFFSET_X = 40;
 const MARKER_PATH_OFFSET_Y = 24;
-const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5", "step6"];
-const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5", "step6"];
+const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5"];
+const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5"];
 const STEP_JSON_DEFAULTS = [
   {
     stepKey: "step1",
     routeKey: "mcbtc",
-    fileName: "MCBTC_A_Floor.json",
-    filePath: "./MCBTC_A_Floor.json"
+    scopeType: "originRoute",
+    scopeValue: "A",
+    scopeLabel: "MCBTC Route A",
+    fileName: "MCBTC_A.json",
+    filePath: "./MCBTC_A.json"
+  },
+  {
+    stepKey: "step1",
+    routeKey: "mcbtc",
+    scopeType: "originRoute",
+    scopeValue: "B",
+    scopeLabel: "MCBTC Route B",
+    fileName: "MCBTC_B.json",
+    filePath: "./MCBTC_B.json"
+  },
+  {
+    stepKey: "step1",
+    routeKey: "mcbtc",
+    scopeType: "originRoute",
+    scopeValue: "C",
+    scopeLabel: "MCBTC Route C",
+    fileName: "MCBTC_C.json",
+    filePath: "./MCBTC_C.json"
+  },
+  {
+    stepKey: "step3",
+    routeKey: "mcbtc",
+    scopeType: "lobby",
+    scopeValue: "south",
+    scopeLabel: "South Lift via G/F",
+    fileName: "Transfer_00_South.json",
+    filePath: "./Transfer_00_South.json"
+  },
+  {
+    stepKey: "step5",
+    routeKey: "ipeb",
+    scopeType: "destinationWing",
+    scopeValue: "A",
+    scopeLabel: "IPEB A Ward",
+    fileName: "IPEB_A.json",
+    filePath: "./IPEB_A.json"
+  },
+  {
+    stepKey: "step5",
+    routeKey: "ipeb",
+    scopeType: "destinationWing",
+    scopeValue: "B",
+    scopeLabel: "IPEB B Ward",
+    fileName: "IPEB_B.json",
+    filePath: "./IPEB_B.json"
   }
 ];
 
@@ -2033,8 +2074,7 @@ const STEP_TAG_LABELS = {
   step2: "Step 2",
   step3: "Step 3",
   step4: "Step 4",
-  step5: "Step 5",
-  step6: "Step 6"
+  step5: "Step 5"
 };
 
 let mapState = getEmptyMapState();
@@ -2458,6 +2498,7 @@ function toRouteOriginEntry(origin) {
   return {
     ward: origin.wardCode,
     floor: origin.floorNumber,
+    route: origin.route,
     suffix: origin.route,
     building: origin.building,
     transferFloor: getTransferFloorForRouteKey(origin.routeKey),
@@ -2469,6 +2510,7 @@ function toRouteDestinationEntry(destination) {
   return {
     ward: destination.wardCode,
     wing: destination.wing,
+    route: destination.route,
     floor: destination.floorNumber,
     building: destination.building,
     routeKey: destination.routeKey,
@@ -2501,29 +2543,55 @@ function getIpebLobbyAssumption(destination) {
   };
 }
 
-function buildMcbtcTransitSegments(lobbyAssumption) {
-  const baseSegments = INTER_BUILDING_SEGMENTS.mcbtc;
-  const northSegment = baseSegments[2];
-  const southConnector = baseSegments[3];
+function buildTransferSegment(routeKey, lobbyAssumption) {
+  const baseSegments = INTER_BUILDING_SEGMENTS[routeKey];
 
-  if (lobbyAssumption.key === "south") {
-    return [
-      {
-        stepTag: "step3",
-        playbackStepKey: "step3",
-        label: "MCBTC Lift to IPEB South Wing Lift",
-        distance: roundOneDecimal(northSegment.distance + southConnector.distance),
-        time: roundOneDecimal(northSegment.time + southConnector.time)
-      }
-    ];
+  if (!Array.isArray(baseSegments) || baseSegments.length < 5) {
+    return {
+      stepTag: "step3",
+      playbackStepKey: "step3",
+      label: "Inter-building transfer",
+      distance: 0,
+      time: 0
+    };
   }
 
-  return [
-    {
-      ...northSegment,
-      playbackStepKey: "step3"
+  let transferSegments = [];
+  let label = "Inter-building transfer";
+
+  if (routeKey === "hklm") {
+    transferSegments = [baseSegments[2], baseSegments[3]];
+    label = "HKLM Lift to IPEB North Wing Lift";
+
+    if (lobbyAssumption.key === "south") {
+      transferSegments.push(baseSegments[4]);
+      label = "HKLM Lift to IPEB South Wing Lift";
     }
-  ];
+  } else if (routeKey === "ef") {
+    transferSegments = [baseSegments[2]];
+    label = "EF Lift to IPEB North Wing Lift";
+
+    if (lobbyAssumption.key === "south") {
+      transferSegments.push(baseSegments[3]);
+      label = "EF Lift to IPEB South Wing Lift";
+    }
+  } else if (routeKey === "mcbtc") {
+    transferSegments = [baseSegments[2]];
+    label = "MCBTC Lift to IPEB North Wing Lift";
+
+    if (lobbyAssumption.key === "south") {
+      transferSegments.push(baseSegments[3]);
+      label = "MCBTC Lift to IPEB South Wing Lift";
+    }
+  }
+
+  return {
+    stepTag: "step3",
+    playbackStepKey: "step3",
+    label,
+    distance: roundOneDecimal(transferSegments.reduce((sum, segment) => sum + (Number(segment.distance) || 0), 0)),
+    time: roundOneDecimal(transferSegments.reduce((sum, segment) => sum + (Number(segment.time) || 0), 0))
+  };
 }
 
 function applyGeneratedRouteResult(result) {
@@ -2534,8 +2602,8 @@ function applyGeneratedRouteResult(result) {
   renderResults(result);
   startStepPlayback();
   showError("");
-  showSuccess(hasAnyStepJsonLoadedForRoute(result.origin.routeKey)
-    ? "已產生路線結果，會按 Step 1 至 Step 6 連續播放已載入的 JSON。"
+  showSuccess(hasAnyStepJsonLoadedForRoute(result)
+    ? "已產生路線結果，會按 Step 1 至 Step 5 自動配對並播放已載入的 JSON。"
     : "已產生路線結果，但目前未載入任何 Step JSON。");
 }
 
@@ -2600,30 +2668,31 @@ function calculateRouteFromDirectoryEntries(originEntry, destinationEntry) {
 
 function buildRouteResult(origin, destination) {
   const lobbyAssumption = getIpebLobbyAssumption(destination);
-  let segmentTemplate = INTER_BUILDING_SEGMENTS[origin.routeKey];
+  const baseSegments = INTER_BUILDING_SEGMENTS[origin.routeKey];
 
-  if (origin.routeKey === "mcbtc") {
-    const mcbtcBaseSegments = INTER_BUILDING_SEGMENTS.mcbtc;
-    segmentTemplate = [
-      {
-        ...mcbtcBaseSegments[0],
-        playbackStepKey: "step1"
-      },
-      {
-        ...mcbtcBaseSegments[1],
-        playbackStepKey: "step2"
-      },
-      ...buildMcbtcTransitSegments(lobbyAssumption),
-      {
-        ...mcbtcBaseSegments[4],
-        playbackStepKey: lobbyAssumption.key === "south" ? "step5" : "step4"
-      },
-      {
-        ...mcbtcBaseSegments[5],
-        playbackStepKey: lobbyAssumption.key === "south" ? "step6" : "step5"
-      }
-    ];
+  if (!Array.isArray(baseSegments) || baseSegments.length < 5) {
+    throw new Error("Origin route is not mapped yet.");
   }
+
+  const segmentTemplate = [
+    {
+      ...baseSegments[0],
+      playbackStepKey: "step1"
+    },
+    {
+      ...baseSegments[1],
+      playbackStepKey: "step2"
+    },
+    buildTransferSegment(origin.routeKey, lobbyAssumption),
+    {
+      ...baseSegments[baseSegments.length - 2],
+      playbackStepKey: "step4"
+    },
+    {
+      ...baseSegments[baseSegments.length - 1],
+      playbackStepKey: "step5"
+    }
+  ];
 
   const steps = segmentTemplate.map((segment, index) => {
     if (segment.calculated === "origin") {
@@ -2680,6 +2749,7 @@ function buildRouteResult(origin, destination) {
   return {
     origin,
     destination,
+    lobbyAssumptionKey: lobbyAssumption.key,
     lobbyAssumptionLabel: lobbyAssumption.label,
     steps,
     totalDistance: roundOneDecimal(totals.distance),
@@ -2706,6 +2776,7 @@ function parseOriginWard(input) {
   return {
     ward: input,
     floor,
+    route: suffix,
     suffix,
     building: config.building,
     transferFloor: config.transferFloor,
@@ -2775,13 +2846,13 @@ function getActiveLiftSceneBuildingLabel(scene) {
   }
 
   if (activePlaybackStepKey === "step2") {
-    const step1Entry = getStepJsonEntry("step1", currentRouteResult.origin.routeKey);
+    const step1Entry = getStepJsonEntry("step1", currentRouteResult);
     return getLiftBuildingDisplayLabel(step1Entry?.routeKey || currentRouteResult.origin.routeKey, currentRouteResult.origin.building || scene?.buildingLabel || "");
   }
 
-  if (activePlaybackStepKey === "step5") {
-    const step6Entry = stepJsonLibrary.step6;
-    return getLiftBuildingDisplayLabel(step6Entry?.routeKey || currentRouteResult.destination.routeKey || "ipeb", currentRouteResult.destination.building || scene?.buildingLabel || "");
+  if (activePlaybackStepKey === "step4") {
+    const step5Entry = getStepJsonEntry("step5", currentRouteResult);
+    return getLiftBuildingDisplayLabel(step5Entry?.routeKey || currentRouteResult.destination.routeKey || "ipeb", currentRouteResult.destination.building || scene?.buildingLabel || "");
   }
 
   return getLiftBuildingDisplayLabel("", scene?.buildingLabel || "");
@@ -3429,7 +3500,7 @@ function renderMap() {
     stopLiftScene();
     mapStatus.textContent = "Drawing route";
   } else if (currentRouteResult && activePlaybackStepKey) {
-    const loadedEntry = getStepJsonEntry(activePlaybackStepKey, currentRouteResult.origin.routeKey);
+    const loadedEntry = getStepJsonEntry(activePlaybackStepKey, currentRouteResult);
     const stepLabel = STEP_TAG_LABELS[activePlaybackStepKey] || activePlaybackStepKey;
 
     if (activeLiftScene) {
@@ -3714,7 +3785,7 @@ function syncRouteVisualizationState() {
     return;
   }
 
-  const loadedEntry = getStepJsonEntry(activePlaybackStepKey, currentRouteResult.origin.routeKey);
+  const loadedEntry = getStepJsonEntry(activePlaybackStepKey, currentRouteResult);
   activePlaybackMapState = loadedEntry ? loadedEntry.mapState : getEmptyMapState();
   activeJourney = loadedEntry ? buildJourneyFromMapState(loadedEntry.mapState) : null;
   updateStepBreakdownHighlight();
@@ -3934,26 +4005,110 @@ function getDisplayMapState() {
   return mapState;
 }
 
-function getStepJsonEntry(stepKey, routeKey = "") {
-  const entry = stepJsonLibrary[stepKey];
-
-  if (!entry) {
-    return null;
-  }
-
-  if (!entry.routeKey || !routeKey || entry.routeKey === routeKey) {
-    return entry;
-  }
-
-  return null;
+function getStepJsonEntries(stepKey) {
+  return Array.isArray(stepJsonLibrary[stepKey]) ? stepJsonLibrary[stepKey] : [];
 }
 
-function hasAnyStepJsonLoadedForRoute(routeKey = "") {
-  return PLAYBACK_STEP_KEYS.some((stepKey) => Boolean(getStepJsonEntry(stepKey, routeKey)));
+function getStepJsonRouteContext(routeResult = currentRouteResult) {
+  const origin = routeResult && routeResult.origin ? routeResult.origin : {};
+  const destination = routeResult && routeResult.destination ? routeResult.destination : {};
+  const lobbyKey = routeResult && routeResult.lobbyAssumptionKey
+    ? routeResult.lobbyAssumptionKey
+    : getIpebLobbyAssumption(destination).key;
+
+  return {
+    originRouteKey: String(origin.routeKey || "").trim().toLowerCase(),
+    destinationRouteKey: String(destination.routeKey || "").trim().toLowerCase(),
+    originRoute: String(origin.route || origin.suffix || "").trim().toUpperCase(),
+    destinationWing: String(destination.wing || destination.route || "").trim().toUpperCase(),
+    lobbyKey: String(lobbyKey || "").trim().toLowerCase()
+  };
+}
+
+function getTargetRouteKeyForStep(stepKey, context) {
+  if (stepKey === "step5") {
+    return context.destinationRouteKey;
+  }
+
+  return context.originRouteKey;
+}
+
+function matchesStepJsonEntry(entry, stepKey, context) {
+  const entryRouteKey = String(entry.routeKey || "").trim().toLowerCase();
+  const targetRouteKey = getTargetRouteKeyForStep(stepKey, context);
+
+  if (entryRouteKey && targetRouteKey && entryRouteKey !== targetRouteKey) {
+    return false;
+  }
+
+  const scopeType = String(entry.scopeType || "global").trim();
+  const scopeValue = String(entry.scopeValue || "").trim().toUpperCase();
+
+  if (scopeType === "originRoute") {
+    return context.originRoute === scopeValue;
+  }
+
+  if (scopeType === "destinationWing") {
+    return context.destinationWing === scopeValue;
+  }
+
+  if (scopeType === "lobby") {
+    return context.lobbyKey === String(entry.scopeValue || "").trim().toLowerCase();
+  }
+
+  return true;
+}
+
+function getStepJsonEntryPriority(entry) {
+  let score = 0;
+
+  if (entry.routeKey) {
+    score += 20;
+  }
+
+  if (entry.scopeType && entry.scopeType !== "global") {
+    score += 40;
+  }
+
+  if (entry.source === "uploaded") {
+    score += 100;
+  }
+
+  return score;
+}
+
+function getStepJsonEntry(stepKey, routeResult = currentRouteResult) {
+  const context = getStepJsonRouteContext(routeResult);
+  let bestEntry = null;
+  let bestScore = -1;
+
+  getStepJsonEntries(stepKey).forEach((entry) => {
+    if (!matchesStepJsonEntry(entry, stepKey, context)) {
+      return;
+    }
+
+    const score = getStepJsonEntryPriority(entry);
+
+    if (!bestEntry || score >= bestScore) {
+      bestEntry = entry;
+      bestScore = score;
+    }
+  });
+
+  return bestEntry;
+}
+
+function hasAnyStepJsonLoadedForRoute(routeResult = currentRouteResult) {
+  return PLAYBACK_STEP_KEYS.some((stepKey) => Boolean(getStepJsonEntry(stepKey, routeResult)));
 }
 
 async function ensureBundledStepJsonDefaults() {
-  const defaultsToLoad = STEP_JSON_DEFAULTS.filter((entry) => !stepJsonLibrary[entry.stepKey]);
+  const defaultsToLoad = STEP_JSON_DEFAULTS.filter((entry) => !getStepJsonEntries(entry.stepKey).some((existingEntry) => {
+    return existingEntry.fileName === entry.fileName
+      && String(existingEntry.routeKey || "") === String(entry.routeKey || "")
+      && String(existingEntry.scopeType || "global") === String(entry.scopeType || "global")
+      && String(existingEntry.scopeValue || "") === String(entry.scopeValue || "");
+  }));
 
   if (!defaultsToLoad.length) {
     return;
@@ -3971,14 +4126,18 @@ async function ensureBundledStepJsonDefaults() {
 
       const parsed = await response.json();
 
-      if (!stepJsonLibrary[entry.stepKey]) {
-        stepJsonLibrary[entry.stepKey] = {
-          fileName: entry.fileName,
-          routeKey: entry.routeKey,
-          mapState: normalizeMapState(parsed)
-        };
-        didChange = true;
-      }
+      const entryToStore = normalizeStepJsonEntry({
+        id: createId("step-json"),
+        fileName: entry.fileName,
+        routeKey: entry.routeKey,
+        scopeType: entry.scopeType,
+        scopeValue: entry.scopeValue,
+        scopeLabel: entry.scopeLabel,
+        source: "bundled",
+        mapState: parsed
+      });
+      stepJsonLibrary[entry.stepKey] = [...getStepJsonEntries(entry.stepKey), entryToStore];
+      didChange = true;
     } catch (error) {
       // Ignore missing bundled defaults and continue booting the app.
     }
@@ -4014,11 +4173,18 @@ function handleStepJsonLibraryImport(event) {
   reader.onload = () => {
     try {
       const parsed = JSON.parse(String(reader.result || ""));
-      stepJsonLibrary[stepKey] = {
+      const nextEntries = getStepJsonEntries(stepKey).filter((entry) => !(entry.source === "uploaded" && String(entry.scopeType || "global") === "global"));
+      nextEntries.push(normalizeStepJsonEntry({
+        id: createId("step-json"),
         fileName: file.name,
         routeKey: "",
-        mapState: normalizeMapState(parsed)
-      };
+        scopeType: "global",
+        scopeValue: "",
+        scopeLabel: "Manual upload",
+        source: "uploaded",
+        mapState: parsed
+      }));
+      stepJsonLibrary[stepKey] = nextEntries;
       persistStepJsonLibrary();
       renderAll();
 
@@ -4027,7 +4193,7 @@ function handleStepJsonLibraryImport(event) {
       }
 
       showError("");
-      showSuccess(`已為 ${STEP_TAG_LABELS[stepKey]} 載入 JSON：「${file.name}」。`);
+      showSuccess(`已為 ${STEP_TAG_LABELS[stepKey]} 載入 JSON：「${file.name}」，會作為手動 override。`);
     } catch (error) {
       showError(`無法讀取 ${STEP_TAG_LABELS[stepKey]} JSON，請使用有效的匯出地圖 JSON。`);
     }
@@ -4049,7 +4215,7 @@ function handleStepJsonLibraryActions(event) {
     return;
   }
 
-  stepJsonLibrary[stepKey] = null;
+  stepJsonLibrary[stepKey] = [];
   persistStepJsonLibrary();
   renderAll();
 
@@ -4062,17 +4228,20 @@ function handleStepJsonLibraryActions(event) {
 
 function renderStepJsonLibrary() {
   stepJsonLibraryElement.innerHTML = PLAYBACK_STEP_KEYS.map((stepKey) => {
-    const entry = stepJsonLibrary[stepKey];
-    const scopeSummary = entry && entry.routeKey ? ` · ${entry.routeKey.toUpperCase()} only` : "";
-    const mapSummary = entry
-      ? `${escapeHtml(entry.fileName)}${scopeSummary} · ${entry.mapState.segments.length} segment(s) · ${entry.mapState.nodes.length} point(s)`
-      : "No JSON uploaded yet.";
+    const entries = getStepJsonEntries(stepKey);
+    const mapSummary = entries.length
+      ? entries.map((entry) => {
+        const scopeSummary = formatStepJsonScope(entry);
+        const sourceSummary = entry.source === "uploaded" ? "Manual" : "Auto";
+        return `<span>${escapeHtml(entry.fileName)} · ${escapeHtml(scopeSummary)} · ${sourceSummary} · ${entry.mapState.segments.length} segment(s) · ${entry.mapState.nodes.length} point(s)</span>`;
+      }).join("<br />")
+      : "No JSON loaded yet.";
 
     return `
       <div class="step-json-item${activePlaybackStepKey === stepKey ? " active" : ""}">
         <div class="step-json-head">
           <p class="asset-title">${STEP_TAG_LABELS[stepKey]}</p>
-          <span class="step-json-status${entry ? " loaded" : ""}">${entry ? "Loaded" : "Empty"}</span>
+          <span class="step-json-status${entries.length ? " loaded" : ""}">${entries.length ? `${entries.length} loaded` : "Empty"}</span>
         </div>
         <p class="asset-meta">${mapSummary}</p>
         <div class="step-json-actions">
@@ -4301,22 +4470,22 @@ function persistStepJsonLibrary() {
 }
 
 function syncBundledMcbtcStepJsonSelection() {
-  const stepOneEntry = stepJsonLibrary.step1;
+  let didChange = false;
 
-  if (!stepOneEntry) {
-    return;
+  PLAYBACK_STEP_KEYS.forEach((stepKey) => {
+    const filteredEntries = getStepJsonEntries(stepKey).filter((entry) => {
+      return !(entry.fileName === "MCBTC_A_Floor.json" && entry.routeKey === "mcbtc");
+    });
+
+    if (filteredEntries.length !== getStepJsonEntries(stepKey).length) {
+      stepJsonLibrary[stepKey] = filteredEntries;
+      didChange = true;
+    }
+  });
+
+  if (didChange) {
+    persistStepJsonLibrary();
   }
-
-  if (stepOneEntry.fileName === "MCBTC_A_Floor.json" && stepOneEntry.routeKey === "mcbtc") {
-    return;
-  }
-
-  if (stepOneEntry.routeKey !== "mcbtc") {
-    return;
-  }
-
-  stepJsonLibrary.step1 = null;
-  persistStepJsonLibrary();
 }
 
 function normalizeMapState(value) {
@@ -4352,7 +4521,7 @@ function normalizeMapState(value) {
           fromId: segment.fromId,
           toId: segment.toId,
           routeGroup: ROUTE_GROUP_META[segment.routeGroup] ? segment.routeGroup : "shared",
-          stepTag: STEP_TAG_LABELS[segment.stepTag] ? segment.stepTag : "step3",
+          stepTag: normalizeStepTag(segment.stepTag),
           label: typeof segment.label === "string" ? segment.label : "",
           waypoints: normalizeSegmentWaypoints(segment, safeState.backgroundWidth, safeState.backgroundHeight)
         }))
@@ -4370,15 +4539,14 @@ function normalizeStepJsonLibrary(value) {
   PLAYBACK_STEP_KEYS.forEach((stepKey) => {
     const rawEntry = value[stepKey];
 
-    if (!rawEntry || typeof rawEntry !== "object") {
+    if (!rawEntry) {
       return;
     }
 
-    safeLibrary[stepKey] = {
-      fileName: typeof rawEntry.fileName === "string" ? rawEntry.fileName : `${stepKey}.json`,
-      routeKey: typeof rawEntry.routeKey === "string" ? rawEntry.routeKey : "",
-      mapState: normalizeMapState(rawEntry.mapState || rawEntry)
-    };
+    const rawEntries = Array.isArray(rawEntry) ? rawEntry : [rawEntry];
+    safeLibrary[stepKey] = rawEntries
+      .filter((entry) => entry && typeof entry === "object")
+      .map((entry) => normalizeStepJsonEntry(entry, stepKey));
   });
 
   return safeLibrary;
@@ -4421,9 +4589,54 @@ function normalizeMapDimension(value) {
 
 function getEmptyStepJsonLibrary() {
   return PLAYBACK_STEP_KEYS.reduce((library, stepKey) => {
-    library[stepKey] = null;
+    library[stepKey] = [];
     return library;
   }, {});
+}
+
+function normalizeStepTag(value) {
+  if (STEP_TAG_LABELS[value]) {
+    return value;
+  }
+
+  if (value === "step6") {
+    return "step5";
+  }
+
+  return "step3";
+}
+
+function normalizeStepJsonEntry(value, fallbackStepKey = "step3") {
+  return {
+    id: typeof value.id === "string" ? value.id : createId("step-json"),
+    fileName: typeof value.fileName === "string" ? value.fileName : `${fallbackStepKey}.json`,
+    routeKey: typeof value.routeKey === "string" ? value.routeKey : "",
+    scopeType: typeof value.scopeType === "string" ? value.scopeType : "global",
+    scopeValue: typeof value.scopeValue === "string" ? value.scopeValue : "",
+    scopeLabel: typeof value.scopeLabel === "string" ? value.scopeLabel : "",
+    source: value.source === "uploaded" ? "uploaded" : "bundled",
+    mapState: normalizeMapState(value.mapState || value)
+  };
+}
+
+function formatStepJsonScope(entry) {
+  if (entry.scopeLabel) {
+    return entry.scopeLabel;
+  }
+
+  if (entry.scopeType === "originRoute") {
+    return `Origin Route ${String(entry.scopeValue || "").toUpperCase()}`;
+  }
+
+  if (entry.scopeType === "destinationWing") {
+    return `Destination Wing ${String(entry.scopeValue || "").toUpperCase()}`;
+  }
+
+  if (entry.scopeType === "lobby") {
+    return `${String(entry.scopeValue || "").toUpperCase()} lobby`;
+  }
+
+  return "All routes";
 }
 
 function updateRouteDrawStatus(message) {
