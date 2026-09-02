@@ -4102,21 +4102,17 @@ function hasAnyStepJsonLoadedForRoute(routeResult = currentRouteResult) {
   return PLAYBACK_STEP_KEYS.some((stepKey) => Boolean(getStepJsonEntry(stepKey, routeResult)));
 }
 
+function isSameStepJsonDefaultEntry(left, right) {
+  return left.fileName === right.fileName
+    && String(left.routeKey || "") === String(right.routeKey || "")
+    && String(left.scopeType || "global") === String(right.scopeType || "global")
+    && String(left.scopeValue || "") === String(right.scopeValue || "");
+}
+
 async function ensureBundledStepJsonDefaults() {
-  const defaultsToLoad = STEP_JSON_DEFAULTS.filter((entry) => !getStepJsonEntries(entry.stepKey).some((existingEntry) => {
-    return existingEntry.fileName === entry.fileName
-      && String(existingEntry.routeKey || "") === String(entry.routeKey || "")
-      && String(existingEntry.scopeType || "global") === String(entry.scopeType || "global")
-      && String(existingEntry.scopeValue || "") === String(entry.scopeValue || "");
-  }));
-
-  if (!defaultsToLoad.length) {
-    return;
-  }
-
   let didChange = false;
 
-  for (const entry of defaultsToLoad) {
+  for (const entry of STEP_JSON_DEFAULTS) {
     try {
       const response = await fetch(entry.filePath);
 
@@ -4136,7 +4132,47 @@ async function ensureBundledStepJsonDefaults() {
         source: "bundled",
         mapState: parsed
       });
-      stepJsonLibrary[entry.stepKey] = [...getStepJsonEntries(entry.stepKey), entryToStore];
+      const existingEntries = getStepJsonEntries(entry.stepKey);
+      const matchingEntryIndex = existingEntries.findIndex((existingEntry) => {
+        return existingEntry.source !== "uploaded" && isSameStepJsonDefaultEntry(existingEntry, entry);
+      });
+
+      if (matchingEntryIndex === -1) {
+        stepJsonLibrary[entry.stepKey] = [...existingEntries, entryToStore];
+        didChange = true;
+        continue;
+      }
+
+      const currentEntry = existingEntries[matchingEntryIndex];
+      const currentSnapshot = JSON.stringify({
+        fileName: currentEntry.fileName,
+        routeKey: currentEntry.routeKey,
+        scopeType: currentEntry.scopeType,
+        scopeValue: currentEntry.scopeValue,
+        scopeLabel: currentEntry.scopeLabel,
+        source: currentEntry.source,
+        mapState: currentEntry.mapState
+      });
+      const nextSnapshot = JSON.stringify({
+        fileName: entryToStore.fileName,
+        routeKey: entryToStore.routeKey,
+        scopeType: entryToStore.scopeType,
+        scopeValue: entryToStore.scopeValue,
+        scopeLabel: entryToStore.scopeLabel,
+        source: entryToStore.source,
+        mapState: entryToStore.mapState
+      });
+
+      if (currentSnapshot === nextSnapshot) {
+        continue;
+      }
+
+      const nextEntries = existingEntries.slice();
+      nextEntries[matchingEntryIndex] = {
+        ...entryToStore,
+        id: currentEntry.id || entryToStore.id
+      };
+      stepJsonLibrary[entry.stepKey] = nextEntries;
       didChange = true;
     } catch (error) {
       // Ignore missing bundled defaults and continue booting the app.

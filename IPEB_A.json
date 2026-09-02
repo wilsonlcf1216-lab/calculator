@@ -4,19 +4,29 @@
   "backgroundHeight": 746,
   "nodes": [
     {
-      "id": "node-9iyqnux0",
+      "id": "node-6j1ltlkz",
       "name": "IPEB_South",
       "type": "lift",
-      "x": 438.5190102243353,
-      "y": 621.2234362417483
+      "x": 440.9504430160635,
+      "y": 617.171012426156
     },
     {
-      "id": "node-ifl4rotj",
-      "name": "IPEB_A_Ward",
+      "id": "node-3sybqj5q",
+      "name": "IPEB_A Ward",
       "type": "entrance",
-      "x": 385.02748880631464,
-      "y": 627.5046852719495
+      "x": 365.57602647248893,
+      "y": 636.4200232314053
     }
   ],
-  "segments": []
+  "segments": [
+    {
+      "id": "segment-2byf8z48",
+      "fromId": "node-6j1ltlkz",
+      "toId": "node-3sybqj5q",
+      "routeGroup": "shared",
+      "stepTag": "step5",
+      "label": "",
+      "waypoints": []
+    }
+  ]
 }
