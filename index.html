@@ -2577,9 +2577,7 @@ function applyGeneratedRouteResult(result) {
   renderResults(result);
   startStepPlayback();
   showError("");
-  showSuccess(hasAnyStepJsonLoadedForRoute(result)
-    ? "已產生路線結果，會按 Step 1 至 Step 5 自動配對並播放已載入的 JSON。"
-    : "已產生路線結果，但目前未載入任何 Step JSON。");
+  showSuccess("");
 }
 
 function clearGeneratedRouteResult(error) {
@@ -4071,10 +4069,6 @@ function getStepJsonEntry(stepKey, routeResult = currentRouteResult) {
   });
 
   return bestEntry;
-}
-
-function hasAnyStepJsonLoadedForRoute(routeResult = currentRouteResult) {
-  return PLAYBACK_STEP_KEYS.some((stepKey) => Boolean(getStepJsonEntry(stepKey, routeResult)));
 }
 
 function isSameStepJsonDefaultEntry(left, right) {
