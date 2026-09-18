@@ -93,7 +93,7 @@ body {
 .calculator-panel,
 .map-panel {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -116,36 +116,38 @@ body {
 }
 
 .step-breakdown-scroll {
-  overflow-x: auto;
+  overflow: auto;
+  max-height: clamp(180px, 25vh, 260px);
+  padding-right: 2px;
 }
 
 .step-playback-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .step-playback-meta {
   margin: 0;
   color: var(--muted);
-  font-size: 0.82rem;
-  line-height: 1.5;
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 
 .route-form {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 10px;
+  gap: 8px;
   align-items: stretch;
 }
 
 .destination-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
+  gap: 8px;
   align-items: end;
 }
 
@@ -155,13 +157,13 @@ body {
 
 .generate-btn {
   align-self: end;
-  min-height: 41px;
+  min-height: 39px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
   font-weight: 700;
 }
 
@@ -177,7 +179,7 @@ body {
 
 .field input {
   width: 100%;
-  padding: 11px 13px;
+  padding: 10px 12px;
   font-size: 0.92rem;
   color: var(--text);
   background: var(--surface-alt);
@@ -206,7 +208,7 @@ body {
 .field select,
 .field input[type="file"] {
   width: 100%;
-  padding: 11px 13px;
+  padding: 10px 12px;
   font-size: 0.92rem;
   color: var(--text);
   background: var(--surface-alt);
@@ -354,15 +356,15 @@ body {
 }
 
 .results {
-  margin-top: 16px;
+  margin-top: 12px;
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
 .summary-card,
@@ -371,7 +373,7 @@ body {
   background: linear-gradient(180deg, #ffffff 0%, var(--surface-alt) 100%);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 15px;
+  padding: 13px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
   overflow: hidden;
 }
@@ -397,21 +399,21 @@ body {
 }
 
 .summary-value {
-  margin: 6px 0 0;
-  font-size: clamp(1.55rem, 2.5vw, 2rem);
+  margin: 4px 0 0;
+  font-size: clamp(1.42rem, 2.2vw, 1.82rem);
   font-weight: 800;
   letter-spacing: -0.03em;
 }
 
 .summary-subvalue {
-  margin: 5px 0 0;
+  margin: 3px 0 0;
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 700;
 }
 
 .detail-card h2 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-size: 0.94rem;
   letter-spacing: -0.015em;
   color: #24384b;
@@ -420,14 +422,14 @@ body {
 .detail-list {
   margin: 0;
   display: grid;
-  gap: 10px;
+  gap: 6px;
 }
 
 .detail-list div {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  padding-bottom: 9px;
+  padding-bottom: 6px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -484,7 +486,7 @@ table {
 th,
 td {
   text-align: left;
-  padding: 9px 8px;
+  padding: 7px 8px;
   border-bottom: 1px solid var(--border);
   overflow-wrap: anywhere;
   word-break: break-word;
