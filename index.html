@@ -517,36 +517,74 @@ td {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  align-items: start;
+  align-items: center;
+  flex-wrap: wrap;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(216, 225, 236, 0.92);
 }
 
-.panel-heading h2 {
-  margin: 2px 0 0;
-  font-size: 1.02rem;
-  letter-spacing: -0.025em;
+.panel-heading-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .panel-eyebrow {
   margin: 0;
-  font-size: 0.64rem;
+  font-size: 0.74rem;
   color: var(--accent);
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.map-status {
-  align-self: center;
-  padding: 6px 11px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #f4f7fa 0%, #eaf0f5 100%);
+.map-header-metrics {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.map-header-metric {
+  min-width: 120px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  border: 1px solid rgba(60, 88, 117, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.map-header-metric-label {
+  margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.map-header-metric-value {
+  margin: 3px 0 0;
   color: var(--accent-dark);
   font-weight: 700;
-  font-size: 0.74rem;
-  border: 1px solid rgba(60, 88, 117, 0.12);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.map-header-metric-subvalue {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.map-status {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .map-stage-wrap {
@@ -1646,18 +1684,6 @@ td {
           <div id="success-message" class="message success hidden" aria-live="polite"></div>
 
           <section id="results" class="results hidden" aria-live="polite">
-            <div class="summary-grid">
-              <article class="summary-card">
-                <p class="summary-label">Total Distance</p>
-                <p id="total-distance" class="summary-value">0 m</p>
-              </article>
-              <article class="summary-card">
-                <p class="summary-label">Total Time</p>
-                <p id="total-time" class="summary-value">0.0 min</p>
-                <p id="total-time-minutes" class="summary-subvalue">0:00.0</p>
-              </article>
-            </div>
-
             <article class="detail-card route-summary-card">
               <h2>Route Summary</h2>
               <dl class="detail-list">
@@ -1736,12 +1762,22 @@ td {
 
         <aside class="map-panel map-panel-inline">
                 <div class="panel-heading">
-                  <div>
+                  <div class="panel-heading-main">
                     <p class="panel-eyebrow">Live Route Map</p>
-                    <h2>2D Journey View</h2>
+                    <div class="map-header-metrics">
+                      <article class="map-header-metric">
+                        <p class="map-header-metric-label">Total Distance</p>
+                        <p id="total-distance" class="map-header-metric-value">0 m</p>
+                      </article>
+                      <article class="map-header-metric">
+                        <p class="map-header-metric-label">Total Time</p>
+                        <p id="total-time" class="map-header-metric-value">0.0 min</p>
+                        <p id="total-time-minutes" class="map-header-metric-subvalue">0:00.0</p>
+                      </article>
+                    </div>
                   </div>
-                  <span id="map-status" class="map-status">Waiting for route</span>
                 </div>
+                <p id="map-status" class="map-status">Waiting for route</p>
 
                 <div class="map-stage-wrap">
                   <svg id="map-svg" class="map-stage" viewBox="0 0 1000 1000" aria-label="Route map">
