@@ -77,15 +77,15 @@ body {
 
 .workspace-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: minmax(320px, 0.76fr) minmax(0, 1.24fr);
+  gap: 14px;
   align-items: start;
 }
 
 .calculator-panel,
 .map-panel {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
 }
 
@@ -99,13 +99,6 @@ body {
   align-self: start;
   position: sticky;
   top: 14px;
-}
-
-.results-sidebar {
-  display: grid;
-  gap: 12px;
-  align-content: start;
-  min-width: 0;
 }
 
 .route-summary-card,
@@ -135,9 +128,25 @@ body {
 
 .route-form {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  align-items: stretch;
+}
+
+.destination-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
   align-items: end;
+}
+
+.destination-row .field {
+  min-width: 0;
+}
+
+.generate-btn {
+  align-self: end;
+  min-height: 41px;
 }
 
 .field {
@@ -359,13 +368,6 @@ body {
   font-weight: 700;
 }
 
-.results-dashboard {
-  display: grid;
-  grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1.48fr);
-  gap: 12px;
-  align-items: start;
-}
-
 .detail-card h2 {
   margin: 0 0 12px;
   font-size: 0.96rem;
@@ -499,8 +501,7 @@ td {
   width: 100%;
   margin: 0;
   min-height: 0;
-  max-height: min(64vh, 640px);
-  aspect-ratio: var(--map-aspect-ratio, 4 / 3);
+  height: clamp(500px, calc(100vh - 170px), 760px);
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -544,7 +545,7 @@ td {
   z-index: 3;
   display: grid;
   place-items: center;
-  padding: clamp(18px, 3vw, 28px);
+  padding: clamp(12px, 2vw, 20px);
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.88) 32%, rgba(222, 232, 243, 0.92) 100%),
     linear-gradient(180deg, #f8fbff 0%, #dce6f2 100%);
@@ -555,9 +556,9 @@ td {
 }
 
 .lift-scene-shell {
-  width: min(100%, 860px);
+  width: min(100%, 760px);
   display: grid;
-  gap: clamp(12px, 2vw, 20px);
+  gap: clamp(8px, 1.4vw, 14px);
 }
 
 .lift-scene-header {
@@ -608,10 +609,10 @@ td {
 
 .lift-scene-elevator {
   position: relative;
-  width: min(100%, 620px);
+  width: min(100%, 560px);
   margin: 0 auto;
-  padding: clamp(18px, 2.4vw, 24px);
-  border-radius: 34px;
+  padding: clamp(14px, 2vw, 20px);
+  border-radius: 28px;
   background: linear-gradient(180deg, #586579 0%, #2f3948 12%, #d3dde8 32%, #a3afbd 100%);
   border: 2px solid rgba(71, 85, 105, 0.4);
   box-shadow:
@@ -624,11 +625,11 @@ td {
   display: grid;
   grid-template-columns: 176px minmax(0, 1fr) max-content;
   align-items: center;
-  gap: 14px;
-  margin: 0 auto 18px;
-  padding: 14px 18px;
-  width: min(100%, 470px);
-  border-radius: 20px;
+  gap: 12px;
+  margin: 0 auto 14px;
+  padding: 12px 16px;
+  width: min(100%, 440px);
+  border-radius: 18px;
   background: linear-gradient(180deg, #2f3a49 0%, #161f2c 100%);
   border: 1px solid rgba(203, 213, 225, 0.25);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
@@ -731,11 +732,11 @@ td {
 
 .lift-scene-cabin {
   position: relative;
-  width: min(100%, 500px);
-  height: clamp(290px, 50vw, 430px);
+  width: min(100%, 450px);
+  height: clamp(250px, 42vw, 380px);
   margin: 0 auto;
-  padding: clamp(18px, 2.4vw, 22px);
-  border-radius: 26px;
+  padding: clamp(14px, 2vw, 18px);
+  border-radius: 22px;
   background: linear-gradient(180deg, #edf4fb 0%, #ccd7e3 100%);
   border: 3px solid rgba(71, 85, 105, 0.36);
   overflow: hidden;
@@ -861,12 +862,13 @@ td {
 }
 
 .lift-scene-caption {
-  padding: 12px 16px;
-  border-radius: 16px;
+  padding: 10px 14px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(148, 163, 184, 0.3);
   text-align: center;
   color: #334155;
+  font-size: 0.86rem;
   font-weight: 700;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
@@ -1477,14 +1479,12 @@ td {
 
 @media (max-width: 880px) {
   .workspace-grid,
-  .editor-grid,
-  .results-dashboard {
+  .editor-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 880px) {
-  .route-form,
   .summary-grid,
   .editor-columns,
   .route-draw-actions {
@@ -1507,12 +1507,20 @@ td {
 
   .map-stage-wrap {
     width: 100%;
-    min-height: 360px;
-    max-height: none;
+    height: auto;
+    min-height: 420px;
   }
 
   .map-panel-inline {
     position: static;
+  }
+
+  .destination-row {
+    grid-template-columns: 1fr;
+  }
+
+  .generate-btn {
+    width: 100%;
   }
 
   .step-table th:nth-child(2),
@@ -1551,96 +1559,115 @@ td {
               </p>
             </label>
 
-            <label class="field">
-              <span>Destination Ward</span>
-              <select
-                id="destinationWard"
-                name="destinationWard"
-                disabled
-                required
-              >
-                <option value="">Select origin first</option>
-              </select>
-              <p id="destination-hint" class="field-meta">
-                After selecting origin, only matching destinations from the list will be shown here.
-              </p>
-            </label>
+            <div class="destination-row">
+              <label class="field">
+                <span>Destination Ward</span>
+                <select
+                  id="destinationWard"
+                  name="destinationWard"
+                  disabled
+                  required
+                >
+                  <option value="">Select origin first</option>
+                </select>
+                <p id="destination-hint" class="field-meta">
+                  After selecting origin, only matching destinations from the list will be shown here.
+                </p>
+              </label>
 
-            <button type="submit" class="primary-btn">Generate</button>
+              <button type="submit" class="primary-btn generate-btn">Generate</button>
+            </div>
           </form>
 
           <div id="error-message" class="message error hidden" aria-live="polite"></div>
           <div id="success-message" class="message success hidden" aria-live="polite"></div>
 
           <section id="results" class="results hidden" aria-live="polite">
-            <div class="results-dashboard">
-              <div class="results-sidebar">
-                <div class="summary-grid">
-                  <article class="summary-card">
-                    <p class="summary-label">Total Distance</p>
-                    <p id="total-distance" class="summary-value">0 m</p>
-                  </article>
-                  <article class="summary-card">
-                    <p class="summary-label">Total Time</p>
-                    <p id="total-time" class="summary-value">0.0 min</p>
-                    <p id="total-time-minutes" class="summary-subvalue">0:00.0</p>
-                  </article>
+            <div class="summary-grid">
+              <article class="summary-card">
+                <p class="summary-label">Total Distance</p>
+                <p id="total-distance" class="summary-value">0 m</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Total Time</p>
+                <p id="total-time" class="summary-value">0.0 min</p>
+                <p id="total-time-minutes" class="summary-subvalue">0:00.0</p>
+              </article>
+            </div>
+
+            <article class="detail-card route-summary-card">
+              <h2>Route Summary</h2>
+              <dl class="detail-list">
+                <div>
+                  <dt>Origin Building</dt>
+                  <dd id="origin-building"></dd>
                 </div>
+                <div>
+                  <dt>Origin Floor</dt>
+                  <dd id="origin-floor"></dd>
+                </div>
+                <div>
+                  <dt>Transfer Floor</dt>
+                  <dd id="transfer-floor"></dd>
+                </div>
+                <div>
+                  <dt>Destination Wing</dt>
+                  <dd id="destination-wing"></dd>
+                </div>
+                <div>
+                  <dt>Destination Floor</dt>
+                  <dd id="destination-floor"></dd>
+                </div>
+                <div>
+                  <dt>Lobby Assumption</dt>
+                  <dd id="lobby-assumption"></dd>
+                </div>
+              </dl>
+            </article>
 
-                <article class="detail-card route-summary-card">
-                  <h2>Route Summary</h2>
-                  <dl class="detail-list">
-                    <div>
-                      <dt>Origin Building</dt>
-                      <dd id="origin-building"></dd>
-                    </div>
-                    <div>
-                      <dt>Origin Floor</dt>
-                      <dd id="origin-floor"></dd>
-                    </div>
-                    <div>
-                      <dt>Transfer Floor</dt>
-                      <dd id="transfer-floor"></dd>
-                    </div>
-                    <div>
-                      <dt>Destination Wing</dt>
-                      <dd id="destination-wing"></dd>
-                    </div>
-                    <div>
-                      <dt>Destination Floor</dt>
-                      <dd id="destination-floor"></dd>
-                    </div>
-                    <div>
-                      <dt>Lobby Assumption</dt>
-                      <dd id="lobby-assumption"></dd>
-                    </div>
-                  </dl>
-                </article>
-
-                <article class="detail-card step-breakdown-card">
-                  <h2>Step Breakdown</h2>
-                  <div class="step-playback-bar">
-                    <button id="playback-toggle" type="button" class="secondary-btn">Stop</button>
-                    <p id="step-playback-meta" class="step-playback-meta">
-                      Click any step row to jump there, then continue playback from that segment.
-                    </p>
-                  </div>
-                  <div class="step-breakdown-scroll">
-                    <table class="step-table">
-                      <thead>
-                        <tr>
-                          <th>Step</th>
-                          <th>Distance</th>
-                          <th>Time</th>
-                        </tr>
-                      </thead>
-                      <tbody id="step-breakdown"></tbody>
-                    </table>
-                  </div>
-                </article>
+            <article class="detail-card step-breakdown-card">
+              <h2>Step Breakdown</h2>
+              <div class="step-playback-bar">
+                <button id="playback-toggle" type="button" class="secondary-btn">Stop</button>
+                <p id="step-playback-meta" class="step-playback-meta">
+                  Click any step row to jump there, then continue playback from that segment.
+                </p>
               </div>
+              <div class="step-breakdown-scroll">
+                <table class="step-table">
+                  <thead>
+                    <tr>
+                      <th>Step</th>
+                      <th>Distance</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="step-breakdown"></tbody>
+                </table>
+              </div>
+            </article>
 
-              <aside class="map-panel map-panel-inline">
+            <article class="detail-card assumptions">
+              <h2>Model Assumptions</h2>
+              <ul>
+                <li>Ward entrance to lift lobby is fixed at 20 m on both ends.</li>
+                <li>Walking speed is fixed at 1.2 m/s.</li>
+                <li>Lift travel time is 4 seconds per floor.</li>
+                <li>
+                  MCBTC uses the decanting path defined by the provided
+                  MCBTC route directory and the matched IPEB lobby assumption.
+                </li>
+                <li>
+                  Old Block HKLM and EF Wing use the route values defined by the
+                  provided old building decanting path.
+                </li>
+                <li>已產生路線結果，會按 Step 1 至 Step 5 自動配對並播放已載入的 JSON。</li>
+              </ul>
+            </article>
+          </section>
+        </section>
+
+        <aside class="map-panel map-panel-inline">
                 <div class="panel-heading">
                   <div>
                     <p class="panel-eyebrow">Live Route Map</p>
@@ -1784,28 +1811,7 @@ td {
                   interactive for editing but no longer show names or dots on top of your
                   floor-plan icons.
                 </p>
-              </aside>
-            </div>
-
-            <article class="detail-card assumptions">
-              <h2>Model Assumptions</h2>
-              <ul>
-                <li>Ward entrance to lift lobby is fixed at 20 m on both ends.</li>
-                <li>Walking speed is fixed at 1.2 m/s.</li>
-                <li>Lift travel time is 4 seconds per floor.</li>
-                <li>
-                  MCBTC uses the decanting path defined by the provided
-                  MCBTC route directory and the matched IPEB lobby assumption.
-                </li>
-                <li>
-                  Old Block HKLM and EF Wing use the route values defined by the
-                  provided old building decanting path.
-                </li>
-                <li>已產生路線結果，會按 Step 1 至 Step 5 自動配對並播放已載入的 JSON。</li>
-              </ul>
-            </article>
-          </section>
-        </section>
+        </aside>
       </div>
 
       <section class="editor-grid hidden" aria-hidden="true">
