@@ -560,7 +560,7 @@ td {
 
 .panel-heading-main {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
@@ -574,20 +574,23 @@ td {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
+  align-self: center;
 }
 
 .map-header-metrics {
-  display: flex;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
   gap: 8px;
-  flex-wrap: wrap;
+  flex: 1 1 420px;
+  max-width: 480px;
   margin-left: auto;
-  justify-content: flex-end;
 }
 
 .map-header-metric {
-  min-width: 128px;
-  padding: 9px 12px;
+  min-width: 0;
+  min-height: 62px;
+  padding: 10px 14px;
   border-radius: 12px;
   background: linear-gradient(180deg, var(--surface-elevated) 0%, #eef3f7 100%);
   border: 1px solid rgba(60, 88, 117, 0.12);
@@ -601,21 +604,17 @@ td {
   text-transform: uppercase;
   color: var(--muted);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .map-header-metric-value {
   margin: 3px 0 0;
   color: var(--accent-dark);
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 1.08rem;
   letter-spacing: -0.02em;
-}
-
-.map-header-metric-subvalue {
-  margin: 2px 0 0;
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .map-status {
@@ -1656,6 +1655,12 @@ td {
     position: static;
   }
 
+  .map-header-metrics {
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    max-width: none;
+    width: 100%;
+  }
+
   .route-summary-card .detail-list {
     grid-template-columns: 1fr;
   }
@@ -1816,8 +1821,7 @@ td {
                       </article>
                       <article class="map-header-metric">
                         <p class="map-header-metric-label">Total Time</p>
-                        <p id="total-time" class="map-header-metric-value">0.0 min</p>
-                        <p id="total-time-minutes" class="map-header-metric-subvalue">0:00.0</p>
+                        <p id="total-time" class="map-header-metric-value">0.0 mins</p>
                       </article>
                     </div>
                   </div>
@@ -3073,7 +3077,6 @@ function normalizeFloorLabel(value) {
 function renderResults(result) {
   document.getElementById("total-distance").textContent = `${result.totalDistance.toFixed(1)} m`;
   document.getElementById("total-time").textContent = formatMinutesValue(result.totalTime);
-  document.getElementById("total-time-minutes").textContent = result.totalTimeMinutes;
   document.getElementById("origin-building").textContent = result.origin.building;
   document.getElementById("origin-floor").textContent = normalizeFloorLabel(`${result.origin.floor}/F`).display;
   document.getElementById("transfer-floor").textContent = normalizeFloorLabel(toLiftCode(result.origin.transferFloor)).display;
@@ -4891,7 +4894,7 @@ function formatSeconds(totalSeconds) {
 }
 
 function formatMinutesValue(totalSeconds) {
-  return `${(totalSeconds / 60).toFixed(1)} min`;
+  return `${(totalSeconds / 60).toFixed(1)} mins`;
 }
 
 function clamp(value, min, max) {
