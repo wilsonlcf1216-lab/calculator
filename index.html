@@ -599,7 +599,7 @@ td {
 
 .lift-scene-lintel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 176px minmax(0, 1fr);
+  grid-template-columns: 176px minmax(0, 1fr) max-content;
   align-items: center;
   gap: 14px;
   margin: 0 auto 18px;
@@ -612,8 +612,8 @@ td {
 }
 
 .lift-scene-display {
-  grid-column: 2;
-  justify-self: center;
+  grid-column: 1;
+  justify-self: start;
   width: 176px;
   min-width: 176px;
   padding: 10px 16px;
@@ -632,6 +632,8 @@ td {
 }
 
 .lift-scene-direction {
+  grid-column: 3;
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -640,19 +642,9 @@ td {
   font-weight: 700;
 }
 
-.lift-scene-status {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  flex-wrap: wrap;
-  flex: 1;
-  min-width: 0;
-}
-
 .lift-scene-building {
+  grid-column: 2;
+  justify-self: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -867,14 +859,9 @@ td {
   }
 
   .lift-scene-display {
-    grid-column: 2;
     width: 132px;
     min-width: 132px;
     letter-spacing: 0.08em;
-  }
-
-  .lift-scene-status {
-    gap: 8px;
   }
 
   .lift-scene-building {
@@ -1707,12 +1694,10 @@ td {
                       <div class="lift-scene-elevator">
                         <div class="lift-scene-lintel">
                           <div id="lift-scene-display" class="lift-scene-display">10/F</div>
-                          <div class="lift-scene-status">
-                            <span id="lift-scene-building" class="lift-scene-building">MCBTC</span>
-                            <div class="lift-scene-direction">
-                              <span id="lift-scene-direction-arrow" class="lift-scene-arrow-icon up">▲</span>
-                              <span id="lift-scene-direction-text" class="lift-scene-direction-text">Moving Up</span>
-                            </div>
+                          <span id="lift-scene-building" class="lift-scene-building">MCBTC</span>
+                          <div class="lift-scene-direction">
+                            <span id="lift-scene-direction-arrow" class="lift-scene-arrow-icon up">▲</span>
+                            <span id="lift-scene-direction-text" class="lift-scene-direction-text">Moving Up</span>
                           </div>
                         </div>
                         <div class="lift-scene-cabin">
