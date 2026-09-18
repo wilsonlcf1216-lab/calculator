@@ -1672,16 +1672,20 @@ td {
                   <dd id="transfer-floor"></dd>
                 </div>
                 <div>
-                  <dt>Destination Wing</dt>
-                  <dd id="destination-wing"></dd>
+                  <dt>IPEB Lift Selection</dt>
+                  <dd id="lobby-assumption"></dd>
+                </div>
+                <div>
+                  <dt>Destination Building</dt>
+                  <dd id="destination-building"></dd>
                 </div>
                 <div>
                   <dt>Destination Floor</dt>
                   <dd id="destination-floor"></dd>
                 </div>
                 <div>
-                  <dt>Lobby Assumption</dt>
-                  <dd id="lobby-assumption"></dd>
+                  <dt>Destination Wing</dt>
+                  <dd id="destination-wing"></dd>
                 </div>
               </dl>
             </article>
@@ -2990,9 +2994,10 @@ function renderResults(result) {
   document.getElementById("origin-building").textContent = result.origin.building;
   document.getElementById("origin-floor").textContent = normalizeFloorLabel(`${result.origin.floor}/F`).display;
   document.getElementById("transfer-floor").textContent = normalizeFloorLabel(toLiftCode(result.origin.transferFloor)).display;
-  document.getElementById("destination-wing").textContent = `${result.destination.wing} Wing`;
-  document.getElementById("destination-floor").textContent = normalizeFloorLabel(`${result.destination.floor}/F`).display;
   document.getElementById("lobby-assumption").textContent = result.lobbyAssumptionLabel || "--";
+  document.getElementById("destination-building").textContent = result.destination.building || "--";
+  document.getElementById("destination-floor").textContent = normalizeFloorLabel(`${result.destination.floor}/F`).display;
+  document.getElementById("destination-wing").textContent = `${result.destination.wing} Wing`;
 
   const tableBody = document.getElementById("step-breakdown");
   tableBody.innerHTML = "";
