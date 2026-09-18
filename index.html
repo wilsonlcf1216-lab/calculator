@@ -90,14 +90,17 @@ body {
   background: var(--surface-alt);
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 20px;
-  height: 100%;
+  padding: 18px;
+  height: auto;
   align-content: start;
+  align-self: start;
+  position: sticky;
+  top: 18px;
 }
 
 .results-sidebar {
   display: grid;
-  gap: 16px;
+  gap: 14px;
   align-content: start;
   min-width: 0;
 }
@@ -348,9 +351,9 @@ body {
 
 .results-dashboard {
   display: grid;
-  grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.68fr);
-  gap: 18px;
-  align-items: stretch;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.5fr);
+  gap: 16px;
+  align-items: start;
 }
 
 .detail-card h2 {
@@ -477,9 +480,11 @@ td {
 
 .map-stage-wrap {
   position: relative;
-  width: 85%;
-  margin: 0 auto;
-  min-height: clamp(476px, 57.8vh, 833px);
+  width: 100%;
+  margin: 0;
+  min-height: 0;
+  max-height: min(68vh, 760px);
+  aspect-ratio: var(--map-aspect-ratio, 4 / 3);
   border-radius: 22px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -489,6 +494,7 @@ td {
 .map-stage {
   display: block;
   width: 100%;
+  height: 100%;
   aspect-ratio: var(--map-aspect-ratio, 4 / 3);
   cursor: crosshair;
 }
@@ -1484,7 +1490,12 @@ td {
 
   .map-stage-wrap {
     width: 100%;
-    min-height: 420px;
+    min-height: 360px;
+    max-height: none;
+  }
+
+  .map-panel-inline {
+    position: static;
   }
 
   .step-table th:nth-child(2),
