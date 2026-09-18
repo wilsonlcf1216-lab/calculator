@@ -598,8 +598,8 @@ td {
 }
 
 .lift-scene-lintel {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 176px minmax(0, 1fr);
   align-items: center;
   gap: 14px;
   margin: 0 auto 18px;
@@ -612,7 +612,8 @@ td {
 }
 
 .lift-scene-display {
-  min-width: 142px;
+  width: 176px;
+  min-width: 176px;
   padding: 10px 16px;
   border-radius: 14px;
   background: #050816;
@@ -620,6 +621,7 @@ td {
   font-size: clamp(1.6rem, 5vw, 2.8rem);
   font-weight: 900;
   letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
   text-align: center;
   text-shadow: 0 0 14px rgba(134, 239, 172, 0.46);
   box-shadow:
@@ -643,6 +645,7 @@ td {
   gap: 10px;
   flex-wrap: wrap;
   flex: 1;
+  min-width: 0;
 }
 
 .lift-scene-building {
@@ -860,7 +863,8 @@ td {
   }
 
   .lift-scene-display {
-    min-width: 112px;
+    width: 132px;
+    min-width: 132px;
     letter-spacing: 0.08em;
   }
 
