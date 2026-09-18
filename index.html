@@ -140,24 +140,37 @@ body {
 
 .route-form {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) 144px;
+  grid-template-columns: minmax(0, 1fr) 108px;
+  grid-template-rows: auto auto;
   gap: 12px;
-  align-items: end;
+  align-items: stretch;
   padding: 0;
   border: none;
   background: transparent;
   box-shadow: none;
 }
 
+.route-form > .autocomplete-field {
+  grid-column: 1;
+  grid-row: 1;
+}
+
 .destination-row {
   display: contents;
 }
 
+.destination-row > .field {
+  grid-column: 1;
+  grid-row: 2;
+}
+
 .generate-btn {
-  align-self: end;
-  min-height: 46px;
-  height: 46px;
-  padding: 0 16px;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: stretch;
+  min-height: 0;
+  height: auto;
+  padding: 0 12px;
   border-radius: 14px;
 }
 
@@ -595,10 +608,10 @@ td {
 
 .map-header-metrics {
   display: grid;
-  grid-template-columns: repeat(2, minmax(180px, 1fr));
-  gap: 8px;
-  flex: 1 1 420px;
-  max-width: 480px;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  gap: 10px;
+  flex: 1 1 620px;
+  max-width: 660px;
   margin-left: auto;
 }
 
@@ -608,8 +621,8 @@ td {
   justify-content: space-between;
   gap: 12px;
   min-width: 0;
-  min-height: 52px;
-  padding: 7px 12px;
+  min-height: 44px;
+  padding: 5px 12px;
   border-radius: 12px;
   background: linear-gradient(180deg, var(--surface-elevated) 0%, #eef3f7 100%);
   border: 1px solid rgba(60, 88, 117, 0.12);
@@ -618,7 +631,7 @@ td {
 
 .map-header-metric-label {
   margin: 0;
-  font-size: 0.69rem;
+  font-size: 0.67rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--muted);
@@ -630,7 +643,7 @@ td {
   margin: 0;
   color: var(--accent-dark);
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 0.96rem;
   letter-spacing: -0.02em;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -1657,6 +1670,7 @@ td {
 
   .route-form {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     align-items: stretch;
   }
 
@@ -1685,7 +1699,7 @@ td {
   }
 
   .map-header-metrics {
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
     max-width: none;
     width: 100%;
   }
@@ -1701,7 +1715,11 @@ td {
   }
 
   .generate-btn {
+    grid-column: auto;
+    grid-row: auto;
     width: 100%;
+    min-height: 46px;
+    height: 46px;
   }
 
   .step-table th:nth-child(2),
