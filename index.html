@@ -1545,20 +1545,20 @@ td {
           <div id="success-message" class="message success hidden" aria-live="polite"></div>
 
           <section id="results" class="results hidden" aria-live="polite">
-            <div class="summary-grid">
-              <article class="summary-card">
-                <p class="summary-label">Total Distance</p>
-                <p id="total-distance" class="summary-value">0 m</p>
-              </article>
-              <article class="summary-card">
-                <p class="summary-label">Total Time</p>
-                <p id="total-time" class="summary-value">0 s</p>
-                <p id="total-time-minutes" class="summary-subvalue">0:00.0</p>
-              </article>
-            </div>
-
             <div class="results-dashboard">
               <div class="results-sidebar">
+                <div class="summary-grid">
+                  <article class="summary-card">
+                    <p class="summary-label">Total Distance</p>
+                    <p id="total-distance" class="summary-value">0 m</p>
+                  </article>
+                  <article class="summary-card">
+                    <p class="summary-label">Total Time</p>
+                    <p id="total-time" class="summary-value">0.0 min</p>
+                    <p id="total-time-minutes" class="summary-subvalue">0:00.0</p>
+                  </article>
+                </div>
+
                 <article class="detail-card route-summary-card">
                   <h2>Route Summary</h2>
                   <dl class="detail-list">
@@ -2890,7 +2890,7 @@ function normalizeFloorLabel(value) {
 
 function renderResults(result) {
   document.getElementById("total-distance").textContent = `${result.totalDistance.toFixed(1)} m`;
-  document.getElementById("total-time").textContent = `${result.totalTime.toFixed(1)} s`;
+  document.getElementById("total-time").textContent = formatMinutesValue(result.totalTime);
   document.getElementById("total-time-minutes").textContent = result.totalTimeMinutes;
   document.getElementById("origin-building").textContent = result.origin.building;
   document.getElementById("origin-floor").textContent = normalizeFloorLabel(`${result.origin.floor}/F`).display;
@@ -4705,6 +4705,10 @@ function formatSeconds(totalSeconds) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = (totalSeconds % 60).toFixed(1).padStart(4, "0");
   return `${minutes}:${seconds}`;
+}
+
+function formatMinutesValue(totalSeconds) {
+  return `${(totalSeconds / 60).toFixed(1)} min`;
 }
 
 function clamp(value, min, max) {
