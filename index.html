@@ -162,7 +162,7 @@ body {
   align-content: start;
   align-self: start;
   position: sticky;
-  top: 14px;
+  top: 0;
   box-shadow: var(--shadow-panel);
 }
 
@@ -852,6 +852,15 @@ td {
     0 0 14px rgba(122, 92, 255, 0.12);
 }
 
+.map-panel-inline .panel-eyebrow {
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #22384c;
+  text-shadow: none;
+}
+
 .map-header-metrics {
   display: grid;
   grid-template-columns: repeat(2, minmax(280px, 1fr));
@@ -867,8 +876,8 @@ td {
   justify-content: space-between;
   gap: 14px;
   min-width: 0;
-  min-height: 42px;
-  padding: 4px 14px;
+  min-height: 48px;
+  padding: 5px 15px;
   border-radius: 12px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(232, 242, 255, 0.92) 100%);
   border: 1px solid rgba(95, 133, 201, 0.22);
@@ -879,24 +888,32 @@ td {
 
 .map-header-metric-label {
   margin: 0;
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 700;
+  color: #48627e;
+  font-weight: 800;
   white-space: nowrap;
 }
 
 .map-header-metric-value {
   margin: 0;
-  color: var(--accent-dark);
+  color: #1f3650;
   font-weight: 900;
-  font-size: 1.24rem;
-  letter-spacing: -0.02em;
+  font-size: 1.48rem;
+  letter-spacing: -0.03em;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   text-align: right;
   line-height: 1;
+}
+
+.map-header-metric-unit {
+  margin-left: 0.22em;
+  color: #7b61ff;
+  font-size: 0.7em;
+  font-weight: 800;
+  letter-spacing: 0.01em;
 }
 
 .map-status {
@@ -2157,11 +2174,11 @@ td {
                     <div class="map-header-metrics">
                       <article class="map-header-metric">
                         <p class="map-header-metric-label">Total Distance</p>
-                        <p id="total-distance" class="map-header-metric-value">0 m</p>
+                        <p id="total-distance" class="map-header-metric-value">0<span class="map-header-metric-unit">m</span></p>
                       </article>
                       <article class="map-header-metric">
                         <p class="map-header-metric-label">Total Time</p>
-                        <p id="total-time" class="map-header-metric-value">0.0 mins</p>
+                        <p id="total-time" class="map-header-metric-value">0.0<span class="map-header-metric-unit">mins</span></p>
                       </article>
                     </div>
                   </div>
@@ -3462,8 +3479,8 @@ function normalizeFloorLabel(value) {
 function renderResults(result) {
   const originDetailsCard = document.getElementById("origin-details-card");
   const destinationDetailsCard = document.getElementById("destination-details-card");
-  document.getElementById("total-distance").textContent = `${result.totalDistance.toFixed(1)} m`;
-  document.getElementById("total-time").textContent = formatMinutesValue(result.totalTime);
+  document.getElementById("total-distance").innerHTML = formatDistanceValue(result.totalDistance);
+  document.getElementById("total-time").innerHTML = formatMinutesValue(result.totalTime);
   originDetailsCard.dataset.building = getBuildingThemeKey(result.origin.routeKey, result.origin.building);
   destinationDetailsCard.dataset.building = getBuildingThemeKey(result.destination.routeKey, result.destination.building);
   document.getElementById("origin-building").textContent = result.origin.building;
@@ -5285,7 +5302,11 @@ function formatSeconds(totalSeconds) {
 }
 
 function formatMinutesValue(totalSeconds) {
-  return `${(totalSeconds / 60).toFixed(1)} mins`;
+  return `${(totalSeconds / 60).toFixed(1)}<span class="map-header-metric-unit">mins</span>`;
+}
+
+function formatDistanceValue(totalDistance) {
+  return `${totalDistance.toFixed(1)}<span class="map-header-metric-unit">m</span>`;
 }
 
 function clamp(value, min, max) {
