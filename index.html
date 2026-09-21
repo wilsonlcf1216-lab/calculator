@@ -1686,11 +1686,16 @@ td {
 
 .map-marker-bed-team .lead-arm,
 .map-marker-bed-team .lead-leg-left,
-.map-marker-bed-team .helper-arm,
-.map-marker-bed-team .helper-leg-left {
+.map-marker-bed-team .helper-arm {
   transform-box: fill-box;
   transform-origin: top center;
   animation: none;
+}
+
+.map-marker-bed-team .helper-leg-left {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: swing-backward 0.7s ease-in-out infinite;
 }
 
 @keyframes swing-forward {
