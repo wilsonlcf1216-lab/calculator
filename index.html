@@ -231,6 +231,25 @@ body {
   padding: 0 12px;
   border-radius: 14px;
   margin-top: 24px;
+  background: linear-gradient(135deg, rgba(255, 126, 170, 0.82) 0%, rgba(255, 153, 112, 0.78) 100%);
+  color: #fff9fc;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 14px 28px rgba(188, 86, 124, 0.24),
+    0 4px 10px rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.generate-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 140, 180, 0.92) 0%, rgba(255, 166, 122, 0.86) 100%);
+  border-color: rgba(255, 255, 255, 0.68);
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 18px 30px rgba(188, 86, 124, 0.28),
+    0 6px 12px rgba(255, 255, 255, 0.14);
 }
 
 .field {
@@ -888,13 +907,13 @@ td {
 
 .map-header-metric-label {
   margin: 0;
-  font-size: 1.72rem;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: #48627e;
   font-weight: 800;
   white-space: nowrap;
-  line-height: 1;
+  line-height: 1.15;
 }
 
 .map-header-metric-value {
@@ -2174,11 +2193,11 @@ td {
                     <p class="panel-eyebrow">Live Route Map</p>
                     <div class="map-header-metrics">
                       <article class="map-header-metric">
-                        <p class="map-header-metric-label">Total Distance</p>
+                        <p class="map-header-metric-label">Total Distance:</p>
                         <p id="total-distance" class="map-header-metric-value">0<span class="map-header-metric-unit">m</span></p>
                       </article>
                       <article class="map-header-metric">
-                        <p class="map-header-metric-label">Total Time</p>
+                        <p class="map-header-metric-label">Total Time:</p>
                         <p id="total-time" class="map-header-metric-value">0.0<span class="map-header-metric-unit">mins</span></p>
                       </article>
                     </div>
