@@ -232,19 +232,29 @@ body {
   border-radius: 16px;
   margin-top: 24px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.06) 100%),
-    linear-gradient(135deg, rgba(205, 191, 255, 0.92) 0%, rgba(181, 163, 247, 0.9) 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 100%),
+    linear-gradient(135deg, rgba(170, 148, 236, 0.96) 0%, rgba(136, 114, 215, 0.94) 100%);
   color: #ffffff;
-  border: 1px solid rgba(255, 214, 102, 0.82);
+  border: none;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    inset 0 -10px 20px rgba(126, 101, 214, 0.16),
-    0 0 0 1px rgba(255, 224, 130, 0.3),
-    0 0 12px rgba(255, 205, 86, 0.34),
-    0 0 22px rgba(255, 190, 64, 0.2),
-    0 14px 24px rgba(118, 95, 204, 0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -10px 20px rgba(88, 63, 176, 0.22),
+    0 14px 24px rgba(92, 69, 178, 0.24);
   transform: translateY(-2px);
   transition: none;
+}
+
+.primary-btn.generate-btn:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 100%),
+    linear-gradient(135deg, rgba(170, 148, 236, 0.96) 0%, rgba(136, 114, 215, 0.94) 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -10px 20px rgba(88, 63, 176, 0.22),
+    0 14px 24px rgba(92, 69, 178, 0.24);
+  transform: translateY(-2px);
 }
 
 .field {
