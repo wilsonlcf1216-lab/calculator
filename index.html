@@ -140,24 +140,37 @@ body {
 
 .route-form {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) 144px;
+  grid-template-columns: minmax(0, 1fr) 108px;
+  grid-template-rows: auto auto;
   gap: 12px;
-  align-items: end;
+  align-items: stretch;
   padding: 0;
   border: none;
   background: transparent;
   box-shadow: none;
 }
 
+.route-form > .autocomplete-field {
+  grid-column: 1;
+  grid-row: 1;
+}
+
 .destination-row {
   display: contents;
 }
 
+.destination-row > .field {
+  grid-column: 1;
+  grid-row: 2;
+}
+
 .generate-btn {
-  align-self: end;
-  min-height: 46px;
-  height: 46px;
-  padding: 0 16px;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: stretch;
+  min-height: 0;
+  height: auto;
+  padding: 0 12px;
   border-radius: 14px;
 }
 
@@ -442,20 +455,50 @@ body {
   color: #24384b;
 }
 
-.route-summary-card .detail-list {
+.route-summary-columns {
+  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 14px;
+  gap: 12px;
+}
+
+.route-summary-group {
+  padding: 12px 13px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(239, 244, 248, 0.96) 100%);
+  border: 1px solid rgba(207, 217, 228, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.route-summary-group h3 {
+  margin: 0 0 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #31485e;
+}
+
+.route-summary-card .detail-list {
+  grid-template-columns: 1fr;
+  gap: 7px;
 }
 
 .route-summary-card .detail-list div {
   flex-direction: column;
   align-items: flex-start;
-  gap: 3px;
+  gap: 4px;
   padding-bottom: 8px;
+}
+
+.route-summary-card .detail-list dt {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .route-summary-card .detail-list dd {
   text-align: left;
+  font-size: 0.9rem;
 }
 
 .detail-list {
@@ -595,21 +638,21 @@ td {
 
 .map-header-metrics {
   display: grid;
-  grid-template-columns: repeat(2, minmax(180px, 1fr));
-  gap: 8px;
-  flex: 1 1 420px;
-  max-width: 480px;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 12px;
+  flex: 1 1 760px;
+  max-width: 820px;
   margin-left: auto;
 }
 
 .map-header-metric {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   min-width: 0;
-  min-height: 52px;
-  padding: 7px 12px;
+  min-height: 42px;
+  padding: 4px 14px;
   border-radius: 12px;
   background: linear-gradient(180deg, var(--surface-elevated) 0%, #eef3f7 100%);
   border: 1px solid rgba(60, 88, 117, 0.12);
@@ -618,7 +661,7 @@ td {
 
 .map-header-metric-label {
   margin: 0;
-  font-size: 0.69rem;
+  font-size: 0.74rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--muted);
@@ -629,12 +672,13 @@ td {
 .map-header-metric-value {
   margin: 0;
   color: var(--accent-dark);
-  font-weight: 800;
-  font-size: 1rem;
+  font-weight: 900;
+  font-size: 1.24rem;
   letter-spacing: -0.02em;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   text-align: right;
+  line-height: 1;
 }
 
 .map-status {
@@ -778,30 +822,39 @@ td {
 
 .lift-scene-lintel {
   display: grid;
-  grid-template-columns: 176px minmax(0, 1fr) max-content;
+  grid-template-columns: minmax(0, 1fr) max-content;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin: 0 auto 14px;
-  padding: 12px 16px;
-  width: min(100%, 440px);
+  padding: 10px 12px;
+  width: min(100%, 420px);
   border-radius: 18px;
   background: linear-gradient(180deg, #2f3a49 0%, #161f2c 100%);
   border: 1px solid rgba(203, 213, 225, 0.25);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.lift-scene-display {
+.lift-scene-display-wrap {
   grid-column: 1;
-  justify-self: start;
-  width: 176px;
-  min-width: 176px;
-  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lift-scene-display {
+  grid-column: auto;
+  justify-self: auto;
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 132px;
+  padding: 8px 12px;
   border-radius: 14px;
   background: #050816;
   color: #86efac;
   font-size: clamp(1.6rem, 5vw, 2.8rem);
   font-weight: 900;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.06em;
   font-variant-numeric: tabular-nums;
   text-align: center;
   text-shadow: 0 0 14px rgba(134, 239, 172, 0.46);
@@ -810,32 +863,21 @@ td {
     inset 0 0 28px rgba(22, 163, 74, 0.22);
 }
 
-.lift-scene-direction {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #e2e8f0;
-  font-size: 0.94rem;
-  font-weight: 700;
-}
-
 .lift-scene-building {
   grid-column: 2;
-  justify-self: center;
+  justify-self: end;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 88px;
-  padding: 9px 14px;
+  min-width: 76px;
+  padding: 8px 12px;
   border-radius: 999px;
   background: rgba(59, 130, 246, 0.16);
   border: 1px solid rgba(191, 219, 254, 0.18);
   color: #dbeafe;
-  font-size: 1.08rem;
+  font-size: 0.98rem;
   font-weight: 900;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.05em;
   text-align: center;
   text-transform: uppercase;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
@@ -869,20 +911,26 @@ td {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   background: rgba(148, 163, 184, 0.12);
   color: #f8fafc;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 .lift-scene-arrow-icon.up {
-  color: #38bdf8;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(134, 239, 172, 0.14);
 }
 
 .lift-scene-arrow-icon.down {
-  color: #f97316;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(252, 165, 165, 0.14);
 }
 
 .lift-scene-cabin {
@@ -1038,20 +1086,34 @@ td {
     min-width: 64px;
   }
 
+  .lift-scene-lintel {
+    width: 100%;
+    gap: 8px;
+    padding: 9px 10px;
+  }
+
+  .lift-scene-display-wrap {
+    gap: 6px;
+  }
+
   .lift-scene-display {
-    width: 132px;
-    min-width: 132px;
-    letter-spacing: 0.08em;
+    min-width: 0;
+    padding: 8px 10px;
+    letter-spacing: 0.04em;
   }
 
   .lift-scene-building {
-    min-width: 78px;
-    font-size: 0.98rem;
-    letter-spacing: 0.1em;
+    min-width: 68px;
+    padding: 7px 10px;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
   }
 
-  .lift-scene-direction-text {
-    display: none;
+  .lift-scene-arrow-icon {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+    font-size: 1.24rem;
   }
 }
 
@@ -1657,6 +1719,7 @@ td {
 
   .route-form {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     align-items: stretch;
   }
 
@@ -1685,12 +1748,12 @@ td {
   }
 
   .map-header-metrics {
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
     max-width: none;
     width: 100%;
   }
 
-  .route-summary-card .detail-list {
+  .route-summary-columns {
     grid-template-columns: 1fr;
   }
 
@@ -1701,7 +1764,11 @@ td {
   }
 
   .generate-btn {
+    grid-column: auto;
+    grid-row: auto;
     width: 100%;
+    min-height: 46px;
+    height: 46px;
   }
 
   .step-table th:nth-child(2),
@@ -1760,36 +1827,50 @@ td {
           <section id="results" class="results hidden" aria-live="polite">
             <article class="detail-card route-summary-card">
               <h2>Route Summary</h2>
-              <dl class="detail-list">
-                <div>
-                  <dt>Origin Building</dt>
-                  <dd id="origin-building"></dd>
-                </div>
-                <div>
-                  <dt>Origin Floor</dt>
-                  <dd id="origin-floor"></dd>
-                </div>
-                <div>
-                  <dt>Transfer Floor</dt>
-                  <dd id="transfer-floor"></dd>
-                </div>
-                <div>
-                  <dt>IPEB Lift Selection</dt>
-                  <dd id="lobby-assumption"></dd>
-                </div>
-                <div>
-                  <dt>Destination Building</dt>
-                  <dd id="destination-building"></dd>
-                </div>
-                <div>
-                  <dt>Destination Floor</dt>
-                  <dd id="destination-floor"></dd>
-                </div>
-                <div>
-                  <dt>Destination Wing</dt>
-                  <dd id="destination-wing"></dd>
-                </div>
-              </dl>
+              <div class="route-summary-columns">
+                <section class="route-summary-group">
+                  <h3>Original Ward Details</h3>
+                  <dl class="detail-list">
+                    <div>
+                      <dt>Origin Building</dt>
+                      <dd id="origin-building"></dd>
+                    </div>
+                    <div>
+                      <dt>Origin Floor</dt>
+                      <dd id="origin-floor"></dd>
+                    </div>
+                    <div>
+                      <dt>Origin Wing</dt>
+                      <dd id="origin-wing"></dd>
+                    </div>
+                    <div>
+                      <dt>Transfer Floor</dt>
+                      <dd id="transfer-floor"></dd>
+                    </div>
+                  </dl>
+                </section>
+                <section class="route-summary-group">
+                  <h3>Destination Ward Details</h3>
+                  <dl class="detail-list">
+                    <div>
+                      <dt>Destination Building</dt>
+                      <dd id="destination-building"></dd>
+                    </div>
+                    <div>
+                      <dt>IPEB Lift Selection</dt>
+                      <dd id="lobby-assumption"></dd>
+                    </div>
+                    <div>
+                      <dt>Destination Floor</dt>
+                      <dd id="destination-floor"></dd>
+                    </div>
+                    <div>
+                      <dt>Destination Wing</dt>
+                      <dd id="destination-wing"></dd>
+                    </div>
+                  </dl>
+                </section>
+              </div>
             </article>
 
             <article class="detail-card step-breakdown-card">
@@ -1914,12 +1995,11 @@ td {
                       </div>
                       <div class="lift-scene-elevator">
                         <div class="lift-scene-lintel">
-                          <div id="lift-scene-display" class="lift-scene-display">10/F</div>
-                          <span id="lift-scene-building" class="lift-scene-building">MCBTC</span>
-                          <div class="lift-scene-direction">
+                          <div class="lift-scene-display-wrap">
+                            <div id="lift-scene-display" class="lift-scene-display">10/F</div>
                             <span id="lift-scene-direction-arrow" class="lift-scene-arrow-icon up">▲</span>
-                            <span id="lift-scene-direction-text" class="lift-scene-direction-text">Moving Up</span>
                           </div>
+                          <span id="lift-scene-building" class="lift-scene-building">MCBTC</span>
                         </div>
                         <div class="lift-scene-cabin">
                           <div class="lift-scene-interior">
@@ -2289,9 +2369,7 @@ let selectedDestinationDirectoryId = "";
 const form = document.getElementById("route-form");
 const originWardInput = document.getElementById("originWard");
 const originSuggestions = document.getElementById("origin-suggestions");
-const originHint = document.getElementById("origin-hint");
 const destinationWardSelect = document.getElementById("destinationWard");
-const destinationHint = document.getElementById("destination-hint");
 const resultsSection = document.getElementById("results");
 const errorMessage = document.getElementById("error-message");
 const successMessage = document.getElementById("success-message");
@@ -2310,7 +2388,6 @@ const liftSceneTo = document.getElementById("lift-scene-to");
 const liftSceneDisplay = document.getElementById("lift-scene-display");
 const liftSceneBuilding = document.getElementById("lift-scene-building");
 const liftSceneDirectionArrow = document.getElementById("lift-scene-direction-arrow");
-const liftSceneDirectionText = document.getElementById("lift-scene-direction-text");
 const liftSceneCaption = document.getElementById("lift-scene-caption");
 const liftSceneDoorLeft = document.getElementById("lift-scene-door-left");
 const liftSceneDoorRight = document.getElementById("lift-scene-door-right");
@@ -2354,6 +2431,7 @@ function initialize() {
   form.addEventListener("submit", handleGenerateRoute);
   originWardInput.addEventListener("input", handleOriginInput);
   originWardInput.addEventListener("focus", handleOriginFocus);
+  originWardInput.addEventListener("click", handleOriginFocus);
   destinationWardSelect.addEventListener("change", handleDestinationChange);
   originSuggestions.addEventListener("click", handleOriginSuggestionClick);
   document.addEventListener("click", handleDocumentClick);
@@ -2531,7 +2609,6 @@ function resetDestinationSelection(message = "Select origin first") {
 function populateDestinationOptions(origin) {
   if (!origin || !origin.destinations.length) {
     resetDestinationSelection("No mapped destinations found for this origin yet");
-    destinationHint.textContent = "This origin is not linked to any destination in the current list yet.";
     return;
   }
 
@@ -2543,9 +2620,6 @@ function populateDestinationOptions(origin) {
     `)
   ].join("");
   destinationWardSelect.value = "";
-  destinationHint.textContent = origin.destinations.length === 1
-    ? "Only one linked destination was found for this origin. The route will generate automatically."
-    : "Choose the matching destination from the list.";
 }
 
 function selectOriginEntry(origin, options = {}) {
@@ -2555,7 +2629,6 @@ function selectOriginEntry(origin, options = {}) {
 
   selectedOriginDirectoryId = origin.id;
   originWardInput.value = buildOriginOptionLabel(origin);
-  originHint.textContent = `${origin.destinations.length} linked destination(s) found for ${origin.wardCode}.`;
   hideOriginSuggestions();
   populateDestinationOptions(origin);
 
@@ -2603,26 +2676,29 @@ function handleOriginInput() {
   selectedOriginDirectoryId = "";
   selectedDestinationDirectoryId = "";
   resetDestinationSelection("Select origin first");
-  destinationHint.textContent = "After selecting origin, only matching destinations from the list will be shown here.";
 
   const query = normalizeSearchQuery(originWardInput.value);
 
   if (!query) {
-    originHint.textContent = "Type ward code, floor, route, or area keyword to search available origins from the list.";
     hideOriginSuggestions();
     return;
   }
 
   const matches = findOriginMatches(query);
   renderOriginSuggestions(matches);
-
-  originHint.textContent = matches.length
-    ? `${matches.length} matching origin(s) found.`
-    : "No matching origin found in the current list.";
 }
 
 function handleOriginFocus() {
+  const selectedOrigin = getOriginDirectoryEntryById(selectedOriginDirectoryId);
+
+  if (selectedOrigin && originWardInput.value === buildOriginOptionLabel(selectedOrigin)) {
+    requestAnimationFrame(() => {
+      originWardInput.select();
+    });
+  }
+
   if (!originWardInput.value.trim()) {
+    hideOriginSuggestions();
     return;
   }
 
@@ -3103,11 +3179,14 @@ function renderResults(result) {
   document.getElementById("total-time").textContent = formatMinutesValue(result.totalTime);
   document.getElementById("origin-building").textContent = result.origin.building;
   document.getElementById("origin-floor").textContent = normalizeFloorLabel(`${result.origin.floor}/F`).display;
+  document.getElementById("origin-wing").textContent = result.origin.route ? `${result.origin.route} Wing` : "--";
   document.getElementById("transfer-floor").textContent = normalizeFloorLabel(toLiftCode(result.origin.transferFloor)).display;
-  document.getElementById("lobby-assumption").textContent = result.lobbyAssumptionLabel || "--";
+  document.getElementById("lobby-assumption").textContent = result.destination.building === "IPEB"
+    ? (result.lobbyAssumptionLabel || "--")
+    : "N/A";
   document.getElementById("destination-building").textContent = result.destination.building || "--";
   document.getElementById("destination-floor").textContent = normalizeFloorLabel(`${result.destination.floor}/F`).display;
-  document.getElementById("destination-wing").textContent = `${result.destination.wing} Wing`;
+  document.getElementById("destination-wing").textContent = result.destination.wing ? `${result.destination.wing} Wing` : "--";
 
   const tableBody = document.getElementById("step-breakdown");
   tableBody.innerHTML = "";
@@ -3773,7 +3852,6 @@ function renderLiftScene(scene, durationMs, isPaused) {
     liftSceneCaption.textContent = state.caption;
     liftSceneDirectionArrow.textContent = state.direction === "down" ? "▼" : "▲";
     liftSceneDirectionArrow.className = `lift-scene-arrow-icon ${state.direction === "down" ? "down" : "up"}`;
-    liftSceneDirectionText.textContent = state.direction === "down" ? "Moving Down" : "Moving Up";
     liftSceneDoorLeft.style.transform = `translateX(${-doorTravelPercent}%)`;
     liftSceneDoorRight.style.transform = `translateX(${doorTravelPercent}%)`;
   };
