@@ -2572,6 +2572,7 @@ const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
 const MARKER_PATH_OFFSET_X = 40;
 const MARKER_PATH_OFFSET_Y = 24;
+const MAP_MARKER_FACING_RIGHT_OFFSET_X = 62.25;
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5"];
 const STEP_JSON_DEFAULTS = [
@@ -4556,7 +4557,9 @@ function updateMapMarkerFacing(pointState) {
 
   mapMarkerFacingGroup.setAttribute(
     "transform",
-    mapMarkerFacingDirection > 0 ? "scale(1 1)" : "scale(-1 1)"
+    mapMarkerFacingDirection > 0
+      ? `translate(${MAP_MARKER_FACING_RIGHT_OFFSET_X} 0) scale(1 1)`
+      : "scale(-1 1)"
   );
 }
 
