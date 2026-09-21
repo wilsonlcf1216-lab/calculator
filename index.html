@@ -2267,7 +2267,7 @@ td {
                     <g id="map-marker" class="map-marker hidden">
                       <g id="map-marker-walker" class="map-marker-bed-team">
                         <g class="marker-scale" transform="translate(3 -1) scale(0.34)">
-                          <g transform="scale(-1 1)">
+                          <g class="walker-facing-group" transform="scale(-1 1)">
                           <ellipse class="bed-shadow" cx="0" cy="40" rx="62" ry="7"></ellipse>
                           <path class="bed-frame-dark" d="M -51 -24 Q -57 -30 -64 -30 Q -73 -30 -76 -21 Q -78 -14 -72 -9 L -55 6 Q -49 12 -40 12 L 63 12 Q 70 12 74 6 Q 78 0 76 -7 Q 74 -14 66 -14 L -6 -14 L -18 -14 L -32 -14 Z"></path>
                           <path class="bed-lime" d="M -43 -21 Q -39 -17 -33 -17 L 63 -17 Q 68 -17 70 -14 Q 72 -11 72 -7 L 72 -3 L -22 -3 L -43 -21 Z"></path>
@@ -2572,6 +2572,7 @@ const LEGACY_MAP_STORAGE_KEYS = ["ward-decanting-map-state-v1"];
 const MAP_SIZE = 1000;
 const MARKER_PATH_OFFSET_X = 40;
 const MARKER_PATH_OFFSET_Y = 24;
+const MAP_MARKER_FACING_RIGHT_OFFSET_X = 62.25;
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5"];
 const STEP_JSON_DEFAULTS = [
@@ -2714,6 +2715,7 @@ let isPlaybackPaused = false;
 let suppressMapClick = false;
 let activeLiftSceneProgress = 0;
 let activeLiftSceneId = "";
+let mapMarkerFacingDirection = -1;
 let routeDirectoryOrigins = [];
 let selectedOriginDirectoryId = "";
 let selectedDestinationDirectoryId = "";
@@ -2731,6 +2733,7 @@ const mapRoutesGroup = document.getElementById("map-routes");
 const mapLabelsGroup = document.getElementById("map-labels");
 const mapMarker = document.getElementById("map-marker");
 const mapMarkerWalker = document.getElementById("map-marker-walker");
+const mapMarkerFacingGroup = document.querySelector("#map-marker-walker .walker-facing-group");
 const mapStatus = document.getElementById("map-status");
 const mapStageWrap = document.querySelector(".map-stage-wrap");
 const mapEmptyState = document.getElementById("map-empty-state");
@@ -4501,6 +4504,8 @@ function buildJourneyFromMapState(sourceMapState) {
 function startAnimation(points, durationOverrideMs) {
   stopAnimation(false);
   mapMarker.classList.remove("hidden");
+  mapMarkerFacingDirection = -1;
+  updateMapMarkerFacing();
 
   const pathSegments = buildPathSegments(points);
   const totalLength = pathSegments.reduce((sum, segment) => sum + segment.length, 0);
@@ -4518,6 +4523,7 @@ function startAnimation(points, durationOverrideMs) {
     const targetDistance = totalLength * progress;
     const pointState = getPointStateAtDistance(pathSegments, targetDistance);
     mapMarker.setAttribute("transform", `translate(${pointState.x + MARKER_PATH_OFFSET_X} ${pointState.y + MARKER_PATH_OFFSET_Y})`);
+    updateMapMarkerFacing(pointState);
 
     if (progress < 1) {
       animationFrameId = window.requestAnimationFrame(animateFrame);
@@ -4538,6 +4544,23 @@ function stopAnimation(hideMarker = true) {
   if (hideMarker) {
     mapMarker.classList.add("hidden");
   }
+}
+
+function updateMapMarkerFacing(pointState) {
+  if (!mapMarkerFacingGroup) {
+    return;
+  }
+
+  if (pointState && Math.abs(pointState.dx || 0) > Math.abs(pointState.dy || 0)) {
+    mapMarkerFacingDirection = pointState.dx > 0 ? 1 : -1;
+  }
+
+  mapMarkerFacingGroup.setAttribute(
+    "transform",
+    mapMarkerFacingDirection > 0
+      ? `translate(${MAP_MARKER_FACING_RIGHT_OFFSET_X} 0) scale(1 1)`
+      : "scale(-1 1)"
+  );
 }
 
 function startStepPlayback(startIndex = 0) {
@@ -5036,6 +5059,8 @@ function getPointStateAtDistance(pathSegments, targetDistance) {
       return {
         x: segment.start.x + (segment.end.x - segment.start.x) * ratio,
         y: segment.start.y + (segment.end.y - segment.start.y) * ratio,
+        dx: segment.end.x - segment.start.x,
+        dy: segment.end.y - segment.start.y,
         angle: Math.atan2(segment.end.y - segment.start.y, segment.end.x - segment.start.x) * (180 / Math.PI) + 90
       };
     }
@@ -5047,6 +5072,8 @@ function getPointStateAtDistance(pathSegments, targetDistance) {
   return {
     x: lastSegment.end.x,
     y: lastSegment.end.y,
+    dx: lastSegment.end.x - lastSegment.start.x,
+    dy: lastSegment.end.y - lastSegment.start.y,
     angle: Math.atan2(lastSegment.end.y - lastSegment.start.y, lastSegment.end.x - lastSegment.start.x) * (180 / Math.PI) + 90
   };
 }
