@@ -466,6 +466,21 @@ body {
   color: #24384b;
 }
 
+.route-summary-card h2,
+.step-breakdown-card h2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: #22384c;
+  border-bottom: 2px solid rgba(88, 112, 136, 0.24);
+}
+
 .route-summary-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -473,20 +488,34 @@ body {
 }
 
 .route-summary-group {
+  --summary-accent: #587088;
+  --summary-border: rgba(207, 217, 228, 0.92);
+  --summary-surface-start: rgba(255, 255, 255, 0.98);
+  --summary-surface-end: rgba(239, 244, 248, 0.96);
+  --summary-heading-bg: rgba(88, 112, 136, 0.12);
+  --summary-heading-color: #31485e;
+  --summary-value-color: #22384c;
   padding: 12px 13px;
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(239, 244, 248, 0.96) 100%);
-  border: 1px solid rgba(207, 217, 228, 0.92);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  background: linear-gradient(180deg, var(--summary-surface-start) 0%, var(--summary-surface-end) 100%);
+  border: 1px solid var(--summary-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    0 8px 18px rgba(15, 23, 42, 0.04);
 }
 
 .route-summary-group h3 {
-  margin: 0 0 10px;
-  font-size: 0.72rem;
+  margin: 0 0 12px;
+  padding: 7px 10px;
+  border-radius: 12px;
+  background: var(--summary-heading-bg);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  text-align: center;
+  font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #31485e;
+  color: var(--summary-heading-color);
 }
 
 .route-summary-card .detail-list {
@@ -510,6 +539,80 @@ body {
 .route-summary-card .detail-list dd {
   text-align: left;
   font-size: 0.9rem;
+  color: var(--summary-value-color);
+}
+
+.route-summary-transfer-group {
+  grid-column: 1 / -1;
+}
+
+.route-summary-transfer-group .detail-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+}
+
+.route-summary-transfer-group .detail-list div {
+  min-width: 0;
+}
+
+.route-summary-group[data-building="mcbtc"] {
+  --summary-accent: #e95f9c;
+  --summary-border: rgba(233, 95, 156, 0.34);
+  --summary-surface-start: rgba(255, 241, 247, 0.98);
+  --summary-surface-end: rgba(255, 228, 239, 0.96);
+  --summary-heading-bg: rgba(233, 95, 156, 0.2);
+  --summary-heading-color: #a92b67;
+  --summary-value-color: #8b2357;
+}
+
+.route-summary-group[data-building="ipeb"] {
+  --summary-accent: #7c63d8;
+  --summary-border: rgba(124, 99, 216, 0.34);
+  --summary-surface-start: rgba(245, 241, 255, 0.98);
+  --summary-surface-end: rgba(234, 226, 255, 0.96);
+  --summary-heading-bg: rgba(124, 99, 216, 0.2);
+  --summary-heading-color: #5d3fc5;
+  --summary-value-color: #4a31a7;
+}
+
+.route-summary-group[data-building="hklm"] {
+  --summary-accent: #3aa4d8;
+  --summary-border: rgba(58, 164, 216, 0.34);
+  --summary-surface-start: rgba(239, 250, 255, 0.98);
+  --summary-surface-end: rgba(223, 244, 252, 0.96);
+  --summary-heading-bg: rgba(58, 164, 216, 0.18);
+  --summary-heading-color: #1777aa;
+  --summary-value-color: #14668f;
+}
+
+.route-summary-group[data-building="ef"] {
+  --summary-accent: #58b474;
+  --summary-border: rgba(88, 180, 116, 0.34);
+  --summary-surface-start: rgba(243, 253, 246, 0.98);
+  --summary-surface-end: rgba(228, 247, 233, 0.96);
+  --summary-heading-bg: rgba(88, 180, 116, 0.18);
+  --summary-heading-color: #2d8b48;
+  --summary-value-color: #276f3c;
+}
+
+.route-summary-group[data-building="csb"] {
+  --summary-accent: #c9a62c;
+  --summary-border: rgba(201, 166, 44, 0.34);
+  --summary-surface-start: rgba(255, 252, 238, 0.98);
+  --summary-surface-end: rgba(251, 245, 216, 0.96);
+  --summary-heading-bg: rgba(201, 166, 44, 0.18);
+  --summary-heading-color: #9a7812;
+  --summary-value-color: #7e630f;
+}
+
+.route-summary-group[data-building="transfer"] {
+  --summary-accent: #5b7aa3;
+  --summary-border: rgba(91, 122, 163, 0.3);
+  --summary-surface-start: rgba(245, 249, 253, 0.98);
+  --summary-surface-end: rgba(232, 240, 247, 0.96);
+  --summary-heading-bg: rgba(91, 122, 163, 0.16);
+  --summary-heading-color: #35547b;
+  --summary-value-color: #294768;
 }
 
 .detail-list {
@@ -1773,6 +1876,10 @@ td {
     grid-template-columns: 1fr;
   }
 
+  .route-summary-transfer-group .detail-list {
+    grid-template-columns: 1fr;
+  }
+
 
   .destination-row {
     display: grid;
@@ -1845,7 +1952,7 @@ td {
             <article class="detail-card route-summary-card">
               <h2>Route Summary</h2>
               <div class="route-summary-columns">
-                <section class="route-summary-group">
+                <section id="origin-details-card" class="route-summary-group" data-building="mcbtc">
                   <h3>Original Ward Details</h3>
                   <dl class="detail-list">
                     <div>
@@ -1860,22 +1967,14 @@ td {
                       <dt>Origin Wing</dt>
                       <dd id="origin-wing"></dd>
                     </div>
-                    <div>
-                      <dt>Transfer Floor</dt>
-                      <dd id="transfer-floor"></dd>
-                    </div>
                   </dl>
                 </section>
-                <section class="route-summary-group">
+                <section id="destination-details-card" class="route-summary-group" data-building="ipeb">
                   <h3>Destination Ward Details</h3>
                   <dl class="detail-list">
                     <div>
                       <dt>Destination Building</dt>
                       <dd id="destination-building"></dd>
-                    </div>
-                    <div>
-                      <dt>IPEB Lift Selection</dt>
-                      <dd id="lobby-assumption"></dd>
                     </div>
                     <div>
                       <dt>Destination Floor</dt>
@@ -1884,6 +1983,19 @@ td {
                     <div>
                       <dt>Destination Wing</dt>
                       <dd id="destination-wing"></dd>
+                    </div>
+                  </dl>
+                </section>
+                <section id="transfer-details-card" class="route-summary-group route-summary-transfer-group" data-building="transfer">
+                  <h3>Transfer Floor Details</h3>
+                  <dl class="detail-list">
+                    <div>
+                      <dt>Transfer Floor</dt>
+                      <dd id="transfer-floor"></dd>
+                    </div>
+                    <div>
+                      <dt>IPEB Lift Selection</dt>
+                      <dd id="lobby-assumption"></dd>
                     </div>
                   </dl>
                 </section>
@@ -2544,7 +2656,7 @@ function buildOriginOptionLabel(origin) {
 }
 
 function buildDestinationOptionLabel(destination) {
-  return `${destination.wardCode} · ${destination.building} ${destination.floor} Route ${destination.route} · ${destination.area}`;
+  return `${destination.wardCode} · ${destination.floor} · ${destination.building} · ${destination.area}`;
 }
 
 function getOriginMatchScore(origin, query) {
@@ -2638,7 +2750,7 @@ function populateDestinationOptions(origin) {
     `)
   ].join("");
   destinationWardSelect.value = "";
-  destinationWardSelect.classList.add("attention-placeholder");
+  destinationWardSelect.classList.toggle("attention-placeholder", origin.destinations.length > 1);
 }
 
 function selectOriginEntry(origin, options = {}) {
@@ -3118,6 +3230,54 @@ function getLiftBuildingDisplayLabel(routeKey = "", fallback = "") {
   return normalizedFallback || "--";
 }
 
+function getBuildingThemeKey(routeKey = "", fallback = "") {
+  const normalizedKey = String(routeKey || "").trim().toLowerCase();
+
+  if (normalizedKey === "mcbtc") {
+    return "mcbtc";
+  }
+
+  if (normalizedKey === "hklm") {
+    return "hklm";
+  }
+
+  if (normalizedKey === "ef") {
+    return "ef";
+  }
+
+  if (normalizedKey === "csb") {
+    return "csb";
+  }
+
+  if (normalizedKey === "ipeb") {
+    return "ipeb";
+  }
+
+  const normalizedFallback = String(fallback || "").trim().toUpperCase();
+
+  if (normalizedFallback.includes("MCBTC")) {
+    return "mcbtc";
+  }
+
+  if (normalizedFallback.includes("HKLM")) {
+    return "hklm";
+  }
+
+  if (normalizedFallback.includes("EF")) {
+    return "ef";
+  }
+
+  if (normalizedFallback.includes("CLINICAL SCIENCES") || normalizedFallback.includes("CSB")) {
+    return "csb";
+  }
+
+  if (normalizedFallback.includes("IPEB")) {
+    return "ipeb";
+  }
+
+  return "transfer";
+}
+
 function getActiveLiftSceneBuildingLabel(scene) {
   if (!currentRouteResult || !activePlaybackStepKey) {
     return getLiftBuildingDisplayLabel("", scene?.buildingLabel || "");
@@ -3194,8 +3354,12 @@ function normalizeFloorLabel(value) {
 }
 
 function renderResults(result) {
+  const originDetailsCard = document.getElementById("origin-details-card");
+  const destinationDetailsCard = document.getElementById("destination-details-card");
   document.getElementById("total-distance").textContent = `${result.totalDistance.toFixed(1)} m`;
   document.getElementById("total-time").textContent = formatMinutesValue(result.totalTime);
+  originDetailsCard.dataset.building = getBuildingThemeKey(result.origin.routeKey, result.origin.building);
+  destinationDetailsCard.dataset.building = getBuildingThemeKey(result.destination.routeKey, result.destination.building);
   document.getElementById("origin-building").textContent = result.origin.building;
   document.getElementById("origin-floor").textContent = normalizeFloorLabel(`${result.origin.floor}/F`).display;
   document.getElementById("origin-wing").textContent = result.origin.route ? `${result.origin.route} Wing` : "--";
