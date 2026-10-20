@@ -3190,10 +3190,11 @@ function toRouteDestinationEntry(destination) {
   };
 }
 
-function getIpebLobbyAssumption(destination) {
+function getIpebLobbyAssumption(destination, originRouteKey = "") {
   const token = String(destination?.liftSelection || destination?.wing || "")
     .trim()
     .toUpperCase();
+  const normalizedOriginRouteKey = String(originRouteKey || "").trim().toLowerCase();
 
   if (token === "A" || token === "B") {
     return {
@@ -3202,7 +3203,22 @@ function getIpebLobbyAssumption(destination) {
     };
   }
 
-  if (token === "C" || token === "D") {
+  if (token === "C") {
+    return {
+      key: "north",
+      label: "North Lift C"
+    };
+  }
+
+  if (token === "D") {
+    if (normalizedOriginRouteKey === "hklm") {
+      return {
+        key: "pending-d",
+        label: "Zone D pending (G/F to 7/F)",
+        isPending: true
+      };
+    }
+
     return {
       key: "north",
       label: "North Wing Lift Lobby"
@@ -3337,8 +3353,12 @@ function calculateRouteFromDirectoryEntries(originEntry, destinationEntry) {
 }
 
 function buildRouteResult(origin, destination) {
-  const lobbyAssumption = getIpebLobbyAssumption(destination);
+  const lobbyAssumption = getIpebLobbyAssumption(destination, origin.routeKey);
   const baseSegments = INTER_BUILDING_SEGMENTS[origin.routeKey];
+
+  if (lobbyAssumption.isPending) {
+    throw new Error("HKLM Zone D routing is pending. Planned path: G/F to 7/F.");
+  }
 
   if (!Array.isArray(baseSegments) || baseSegments.length < 5) {
     throw new Error("Origin route is not mapped yet.");
@@ -4758,7 +4778,7 @@ function getStepJsonRouteContext(routeResult = currentRouteResult) {
   const destination = routeResult && routeResult.destination ? routeResult.destination : {};
   const lobbyKey = routeResult && routeResult.lobbyAssumptionKey
     ? routeResult.lobbyAssumptionKey
-    : getIpebLobbyAssumption(destination).key;
+    : getIpebLobbyAssumption(destination, origin.routeKey).key;
 
   return {
     originRouteKey: String(origin.routeKey || "").trim().toLowerCase(),
