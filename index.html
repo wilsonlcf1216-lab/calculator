@@ -5122,10 +5122,25 @@ function getDraftRoutePoints() {
 }
 
 function getSvgPoint(event) {
-  const rect = mapSvg.getBoundingClientRect();
   const viewBox = mapSvg.viewBox.baseVal;
   const maxX = viewBox && viewBox.width ? viewBox.width : getMapWidth(mapState);
   const maxY = viewBox && viewBox.height ? viewBox.height : getMapHeight(mapState);
+  const screenMatrix = typeof mapSvg.getScreenCTM === "function" ? mapSvg.getScreenCTM() : null;
+
+  if (screenMatrix && typeof mapSvg.createSVGPoint === "function") {
+    const svgPoint = mapSvg.createSVGPoint();
+    svgPoint.x = event.clientX;
+    svgPoint.y = event.clientY;
+
+    const localPoint = svgPoint.matrixTransform(screenMatrix.inverse());
+
+    return {
+      x: clamp(localPoint.x, 0, maxX),
+      y: clamp(localPoint.y, 0, maxY)
+    };
+  }
+
+  const rect = mapSvg.getBoundingClientRect();
   const x = ((event.clientX - rect.left) / rect.width) * maxX;
   const y = ((event.clientY - rect.top) / rect.height) * maxY;
 
