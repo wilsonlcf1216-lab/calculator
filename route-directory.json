@@ -1061,6 +1061,1026 @@
           "remark": ""
         }
       ]
+    },
+    {
+      "id": "HKLM|H|11/F|11H PAED Ambulatory Care Centre",
+      "wardCode": "11H",
+      "building": "HKLM",
+      "route": "H",
+      "floor": "11/F",
+      "floorNumber": 11,
+      "area": "11H PAED Ambulatory Care Centre",
+      "routeKey": "hklm",
+      "searchText": "11H HKLM 11/F H 11H PAED AMBULATORY CARE CENTRE",
+      "destinations": [
+        {
+          "id": "IPEB|C|18/F|PAED DAY",
+          "wardCode": "C18",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "18/F",
+          "floorNumber": 18,
+          "area": "PAED DAY",
+          "routeKey": "ipeb",
+          "searchText": "C18 IPEB 18/F C PAED DAY",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|K|11/F|11K PAED Ward",
+      "wardCode": "11K",
+      "building": "HKLM",
+      "route": "K",
+      "floor": "11/F",
+      "floorNumber": 11,
+      "area": "11K PAED Ward",
+      "routeKey": "hklm",
+      "searchText": "11K HKLM 11/F K 11K PAED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|18/F|PAED IP Ward",
+          "wardCode": "B18",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "18/F",
+          "floorNumber": 18,
+          "area": "PAED IP Ward",
+          "routeKey": "ipeb",
+          "searchText": "B18 IPEB 18/F B PAED IP WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|L|11/F|11L PAED ISOL Ward",
+      "wardCode": "11L",
+      "building": "HKLM",
+      "route": "L",
+      "floor": "11/F",
+      "floorNumber": 11,
+      "area": "11L PAED ISOL Ward",
+      "routeKey": "hklm",
+      "searchText": "11L HKLM 11/F L 11L PAED ISOL WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|17/F|PAED ISOL Ward",
+          "wardCode": "A17",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "17/F",
+          "floorNumber": 17,
+          "area": "PAED ISOL Ward",
+          "routeKey": "ipeb",
+          "searchText": "A17 IPEB 17/F A PAED ISOL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|M|11/F|11M PAED ISOL Ward",
+      "wardCode": "11M",
+      "building": "HKLM",
+      "route": "M",
+      "floor": "11/F",
+      "floorNumber": 11,
+      "area": "11M PAED ISOL Ward",
+      "routeKey": "hklm",
+      "searchText": "11M HKLM 11/F M 11M PAED ISOL WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|17/F|PAED ISOL Ward",
+          "wardCode": "A17",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "17/F",
+          "floorNumber": 17,
+          "area": "PAED ISOL Ward",
+          "routeKey": "ipeb",
+          "searchText": "A17 IPEB 17/F A PAED ISOL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|H|10/F|10H MED Ward",
+      "wardCode": "10H",
+      "building": "HKLM",
+      "route": "H",
+      "floor": "10/F",
+      "floorNumber": 10,
+      "area": "10H MED Ward",
+      "routeKey": "hklm",
+      "searchText": "10H HKLM 10/F H 10H MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|12/F|Medical Ward",
+          "wardCode": "A12",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "A12 IPEB 12/F A MEDICAL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|K|10/F|10K MED Ward",
+      "wardCode": "10K",
+      "building": "HKLM",
+      "route": "K",
+      "floor": "10/F",
+      "floorNumber": 10,
+      "area": "10K MED Ward",
+      "routeKey": "hklm",
+      "searchText": "10K HKLM 10/F K 10K MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|12/F|Medical Ward",
+          "wardCode": "A12",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "A12 IPEB 12/F A MEDICAL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|L|10/F|10L MED Ward",
+      "wardCode": "10L",
+      "building": "HKLM",
+      "route": "L",
+      "floor": "10/F",
+      "floorNumber": 10,
+      "area": "10L MED Ward",
+      "routeKey": "hklm",
+      "searchText": "10L HKLM 10/F L 10L MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|14/F|Medical Ward",
+          "wardCode": "A14",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "14/F",
+          "floorNumber": 14,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "A14 IPEB 14/F A MEDICAL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|14/F|Medical Ward",
+          "wardCode": "B14",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "14/F",
+          "floorNumber": 14,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B14 IPEB 14/F B MEDICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|M|10/F|10M MED Ward",
+      "wardCode": "10M",
+      "building": "HKLM",
+      "route": "M",
+      "floor": "10/F",
+      "floorNumber": 10,
+      "area": "10M MED Ward",
+      "routeKey": "hklm",
+      "searchText": "10M HKLM 10/F M 10M MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|14/F|Medical Ward",
+          "wardCode": "A14",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "14/F",
+          "floorNumber": 14,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "A14 IPEB 14/F A MEDICAL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|14/F|Medical Ward",
+          "wardCode": "B14",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "14/F",
+          "floorNumber": 14,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B14 IPEB 14/F B MEDICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|M|9/F|9M MED Ward",
+      "wardCode": "9M",
+      "building": "HKLM",
+      "route": "M",
+      "floor": "9/F",
+      "floorNumber": 9,
+      "area": "9M MED Ward",
+      "routeKey": "hklm",
+      "searchText": "9M HKLM 9/F M 9M MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|14/F|Medical Ward",
+          "wardCode": "A14",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "14/F",
+          "floorNumber": 14,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "A14 IPEB 14/F A MEDICAL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|14/F|Medical Ward",
+          "wardCode": "B14",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "14/F",
+          "floorNumber": 14,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B14 IPEB 14/F B MEDICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|H|8/F|8H SUR Ward",
+      "wardCode": "8H",
+      "building": "HKLM",
+      "route": "H",
+      "floor": "8/F",
+      "floorNumber": 8,
+      "area": "8H SUR Ward",
+      "routeKey": "hklm",
+      "searchText": "8H HKLM 8/F H 8H SUR WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|8/F|Surgical Ward",
+          "wardCode": "B8",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "8/F",
+          "floorNumber": 8,
+          "area": "Surgical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B8 IPEB 8/F B SURGICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|A|11/F|GI Ward",
+          "wardCode": "A11",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "GI Ward",
+          "routeKey": "ipeb",
+          "searchText": "A11 IPEB 11/F A GI WARD",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|12/F|RENAL/URO Ward",
+          "wardCode": "B12",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "RENAL/URO Ward",
+          "routeKey": "ipeb",
+          "searchText": "B12 IPEB 12/F B RENAL/URO WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|K|8/F|8K SUR Ward",
+      "wardCode": "8K",
+      "building": "HKLM",
+      "route": "K",
+      "floor": "8/F",
+      "floorNumber": 8,
+      "area": "8K SUR Ward",
+      "routeKey": "hklm",
+      "searchText": "8K HKLM 8/F K 8K SUR WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|8/F|Surgical Ward",
+          "wardCode": "B8",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "8/F",
+          "floorNumber": 8,
+          "area": "Surgical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B8 IPEB 8/F B SURGICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|A|11/F|GI Ward",
+          "wardCode": "A11",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "GI Ward",
+          "routeKey": "ipeb",
+          "searchText": "A11 IPEB 11/F A GI WARD",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|12/F|RENAL/URO Ward",
+          "wardCode": "B12",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "RENAL/URO Ward",
+          "routeKey": "ipeb",
+          "searchText": "B12 IPEB 12/F B RENAL/URO WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|L|8/F|8L Haemodialysis & Renal Transplant Centre",
+      "wardCode": "8L",
+      "building": "HKLM",
+      "route": "L",
+      "floor": "8/F",
+      "floorNumber": 8,
+      "area": "8L Haemodialysis & Renal Transplant Centre",
+      "routeKey": "hklm",
+      "searchText": "8L HKLM 8/F L 8L HAEMODIALYSIS & RENAL TRANSPLANT CENTRE",
+      "destinations": [
+        {
+          "id": "IPEB|C|12/F|KIDNEY Programme Floor",
+          "wardCode": "C12",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "KIDNEY Programme Floor",
+          "routeKey": "ipeb",
+          "searchText": "C12 IPEB 12/F C KIDNEY PROGRAMME FLOOR",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|M|8/F|8M Haemodialysis & Renal Transplant Centre",
+      "wardCode": "8M",
+      "building": "HKLM",
+      "route": "M",
+      "floor": "8/F",
+      "floorNumber": 8,
+      "area": "8M Haemodialysis & Renal Transplant Centre",
+      "routeKey": "hklm",
+      "searchText": "8M HKLM 8/F M 8M HAEMODIALYSIS & RENAL TRANSPLANT CENTRE",
+      "destinations": [
+        {
+          "id": "IPEB|C|12/F|KIDNEY Programme Floor",
+          "wardCode": "C12",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "KIDNEY Programme Floor",
+          "routeKey": "ipeb",
+          "searchText": "C12 IPEB 12/F C KIDNEY PROGRAMME FLOOR",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|H|7/F|7H SACC",
+      "wardCode": "7H",
+      "building": "HKLM",
+      "route": "H",
+      "floor": "7/F",
+      "floorNumber": 7,
+      "area": "7H SACC",
+      "routeKey": "hklm",
+      "searchText": "7H HKLM 7/F H 7H SACC",
+      "destinations": [
+        {
+          "id": "IPEB|D|7/F|SACC",
+          "wardCode": "D7",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "7/F",
+          "floorNumber": 7,
+          "area": "SACC",
+          "routeKey": "ipeb",
+          "searchText": "D7 IPEB 7/F D SACC",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|C|11/F|GI Programme Floor",
+          "wardCode": "C11",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "GI Programme Floor",
+          "routeKey": "ipeb",
+          "searchText": "C11 IPEB 11/F C GI PROGRAMME FLOOR",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|K|7/F|7K SACC",
+      "wardCode": "7K",
+      "building": "HKLM",
+      "route": "K",
+      "floor": "7/F",
+      "floorNumber": 7,
+      "area": "7K SACC",
+      "routeKey": "hklm",
+      "searchText": "7K HKLM 7/F K 7K SACC",
+      "destinations": [
+        {
+          "id": "IPEB|D|7/F|SACC",
+          "wardCode": "D7",
+          "building": "IPEB",
+          "route": "D",
+          "wing": "D",
+          "floor": "7/F",
+          "floorNumber": 7,
+          "area": "SACC",
+          "routeKey": "ipeb",
+          "searchText": "D7 IPEB 7/F D SACC",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|C|11/F|GI Programme Floor",
+          "wardCode": "C11",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "GI Programme Floor",
+          "routeKey": "ipeb",
+          "searchText": "C11 IPEB 11/F C GI PROGRAMME FLOOR",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|L|7/F|7L PAED ORT/SUR Ward",
+      "wardCode": "7L",
+      "building": "HKLM",
+      "route": "L",
+      "floor": "7/F",
+      "floorNumber": 7,
+      "area": "7L PAED ORT/SUR Ward",
+      "routeKey": "hklm",
+      "searchText": "7L HKLM 7/F L 7L PAED ORT/SUR WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|18/F|PAED SUR/ORT Ward",
+          "wardCode": "A18",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "18/F",
+          "floorNumber": 18,
+          "area": "PAED SUR/ORT Ward",
+          "routeKey": "ipeb",
+          "searchText": "A18 IPEB 18/F A PAED SUR/ORT WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|M|7/F|7M PAED ORT/SUR Ward",
+      "wardCode": "7M",
+      "building": "HKLM",
+      "route": "M",
+      "floor": "7/F",
+      "floorNumber": 7,
+      "area": "7M PAED ORT/SUR Ward",
+      "routeKey": "hklm",
+      "searchText": "7M HKLM 7/F M 7M PAED ORT/SUR WARD",
+      "destinations": [
+        {
+          "id": "IPEB|A|18/F|PAED SUR/ORT Ward",
+          "wardCode": "A18",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "18/F",
+          "floorNumber": 18,
+          "area": "PAED SUR/ORT Ward",
+          "routeKey": "ipeb",
+          "searchText": "A18 IPEB 18/F A PAED SUR/ORT WARD",
+          "liftSelection": "A",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|H|6/F|6H NICU/SCBU",
+      "wardCode": "6H",
+      "building": "HKLM",
+      "route": "H",
+      "floor": "6/F",
+      "floorNumber": 6,
+      "area": "6H NICU/SCBU",
+      "routeKey": "hklm",
+      "searchText": "6H HKLM 6/F H 6H NICU/SCBU",
+      "destinations": [
+        {
+          "id": "IPEB|C|17/F|SCBU",
+          "wardCode": "C17",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "17/F",
+          "floorNumber": 17,
+          "area": "SCBU",
+          "routeKey": "ipeb",
+          "searchText": "C17 IPEB 17/F C SCBU",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|K|6/F|6K NICU/SCBU",
+      "wardCode": "6K",
+      "building": "HKLM",
+      "route": "K",
+      "floor": "6/F",
+      "floorNumber": 6,
+      "area": "6K NICU/SCBU",
+      "routeKey": "hklm",
+      "searchText": "6K HKLM 6/F K 6K NICU/SCBU",
+      "destinations": [
+        {
+          "id": "IPEB|C|17/F|NICU",
+          "wardCode": "C17",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "17/F",
+          "floorNumber": 17,
+          "area": "NICU",
+          "routeKey": "ipeb",
+          "searchText": "C17 IPEB 17/F C NICU",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|L|6/F|6L Paediatric Ward (SCBU)",
+      "wardCode": "6L",
+      "building": "HKLM",
+      "route": "L",
+      "floor": "6/F",
+      "floorNumber": 6,
+      "area": "6L Paediatric Ward (SCBU)",
+      "routeKey": "hklm",
+      "searchText": "6L HKLM 6/F L 6L PAEDIATRIC WARD (SCBU)",
+      "destinations": [
+        {
+          "id": "IPEB|C|17/F|SCBU",
+          "wardCode": "C17",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "17/F",
+          "floorNumber": 17,
+          "area": "SCBU",
+          "routeKey": "ipeb",
+          "searchText": "C17 IPEB 17/F C SCBU",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|M|6/F|6M Paediatric Ward (PICU & HDU)",
+      "wardCode": "6M",
+      "building": "HKLM",
+      "route": "M",
+      "floor": "6/F",
+      "floorNumber": 6,
+      "area": "6M Paediatric Ward (PICU & HDU)",
+      "routeKey": "hklm",
+      "searchText": "6M HKLM 6/F M 6M PAEDIATRIC WARD (PICU & HDU)",
+      "destinations": [
+        {
+          "id": "IPEB|B|17/F|PICU",
+          "wardCode": "B17",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "17/F",
+          "floorNumber": 17,
+          "area": "PICU",
+          "routeKey": "ipeb",
+          "searchText": "B17 IPEB 17/F B PICU",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|K|5/F|5K OACC",
+      "wardCode": "5K",
+      "building": "HKLM",
+      "route": "K",
+      "floor": "5/F",
+      "floorNumber": 5,
+      "area": "5K OACC",
+      "routeKey": "hklm",
+      "searchText": "5K HKLM 5/F K 5K OACC",
+      "destinations": [
+        {
+          "id": "IPEB|C|13/F|MSK Programme Floor",
+          "wardCode": "C13",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "13/F",
+          "floorNumber": 13,
+          "area": "MSK Programme Floor",
+          "routeKey": "ipeb",
+          "searchText": "C13 IPEB 13/F C MSK PROGRAMME FLOOR",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|L|5/F|5L MED Ward",
+      "wardCode": "5L",
+      "building": "HKLM",
+      "route": "L",
+      "floor": "5/F",
+      "floorNumber": 5,
+      "area": "5L MED Ward",
+      "routeKey": "hklm",
+      "searchText": "5L HKLM 5/F L 5L MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|11/F|NIV/GI Ward",
+          "wardCode": "B11",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "NIV/GI Ward",
+          "routeKey": "ipeb",
+          "searchText": "B11 IPEB 11/F B NIV/GI WARD",
+          "liftSelection": "B",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|A|15/F|Medical Ward",
+          "wardCode": "A15",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "15/F",
+          "floorNumber": 15,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "A15 IPEB 15/F A MEDICAL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|15/F|Medical Ward",
+          "wardCode": "B15",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "15/F",
+          "floorNumber": 15,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B15 IPEB 15/F B MEDICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|M|5/F|5M MED Ward",
+      "wardCode": "5M",
+      "building": "HKLM",
+      "route": "M",
+      "floor": "5/F",
+      "floorNumber": 5,
+      "area": "5M MED Ward",
+      "routeKey": "hklm",
+      "searchText": "5M HKLM 5/F M 5M MED WARD",
+      "destinations": [
+        {
+          "id": "IPEB|B|11/F|NIV/GI Ward",
+          "wardCode": "B11",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "NIV/GI Ward",
+          "routeKey": "ipeb",
+          "searchText": "B11 IPEB 11/F B NIV/GI WARD",
+          "liftSelection": "B",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|A|15/F|Medical Ward",
+          "wardCode": "A15",
+          "building": "IPEB",
+          "route": "A",
+          "wing": "A",
+          "floor": "15/F",
+          "floorNumber": 15,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "A15 IPEB 15/F A MEDICAL WARD",
+          "liftSelection": "A",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|B|15/F|Medical Ward",
+          "wardCode": "B15",
+          "building": "IPEB",
+          "route": "B",
+          "wing": "B",
+          "floor": "15/F",
+          "floorNumber": 15,
+          "area": "Medical Ward",
+          "routeKey": "ipeb",
+          "searchText": "B15 IPEB 15/F B MEDICAL WARD",
+          "liftSelection": "B",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|H|4/F|4H Integrated Renal Care Centre",
+      "wardCode": "4H",
+      "building": "HKLM",
+      "route": "H",
+      "floor": "4/F",
+      "floorNumber": 4,
+      "area": "4H Integrated Renal Care Centre",
+      "routeKey": "hklm",
+      "searchText": "4H HKLM 4/F H 4H INTEGRATED RENAL CARE CENTRE",
+      "destinations": [
+        {
+          "id": "IPEB|C|12/F|KIDNEY Programme Floor",
+          "wardCode": "C12",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "KIDNEY Programme Floor",
+          "routeKey": "ipeb",
+          "searchText": "C12 IPEB 12/F C KIDNEY PROGRAMME FLOOR",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|K|4/F|4K Dept of PAED, O&G, Prenatal Genetics",
+      "wardCode": "4K",
+      "building": "HKLM",
+      "route": "K",
+      "floor": "4/F",
+      "floorNumber": 4,
+      "area": "4K Dept of PAED, O&G, Prenatal Genetics",
+      "routeKey": "hklm",
+      "searchText": "4K HKLM 4/F K 4K DEPT OF PAED, O&G, PRENATAL GENETICS",
+      "destinations": [
+        {
+          "id": "IPEB|C|11/F|PAED Dept Office",
+          "wardCode": "C11",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "11/F",
+          "floorNumber": 11,
+          "area": "PAED Dept Office",
+          "routeKey": "ipeb",
+          "searchText": "C11 IPEB 11/F C PAED DEPT OFFICE",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|C|16/F|Shared Facilities",
+          "wardCode": "C16",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "16/F",
+          "floorNumber": 16,
+          "area": "Shared Facilities",
+          "routeKey": "ipeb",
+          "searchText": "C16 IPEB 16/F C SHARED FACILITIES",
+          "liftSelection": "",
+          "remark": ""
+        },
+        {
+          "id": "IPEB|C|18/F|Shared Facilities",
+          "wardCode": "C18",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "18/F",
+          "floorNumber": 18,
+          "area": "Shared Facilities",
+          "routeKey": "ipeb",
+          "searchText": "C18 IPEB 18/F C SHARED FACILITIES",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|M|4/F|4M MACC",
+      "wardCode": "4M",
+      "building": "HKLM",
+      "route": "M",
+      "floor": "4/F",
+      "floorNumber": 4,
+      "area": "4M MACC",
+      "routeKey": "hklm",
+      "searchText": "4M HKLM 4/F M 4M MACC",
+      "destinations": [
+        {
+          "id": "IPEB|C|10/F|CTS Programme Floor",
+          "wardCode": "C10",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "10/F",
+          "floorNumber": 10,
+          "area": "CTS Programme Floor",
+          "routeKey": "ipeb",
+          "searchText": "C10 IPEB 10/F C CTS PROGRAMME FLOOR",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|H|3/F|3H Pulmonary Function Laboratory",
+      "wardCode": "3H",
+      "building": "HKLM",
+      "route": "H",
+      "floor": "3/F",
+      "floorNumber": 3,
+      "area": "3H Pulmonary Function Laboratory",
+      "routeKey": "hklm",
+      "searchText": "3H HKLM 3/F H 3H PULMONARY FUNCTION LABORATORY",
+      "destinations": [
+        {
+          "id": "IPEB|C|10/F|CTS Programme Floor",
+          "wardCode": "C10",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "10/F",
+          "floorNumber": 10,
+          "area": "CTS Programme Floor",
+          "routeKey": "ipeb",
+          "searchText": "C10 IPEB 10/F C CTS PROGRAMME FLOOR",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|K|3/F|3K MACC",
+      "wardCode": "3K",
+      "building": "HKLM",
+      "route": "K",
+      "floor": "3/F",
+      "floorNumber": 3,
+      "area": "3K MACC",
+      "routeKey": "hklm",
+      "searchText": "3K HKLM 3/F K 3K MACC",
+      "destinations": [
+        {
+          "id": "IPEB|C|12/F|MACC",
+          "wardCode": "C12",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "MACC",
+          "routeKey": "ipeb",
+          "searchText": "C12 IPEB 12/F C MACC",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
+      "id": "HKLM|L|3/F|3L DMEC",
+      "wardCode": "3L",
+      "building": "HKLM",
+      "route": "L",
+      "floor": "3/F",
+      "floorNumber": 3,
+      "area": "3L DMEC",
+      "routeKey": "hklm",
+      "searchText": "3L HKLM 3/F L 3L DMEC",
+      "destinations": [
+        {
+          "id": "IPEB|C|12/F|DMEC",
+          "wardCode": "C12",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "12/F",
+          "floorNumber": 12,
+          "area": "DMEC",
+          "routeKey": "ipeb",
+          "searchText": "C12 IPEB 12/F C DMEC",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
     }
   ]
 }
