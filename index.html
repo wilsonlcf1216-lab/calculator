@@ -2967,6 +2967,14 @@ function normalizeSearchQuery(value) {
   return String(value || "").trim().toUpperCase().replace(/\s+/g, " ");
 }
 
+function compactSearchValue(value) {
+  return String(value || "").toUpperCase().replace(/[^A-Z0-9]+/g, "");
+}
+
+function tokenizeSearchQuery(value) {
+  return normalizeSearchQuery(value).split(/[^A-Z0-9]+/).filter(Boolean);
+}
+
 function buildOriginOptionLabel(origin) {
   return `${origin.wardCode} · ${origin.floor} · ${origin.building} · ${origin.area}`;
 }
@@ -2981,8 +2989,12 @@ function getOriginMatchScore(origin, query) {
   }
 
   const normalizedQuery = normalizeSearchQuery(query);
+  const compactQuery = compactSearchValue(normalizedQuery);
+  const queryTokens = tokenizeSearchQuery(normalizedQuery);
   const code = origin.wardCode;
   const haystack = origin.searchText || buildOriginOptionLabel(origin).toUpperCase();
+  const compactCode = compactSearchValue(code);
+  const compactHaystack = compactSearchValue(haystack);
 
   if (code === normalizedQuery) {
     return 500;
@@ -2994,6 +3006,18 @@ function getOriginMatchScore(origin, query) {
 
   if (haystack.includes(normalizedQuery)) {
     return 120;
+  }
+
+  if (compactQuery && (compactCode === compactQuery || compactCode.startsWith(compactQuery))) {
+    return 320;
+  }
+
+  if (compactQuery && compactHaystack.includes(compactQuery)) {
+    return 140;
+  }
+
+  if (queryTokens.length > 1 && queryTokens.every((token) => haystack.includes(token))) {
+    return 100;
   }
 
   return 0;
