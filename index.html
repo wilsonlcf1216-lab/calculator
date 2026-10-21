@@ -2575,6 +2575,28 @@ const MARKER_PATH_OFFSET_Y = 24;
 const MAP_MARKER_FACING_RIGHT_OFFSET_X = 62.25;
 const STEP_ORDER = ["step1", "step2", "step3", "step4", "step5"];
 const PLAYBACK_STEP_KEYS = ["step1", "step2", "step3", "step4", "step5"];
+const HIDDEN_ORIGIN_IDS = new Set([
+  "EF|F|1/F|1F ART Lab",
+  "EF|F|2/F|2F CUHK-PWH Medical Centre",
+  "EF|E|3/F|3E Staff Changing (N)",
+  "EF|E|5/F|5E O&G Day Ward",
+  "EF|F|9/F|9F Assisted Reproductive Technology Unit",
+  "HKLM|H|3/F|3H Pulmonary Function Laboratory",
+  "HKLM|K|3/F|3K MACC",
+  "HKLM|L|3/F|3L DMEC",
+  "HKLM|H|4/F|4H Integrated Renal Care Centre",
+  "HKLM|K|4/F|4K Dept of PAED, O&G, Prenatal Genetics",
+  "HKLM|M|4/F|4M MACC",
+  "HKLM|K|5/F|5K OACC",
+  "HKLM|H|7/F|7H SACC",
+  "HKLM|K|7/F|7K SACC",
+  "HKLM|L|8/F|8L Haemodialysis & Renal Transplant Centre",
+  "HKLM|M|8/F|8M Haemodialysis & Renal Transplant Centre",
+  "HKLM|H|11/F|11H PAED Ambulatory Care Centre",
+  "MCBTC|D|0/F|Mortuary",
+  "MCBTC|D|2/F|DIIR",
+  "MCBTC|D|3/F|DSU"
+]);
 const STEP_JSON_DEFAULTS = [
   {
     stepKey: "step1",
@@ -2955,6 +2977,7 @@ function normalizeRouteDirectory(origins) {
         }))
         : []
     }))
+    .filter((origin) => !HIDDEN_ORIGIN_IDS.has(origin.id))
     .filter((origin) => origin.id && origin.wardCode);
 }
 
