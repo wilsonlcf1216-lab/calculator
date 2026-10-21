@@ -18,5 +18,15 @@
       "y": 257.3177795410156
     }
   ],
-  "segments": []
+  "segments": [
+    {
+      "id": "segment-ef-f-step1",
+      "fromId": "node-2ctd6s7b",
+      "toId": "node-6j9nri4o",
+      "routeGroup": "ef",
+      "stepTag": "step1",
+      "label": "",
+      "waypoints": []
+    }
+  ]
 }
