@@ -4,29 +4,46 @@
   "backgroundHeight": 750,
   "nodes": [
     {
-      "id": "node-8oe6ezvh",
-      "name": "CCU",
+      "id": "node-hoio6ms8",
+      "name": "IPEB_CCU",
       "type": "entrance",
       "x": 326.6766662597656,
-      "y": 482.91143798828125
+      "y": 492.805908203125
     },
     {
-      "id": "node-jfos4l52",
-      "name": "IPEB_HOT",
+      "id": "node-g46nu6ls",
+      "name": "IPEB_Hot",
       "type": "lift",
-      "x": 425.62127685546875,
-      "y": 568.0037841796875
+      "x": 426.6107177734375,
+      "y": 558.1093139648438
     }
   ],
   "segments": [
     {
-      "id": "segment-tdro1yuh",
-      "fromId": "node-jfos4l52",
-      "toId": "node-8oe6ezvh",
+      "id": "segment-v020cp9g",
+      "fromId": "node-g46nu6ls",
+      "toId": "node-hoio6ms8",
       "routeGroup": "shared",
       "stepTag": "step5",
       "label": "",
-      "waypoints": []
+      "waypoints": [
+        {
+          "x": 426.6107177734375,
+          "y": 582.8300170898438
+        },
+        {
+          "x": 453.32574462890625,
+          "y": 582.8300170898438
+        },
+        {
+          "x": 453.32574462890625,
+          "y": 550.1782836914062
+        },
+        {
+          "x": 326.6766662597656,
+          "y": 550.1782836914062
+        }
+      ]
     }
   ]
 }
