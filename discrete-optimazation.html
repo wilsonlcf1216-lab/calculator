@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>醫院病房搬遷 (Decanting) 離散模擬與優化模型</title>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        h1 {
+            margin: 0 0 8px 0;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        p.subtitle {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #334155;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #475569;
+        }
+
+        .form-group input[type="number"], .form-group select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+
+        .form-group input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e1;
+        }
+
+        /* Results Styling */
+        .results-container {
+            display: none;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .metric-card .title {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .metric-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .status-success { background: #d1fae5; color: #065f46; }
+        .status-danger { background: #fee2e2; color: #991b1b; }
+
+        .log-box {
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🏥 醫院病房搬遷 (Decanting) 模擬與計算器</h1>
+        <p class="subtitle">調整人力、個案數、路線與策略參數，即時估算總搬遷時間與發現人力瓶頸</p>
+    </header>
+
+    <div class="btn-container">
+        <button class="btn-secondary" onclick="loadPreset('default')">📋 帶入標準基準情境</button>
+        <button class="btn-secondary" onclick="loadPreset('optimised')">⚡ 帶入優化情境（延遲護士轉移）</button>
+        <button class="btn-secondary" onclick="loadPreset('roadblock')">🚧 帶入道路封鎖情境</button>
+    </div>
+
+    <form id="simForm">
+        <div class="grid">
+            <!-- 1. 個案數量 -->
+            <div class="card">
+                <h2>1. 病患數量 (Cases)</h2>
+                <div class="form-group">
+                    <label>A 病房一般個案</label>
+                    <input type="number" id="cases_normal_A" value="18" min="0">
+                </div>
+                <div class="form-group">
+                    <label>B 病房一般個案</label>
+                    <input type="number" id="cases_normal_B" value="18" min="0">
+                </div>
+                <div class="form-group">
+                    <label>A 病房重症個案</label>
+                    <input type="number" id="cases_critical_A" value="2" min="0">
+                </div>
+                <div class="form-group">
+                    <label>B 病房重症個案</label>
+                    <input type="number" id="cases_critical_B" value="2" min="0">
+                </div>
+            </div>
+
+            <!-- 2. 流程與時間 -->
+            <div class="card">
+                <h2>2. 流程時間 (分鐘)</h2>
+                <div class="form-group">
+                    <label>一般個案準備時間 (Prep Time)</label>
+                    <input type="number" id="t_prep_normal" value="5.0" step="0.5">
+                </div>
+                <div class="form-group">
+                    <label>接收交接時間 (Handover Time)</label>
+                    <input type="number" id="t_recv_normal" value="5.0" step="0.5">
+                </div>
+                <div class="form-group">
+                    <label>一般個案單程時間 (A / B)</label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="number" id="t_transit_A_normal" value="5.63" step="0.1">
+                        <input type="number" id="t_transit_B_normal" value="6.17" step="0.1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>重症個案單程時間 (A / B)</label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="number" id="t_transit_A_critical" value="7.68" step="0.1">
+                        <input type="number" id="t_transit_B_critical" value="8.21" step="0.1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>護送團隊空手返回時間 (Return Time)</label>
+                    <input type="number" id="t_return" value="4.10" step="0.1">
+                </div>
+            </div>
+
+            <!-- 3. 人力資源配置 -->
+            <div class="card">
+                <h2>3. 人力資源 (Staffing)</h2>
+                <div class="form-group">
+                    <label>總護士人數 (Total Nurses)</label>
+                    <input type="number" id="total_nurses" value="10">
+                </div>
+                <div class="form-group">
+                    <label>初始留在新病房護士 (A / B)</label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="number" id="init_nurses_A" value="2">
+                        <input type="number" id="init_nurses_B" value="2">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>搬出病房最少留守護士</label>
+                    <input type="number" id="min_vacating_nurses" value="2">
+                </div>
+                <div class="form-group">
+                    <label>可用支援人員上限 (Supporting Staff)</label>
+                    <input type="number" id="max_support_staff" value="4">
+                </div>
+                <div class="form-group">
+                    <label>可用醫生數量 (Doctors)</label>
+                    <input type="number" id="max_doctors" value="1">
+                </div>
+            </div>
+
+            <!-- 4. 硬體與應變策略 -->
+            <div class="card">
+                <h2>4. 硬體與策略 (Strategy)</h2>
+                <div class="form-group">
+                    <label>可用專用電梯數量</label>
+                    <input type="number" id="max_lifts" value="4" min="1">
+                </div>
+                <div class="form-group">
+                    <label>電梯往返復位時間 (分鐘)</label>
+                    <input type="number" id="lift_round_trip" value="3.0" step="0.5">
+                </div>
+                <div class="form-group">
+                    <label>道路封鎖/繞道額外增加時間 (分鐘)</label>
+                    <input type="number" id="roadblock_extra_mins" value="0.0" step="0.5">
+                </div>
+                <div class="form-group" style="margin-top:16px;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="delay_nurse_transfer">
+                        延遲護士轉移（送完所有人才留在新病房）
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <button type="button" class="btn-primary" onclick="runSimulation()">🚀 開始執行模擬計算</button>
+        </div>
+    </form>
+
+    <!-- 結果展示區 -->
+    <div id="results" class="results-container">
+        <h2>📊 模擬計算結果</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="title">搬遷狀態</div>
+                <div id="metric-status" class="value" style="font-size:1.2rem; margin-top:8px;">-</div>
+            </div>
+            <div class="metric-card">
+                <div class="title">總耗時 (分鐘)</div>
+                <div id="metric-time-mins" class="value">-</div>
+            </div>
+            <div class="metric-card">
+                <div class="title">總耗時 (小時)</div>
+                <div id="metric-time-hours" class="value">-</div>
+            </div>
+            <div class="metric-card">
+                <div class="title">已完成搬遷人數</div>
+                <div id="metric-cases-moved" class="value">-</div>
+            </div>
+        </div>
+
+        <h3>📝 詳細時間軸與調度日誌 (Timeline Log)</h3>
+        <div id="log-box" class="log-box"></div>
+    </div>
+</div>
+
+<script>
+class DecantingSimulator {
+    constructor(cfg) {
+        this.cfg = cfg;
+        this.time = 0.0;
+        
+        this.vacating_nurses = cfg.total_nurses - cfg.init_nurses_A - cfg.init_nurses_B;
+        this.avail_nurses = this.vacating_nurses;
+        this.avail_support = cfg.max_support_staff;
+        this.avail_doctors = cfg.max_doctors;
+        
+        this.cases_sent_A = 0;
+        this.cases_sent_B = 0;
+        this.transferred_nurses_A = 0;
+        this.transferred_nurses_B = 0;
+        
+        this.events = [];
+        this.lift_busy_until = new Array(cfg.max_lifts).fill(0.0);
+        this.logs = [];
+        this.isDeadlock = false;
+    }
+
+    log(msg) {
+        this.logs.push(`[${this.time.toFixed(2).padStart(6, ' ')} 分鐘] ${msg}`);
+    }
+
+    run() {
+        let queue = [];
+        for (let i = 0; i < this.cfg.cases_normal_A; i++) queue.push({ dest: 'A', type: 'Normal' });
+        for (let i = 0; i < this.cfg.cases_normal_B; i++) queue.push({ dest: 'B', type: 'Normal' });
+        for (let i = 0; i < this.cfg.cases_critical_A; i++) queue.push({ dest: 'A', type: 'Critical' });
+        for (let i = 0; i < this.cfg.cases_critical_B; i++) queue.push({ dest: 'B', type: 'Critical' });
+
+        this.log(`=== 搬遷模擬開始 | 總個案數: ${queue.length} | 初始搬出病房護士: ${this.vacating_nurses} 名 ===`);
+
+        let case_idx = 0;
+        let safety_counter = 0;
+
+        while ((case_idx < queue.length || this.events.length > 0) && safety_counter < 5000) {
+            safety_counter++;
+
+            // 處理已到達時間點的事件
+            this.events.sort((a, b) => a.time - b.time);
+            while (this.events.length > 0 && this.events[0].time <= this.time + 1e-5) {
+                let ev = this.events.shift();
+                this.time = ev.time;
+                if (ev.type === 'RETURN_STAFF') {
+                    let [req_n, req_s, req_d, is_transferred] = ev.data;
+                    this.avail_support += req_s;
+                    this.avail_doctors += req_d;
+                    if (!is_transferred) {
+                        this.avail_nurses += req_n;
+                    }
+                    this.log(`護送團隊返回搬出病房 (釋放支援:${req_s}, 醫生:${req_d}, 護士:${is_transferred ? 0 : req_n})`);
+                }
+            }
+
+            // 嘗試發車
+            if (case_idx < queue.length) {
+                let patient = queue[case_idx];
+                let dest = patient.dest;
+                let priority = patient.type;
+
+                let req_n = 1;
+                let req_s = priority === 'Normal' ? 1 : 2;
+                let req_d = priority === 'Normal' ? 0 : 1;
+
+                let is_nurse_transfer = false;
+                if (!this.cfg.delay_nurse_transfer) {
+                    let target_sent = dest === 'A' ? this.cases_sent_A : this.cases_sent_B;
+                    let trans_count = dest === 'A' ? this.transferred_nurses_A : this.transferred_nurses_B;
+                    if ((target_sent + 1) >= (trans_count + 1) * 6) {
+                        is_nurse_transfer = true;
+                    }
+                }
+
+                let min_needed = is_nurse_transfer ? (this.cfg.min_vacating_nurses - 1) : this.cfg.min_vacating_nurses;
+                let usable_nurses = this.avail_nurses - min_needed;
+
+                let min_lift_time = Math.min(...this.lift_busy_until);
+
+                if (usable_nurses >= req_n && this.avail_support >= req_s && this.avail_doctors >= req_d) {
+                    // 扣除人力
+                    this.avail_nurses -= req_n;
+                    this.avail_support -= req_s;
+                    this.avail_doctors -= req_d;
+
+                    let transit = dest === 'A' 
+                        ? (priority === 'Normal' ? this.cfg.t_transit_A_normal : this.cfg.t_transit_A_critical)
+                        : (priority === 'Normal' ? this.cfg.t_transit_B_normal : this.cfg.t_transit_B_critical);
+                    
+                    transit += this.cfg.roadblock_extra_mins;
+
+                    let recv_time = priority === 'Normal' ? this.cfg.t_recv_normal : this.cfg.t_recv_critical;
+                    let prep_time = priority === 'Normal' ? this.cfg.t_prep_normal : this.cfg.t_prep_critical;
+
+                    let lift_start = Math.max(this.time, min_lift_time);
+                    let lift_idx = this.lift_busy_until.indexOf(min_lift_time);
+                    this.lift_busy_until[lift_idx] = lift_start + this.cfg.lift_round_trip;
+
+                    let total_cycle = prep_time + transit + recv_time + this.cfg.t_return;
+                    let return_time = this.time + total_cycle;
+
+                    if (dest === 'A') this.cases_sent_A++;
+                    else this.cases_sent_B++;
+
+                    if (is_nurse_transfer) {
+                        if (dest === 'A') this.transferred_nurses_A++;
+                        else this.transferred_nurses_B++;
+                        this.vacating_nurses--;
+                        this.log(`【出發】個案 #${case_idx + 1} (${priority}) 前往病房 ${dest} [護士轉移至 ${dest}]`);
+                    } else {
+                        this.log(`【出發】個案 #${case_idx + 1} (${priority}) 前往病房 ${dest}`);
+                    }
+
+                    this.events.push({
+                        time: return_time,
+                        type: 'RETURN_STAFF',
+                        data: [req_n, req_s, req_d, is_nurse_transfer]
+                    });
+
+                    case_idx++;
+                    this.time += 1.0;
+                    continue;
+                } else {
+                    if (case_idx < queue.length && this.events.length === 0) {
+                        this.isDeadlock = true;
+                        this.log(`⚠️ 【死鎖警示 (Deadlock)】搬出病房可用人力不足，且無執行中的護送團隊可返航！模擬中斷。`);
+                        break;
+                    }
+                }
+            }
+
+            if (this.events.length > 0) {
+                this.time = Math.max(this.time + 0.5, this.events[0].time);
+            } else {
+                this.time += 1.0;
+            }
+        }
+
+        if (!this.isDeadlock) {
+            this.log(`=== 搬遷完成 | 總耗時: ${this.time.toFixed(2)} 分鐘 (${(this.time / 60).toFixed(2)} 小時) ===`);
+        }
+
+        return {
+            totalTime: this.time,
+            isDeadlock: this.isDeadlock,
+            logs: this.logs,
+            casesMoved: case_idx,
+            totalCases: queue.length
+        };
+    }
+}
+
+function getFormConfig() {
+    return {
+        cases_normal_A: parseInt(document.getElementById('cases_normal_A').value) || 0,
+        cases_normal_B: parseInt(document.getElementById('cases_normal_B').value) || 0,
+        cases_critical_A: parseInt(document.getElementById('cases_critical_A').value) || 0,
+        cases_critical_B: parseInt(document.getElementById('cases_critical_B').value) || 0,
+        t_prep_normal: parseFloat(document.getElementById('t_prep_normal').value) || 0,
+        t_recv_normal: parseFloat(document.getElementById('t_recv_normal').value) || 0,
+        t_prep_critical: parseFloat(document.getElementById('t_prep_normal').value) || 0,
+        t_recv_critical: parseFloat(document.getElementById('t_recv_normal').value) || 0,
+        t_transit_A_normal: parseFloat(document.getElementById('t_transit_A_normal').value) || 0,
+        t_transit_B_normal: parseFloat(document.getElementById('t_transit_B_normal').value) || 0,
+        t_transit_A_critical: parseFloat(document.getElementById('t_transit_A_critical').value) || 0,
+        t_transit_B_critical: parseFloat(document.getElementById('t_transit_B_critical').value) || 0,
+        t_return: parseFloat(document.getElementById('t_return').value) || 0,
+        total_nurses: parseInt(document.getElementById('total_nurses').value) || 0,
+        init_nurses_A: parseInt(document.getElementById('init_nurses_A').value) || 0,
+        init_nurses_B: parseInt(document.getElementById('init_nurses_B').value) || 0,
+        min_vacating_nurses: parseInt(document.getElementById('min_vacating_nurses').value) || 0,
+        max_support_staff: parseInt(document.getElementById('max_support_staff').value) || 0,
+        max_doctors: parseInt(document.getElementById('max_doctors').value) || 0,
+        max_lifts: parseInt(document.getElementById('max_lifts').value) || 1,
+        lift_round_trip: parseFloat(document.getElementById('lift_round_trip').value) || 0,
+        roadblock_extra_mins: parseFloat(document.getElementById('roadblock_extra_mins').value) || 0,
+        delay_nurse_transfer: document.getElementById('delay_nurse_transfer').checked
+    };
+}
+
+function runSimulation() {
+    const cfg = getFormConfig();
+    const sim = new DecantingSimulator(cfg);
+    const res = sim.run();
+
+    document.getElementById('results').style.display = 'block';
+    
+    const statusEl = document.getElementById('metric-status');
+    if (res.isDeadlock) {
+        statusEl.innerHTML = '<span class="status-badge status-danger">⚠️ 中斷 (Deadlock)</span>';
+    } else {
+        statusEl.innerHTML = '<span class="status-badge status-success">✅ 順利完成</span>';
+    }
+
+    document.getElementById('metric-time-mins').innerText = res.totalTime.toFixed(1);
+    document.getElementById('metric-time-hours').innerText = (res.totalTime / 60).toFixed(2);
+    document.getElementById('metric-cases-moved').innerText = `${res.casesMoved} / ${res.totalCases}`;
+
+    document.getElementById('log-box').innerText = res.logs.join('\n');
+}
+
+function loadPreset(type) {
+    document.getElementById('roadblock_extra_mins').value = "0.0";
+    if (type === 'default') {
+        document.getElementById('delay_nurse_transfer').checked = false;
+    } else if (type === 'optimised') {
+        document.getElementById('delay_nurse_transfer').checked = true;
+    } else if (type === 'roadblock') {
+        document.getElementById('delay_nurse_transfer').checked = true;
+        document.getElementById('roadblock_extra_mins').value = "5.0";
+    }
+    runSimulation();
+}
+</script>
+</body>
+</html>
