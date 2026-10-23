@@ -2930,6 +2930,15 @@ const STEP_JSON_DEFAULTS = [
     scopeLabel: "IPEB O&G Private",
     fileName: "IPEB_O&G_PRI.json",
     filePath: "./IPEB_O&G_PRI.json"
+  },
+  {
+    stepKey: "step1",
+    routeKey: "mcbtc",
+    scopeType: "originDestinationPair",
+    scopeValue: "MCBTC|D|0/F|A&E=>IPEB|D|0/F|A&E",
+    scopeLabel: "MCBTC A&E to IPEB A&E",
+    fileName: "MCB_IPEB_AED.json",
+    filePath: "./MCB_IPEB_AED.json"
   }
 ];
 
@@ -2970,6 +2979,7 @@ const MCBTC_SOUTH_TRANSFER_ORIGIN_IDS = new Set([
   "MCBTC|D|5/F|Burns Centre",
   "MCBTC|D|2/F|EM Ward"
 ]);
+const AED_DIRECT_ROUTE_PAIR = "MCBTC|D|0/F|A&E=>IPEB|D|0/F|A&E";
 
 const INTER_BUILDING_SEGMENTS = {
   hklm: [
@@ -3667,6 +3677,28 @@ function calculateRouteFromDirectoryEntries(originEntry, destinationEntry) {
 }
 
 function buildRouteResult(origin, destination) {
+  if (isAedDirectRoute(origin, destination)) {
+    const directStep = {
+      stepTag: "step1",
+      playbackStepKey: "step1",
+      label: "Direct transfer between MCBTC A&E and IPEB A&E",
+      distance: 0,
+      time: 0
+    };
+
+    return {
+      origin,
+      destination,
+      lobbyAssumptionKey: "direct",
+      lobbyAssumptionLabel: "No lift required",
+      steps: [directStep],
+      totalDistance: 0,
+      totalTime: 0,
+      totalTimeMinutes: formatSeconds(0),
+      isDirectRoute: true
+    };
+  }
+
   const lobbyAssumption = getIpebLobbyAssumption(destination, origin.routeKey);
   const baseSegments = INTER_BUILDING_SEGMENTS[origin.routeKey];
 
@@ -3970,6 +4002,12 @@ function normalizeFloorLabel(value) {
 function renderResults(result) {
   const originDetailsCard = document.getElementById("origin-details-card");
   const destinationDetailsCard = document.getElementById("destination-details-card");
+  const transferFloorLabel = result.isDirectRoute
+    ? "N/A"
+    : normalizeFloorLabel(toLiftCode(result.origin.transferFloor)).display;
+  const lobbyLabel = result.isDirectRoute
+    ? "No lift required"
+    : (result.destination.building === "IPEB" ? (result.lobbyAssumptionLabel || "--") : "N/A");
   document.getElementById("total-distance").innerHTML = formatDistanceValue(result.totalDistance);
   document.getElementById("total-time").innerHTML = formatMinutesValue(result.totalTime);
   originDetailsCard.dataset.building = getBuildingThemeKey(result.origin.routeKey, result.origin.building);
@@ -3977,10 +4015,8 @@ function renderResults(result) {
   document.getElementById("origin-building").textContent = result.origin.building;
   document.getElementById("origin-floor").textContent = normalizeFloorLabel(`${result.origin.floor}/F`).display;
   document.getElementById("origin-wing").textContent = result.origin.route ? `${result.origin.route} Wing` : "--";
-  document.getElementById("transfer-floor").textContent = normalizeFloorLabel(toLiftCode(result.origin.transferFloor)).display;
-  document.getElementById("lobby-assumption").textContent = result.destination.building === "IPEB"
-    ? (result.lobbyAssumptionLabel || "--")
-    : "N/A";
+  document.getElementById("transfer-floor").textContent = transferFloorLabel;
+  document.getElementById("lobby-assumption").textContent = lobbyLabel;
   document.getElementById("destination-building").textContent = result.destination.building || "--";
   document.getElementById("destination-floor").textContent = normalizeFloorLabel(`${result.destination.floor}/F`).display;
   document.getElementById("destination-wing").textContent = result.destination.wing ? `${result.destination.wing} Wing` : "--";
@@ -5010,7 +5046,7 @@ function playStepAtIndex(index, shouldAutoAdvance = true) {
   syncRouteVisualizationState();
   renderAll(false);
 
-  if (!shouldAutoAdvance || isPlaybackPaused) {
+  if (!shouldAutoAdvance || isPlaybackPaused || playbackSteps.length === 1) {
     return;
   }
 
@@ -5105,6 +5141,10 @@ function getMcbtcTransferProfile(origin = {}, destination = {}, lobbyKey = "") {
   return String(lobbyKey || "").trim().toLowerCase();
 }
 
+function isAedDirectRoute(origin = {}, destination = {}) {
+  return `${String(origin.id || "").trim()}=>${String(destination.id || "").trim()}` === AED_DIRECT_ROUTE_PAIR;
+}
+
 function getStepJsonRouteContext(routeResult = currentRouteResult) {
   const origin = routeResult && routeResult.origin ? routeResult.origin : {};
   const destination = routeResult && routeResult.destination ? routeResult.destination : {};
@@ -5117,6 +5157,7 @@ function getStepJsonRouteContext(routeResult = currentRouteResult) {
 
   return {
     originId: String(origin.id || "").trim(),
+    originDestinationPair: `${String(origin.id || "").trim()}=>${String(destination.id || "").trim()}`,
     originRouteKey: String(origin.routeKey || "").trim().toLowerCase(),
     destinationRouteKey: String(destination.routeKey || "").trim().toLowerCase(),
     originRoute: String(origin.route || origin.suffix || "").trim().toUpperCase(),
@@ -5152,6 +5193,10 @@ function matchesStepJsonEntry(entry, stepKey, context) {
 
   if (scopeType === "originId") {
     return context.originId.toUpperCase() === scopeValue;
+  }
+
+  if (scopeType === "originDestinationPair") {
+    return context.originDestinationPair.toUpperCase() === scopeValue;
   }
 
   if (scopeType === "destinationWing") {
@@ -5845,6 +5890,13 @@ function inferStepJsonEntryMetadata(fileName, fallbackStepKey = "step3") {
       scopeValue: "MCBTC|D|6/F|Private Ward",
       scopeLabel: "MCBTC Private Ward"
     },
+    "MCB_IPEB_AED.json": {
+      stepKey: "step1",
+      routeKey: "mcbtc",
+      scopeType: "originDestinationPair",
+      scopeValue: "MCBTC|D|0/F|A&E=>IPEB|D|0/F|A&E",
+      scopeLabel: "MCBTC A&E to IPEB A&E"
+    },
     "Transfer_00_South.json": {
       stepKey: "step3",
       routeKey: "mcbtc",
@@ -5983,6 +6035,10 @@ function formatStepJsonScope(entry) {
 
   if (entry.scopeType === "originId") {
     return `Origin ${String(entry.scopeValue || "")}`;
+  }
+
+  if (entry.scopeType === "originDestinationPair") {
+    return `Direct Route ${String(entry.scopeValue || "")}`;
   }
 
   if (entry.scopeType === "destinationWing") {
