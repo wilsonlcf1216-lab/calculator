@@ -2301,6 +2301,33 @@
       ]
     },
     {
+      "id": "EF|E|6/F|6EF Delivery Suite",
+      "wardCode": "6EF",
+      "building": "EF",
+      "route": "E",
+      "floor": "6/F",
+      "floorNumber": 6,
+      "area": "6EF Delivery Suite",
+      "routeKey": "ef",
+      "searchText": "6EF EF 6/F E 6EF DELIVERY SUITE",
+      "destinations": [
+        {
+          "id": "IPEB|C|16/F|Labour & Delivery",
+          "wardCode": "C16",
+          "building": "IPEB",
+          "route": "C",
+          "wing": "C",
+          "floor": "16/F",
+          "floorNumber": 16,
+          "area": "Labour & Delivery",
+          "routeKey": "ipeb",
+          "searchText": "C16 IPEB 16/F C LABOUR & DELIVERY",
+          "liftSelection": "",
+          "remark": ""
+        }
+      ]
+    },
+    {
       "id": "EF|E|5/F|5E O&G Day Ward",
       "wardCode": "5E",
       "building": "EF",
